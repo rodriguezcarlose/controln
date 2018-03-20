@@ -11,7 +11,7 @@ class Claims_model extends CI_Model
                                         	g.nombre nombre_gerencia,
                                         	p.nombre nombre_proyecto,
                                         	b.nombre nombre_banco,
-                                        	r.numero_cuenta,
+                                            CONCAT(SUBSTR(r.numero_cuenta,1,4),'-****-****-****-',SUBSTR(r.numero_cuenta,LENGTH(r.numero_cuenta)-3,4)) numero_cuenta,
                                         	r.fecha_reclamo,
                                         	er.nombre estatus_reclamo
                                         FROM 	reclamo r, 

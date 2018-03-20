@@ -17,7 +17,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <td>Nro. Cuenta</td>
                     <td>Fecha</td>
                     <td>Estatus</td>
-                    <td></td>
                 </tr>
                 
                 <?php foreach ($consulta->result() as $fila){ ?>
@@ -30,7 +29,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <td><?= $fila->numero_cuenta; ?></td>
                         <td><?= $fila->fecha_reclamo; ?></td>
                         <td><?= $fila->estatus_reclamo; ?></td>
-                    	<td></td>
                 </tr>
          
                 <?php }?>

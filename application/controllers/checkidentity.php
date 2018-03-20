@@ -38,20 +38,24 @@ class Checkidentity extends CI_Controller {
             
             $this->load->model('payments_model');
             $result=$this->payments_model->getPaymentsByIdentity($nacionalidad,$cedula);
-            $data=array('consulta'=>$result);
+            $dataPayments=array('consulta'=>$result);
             
             if($result != null){
-                $this->load->view('checkpayments/payments',$data);
+                $this->load->view('checkpayments/payments',$dataPayments);
             }
 
             $this->load->model('claims_model');
             $result=$this->claims_model->getClaimsByIdentity($nacionalidad,$cedula);
-            $data=array('consulta'=>$result);
+            $dataClaims=array('consulta'=>$result);
             
             if($result != null){
-                $this->load->view('checkpayments/claims',$data);
+                $this->load->view('checkpayments/claims',$dataClaims);
             }
+            
+            
             $this->load->view('templates/footer');
+            
+
         }
         
     }

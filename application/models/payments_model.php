@@ -11,7 +11,7 @@ class Payments_model extends CI_Model
                                     g.nombre nombre_gerencia,
                                     p.nombre nombre_proyecto,
                                     b.nombre nombre_banco,
-                                    nd.numero_cuenta,
+	                                CONCAT(SUBSTR(nd.numero_cuenta,1,4),'-****-****-****-',SUBSTR(nd.numero_cuenta,LENGTH(nd.numero_cuenta)-3,4)) numero_cuenta,
                                     nd.fecha,
                                     endet.nombre estatus
                                     FROM    nomina n, 
