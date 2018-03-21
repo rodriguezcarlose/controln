@@ -44,6 +44,121 @@ class Payments_model extends CI_Model
         
     }
     
+    /**
+     * createTablepaymentsTem function, para la creación de una tabla temporal para la carga de archivos CSV de la nosminas
+     *
+     * @access public
+     * @param $table      
+     * @return boolean
+     */
+    
+    public function createTablepaymentsTem($table){
+        $result=$this->db->query("CREATE TABLE ".$table. " (
+              `id` int(10) NOT NULL AUTO_INCREMENT,
+              `beneficiario` varchar(255),
+              `id_cargo` varchar(255),
+              `referencia_credito` varchar(255),
+              `id_tipo_documento_identidad` varchar(255),
+              `documento_identidad` varchar(255),
+              `id_tipo_cuenta` varchar(255),
+              `numero_cuenta` varchar(255),
+              `credito` varchar(255),
+              `id_tipo_pago` varchar(255),
+              `id_banco` varchar(255),
+              `id_duracion_cheque` varchar(255),
+              `correo_beneficiario` varchar(255),
+              `fecha` varchar(255),
+                PRIMARY KEY (`id`))");
+        
+    }
+    
+    /**
+     * deleteTablepaymentsTem function, para la eliminacón de una tabla temporal para la carga de archivos CSV de la nosminas
+     *
+     * @access public
+     * @param $table
+     * @return boolean
+     */
+    
+    public function deleteTablepaymentsTem($table){
+        $result=$this->db->query("DROP TABLE IF EXISTS ".$table.";");
+        
+    }
+    
+    
+    /**
+     * insertTablepaymentsTem function, para la inserción de tatos en la tabla temporar creada
+     *
+     * @access public
+     * @param $table
+     * @param $sql
+     * @return boolean
+     */
+    
+    public function insertTablepaymentsTem($table_name, $sql){
+        
+        //si existe la tabla
+        if ($this->db->table_exists($table_name))
+        {
+            //si es un array y no está vacio
+            if(!empty($sql) && is_array($sql))
+            {
+                //si se lleva a cabo la inserción
+                if($this->db->insert_batch($table_name, $sql))
+                {
+                    return TRUE;
+                }else{
+                    return FALSE;
+                }
+            }
+        }
+    }
+    
+    
+    /**
+     * get_current_page_records function
+     *
+     * @access public
+     * @param $table
+     * @param $limit
+     * @param $start
+     * @return $data
+     */
+    
+    public function get_current_page_records($table,$limit, $start){
+        $this->db->limit($limit, $start);
+        $this->db->order_by('id','DESC');
+        $query = $this->db->get($table);
+        
+        if ($query->num_rows() > 0)
+        {
+            foreach ($query->result() as $row)
+            {
+                $data[] = $row;
+            }
+            
+            return $data;
+        }
+        
+        return false;
+    }
+    
+    
+    /**
+     * get_total function, Retorna la cantidad de Registros de la tabla 
+     *
+     * @access public
+     * @param $table
+     * @return $data
+     */
+    public function get_total($table) {
+        
+        return $this->db->count_all($table);
+
+    }
+        
+
+    
     
 }
 

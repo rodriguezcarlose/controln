@@ -1,19 +1,43 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
 <fieldset class="ribbon no-pad no-pad-bottom">
-    <!-- Otra información -->
     <div class="HorizontalTabLayout">
         <div class="TabHeader">
             <ul class="tabs content" data-tab>
-                <li class="tab-title active"><a href="#Tab1-1">Agregar Beneficiario</a></li>
-                <li class="tab-title"><a href="#Tab2-1">Cargar Archivo Nomina</a></li>
+               <?php 
+                	if (isset($tab)){
+                	    if ($tab == "1"){
+                	        echo '<li class="tab-title active"><a href="#Tab1-1">Agregar Beneficiario</a></li>';
+                	        echo '<li class="tab-title"><a href="#Tab2-1">Cargar Archivo Nomina</a></li>';
+                	    }else{
+                	        echo '<li class="tab-title"><a href="#Tab1-1">Agregar Beneficiario</a></li>';
+                	        echo '<li class="tab-title active"><a href="#Tab2-1">Cargar Archivo Nomina</a></li>';
+                	    }
+                	}else{
+                	    echo '<li class="tab-title active"><a href="#Tab1-1">Agregar Beneficiario</a></li>';
+                	    echo '<li class="tab-title"><a href="#Tab2-1">Cargar Archivo Nomina</a></li>';
+                	}
+            	?>
+
             </ul>
         </div>
         <div class="TabContent ribbon">
             <div class="tabs-content content">
-                <div id="Tab1-1" class="content active">
+            
+            	<?php 
+                	if (isset($tab)){
+                	    if ($tab == "1"){
+                	        echo '<div id="Tab1-1" class="content active">';
+                	    }else{
+                	        echo '<div id="Tab1-1" class="content">';
+                	    }
+                	}else{
+                	    echo '<div id="Tab1-1" class="content active">';
+                	}
+            	?>
+            
                     <h3>Agregar Beneficiario</h3>
- 					<?= form_open()?>
+ 					<?= form_open('payments/load')?>
             		<div class="field small-3 column">
                         <label for="String:">Beneficiario:</label>
                         <input id="beneficiario" name="beneficiario" type="text" value="" />
@@ -96,15 +120,28 @@
                     </div>
 					<?= form_close()?>	
                 </div>
-                <div id="Tab2-1" class="content">
+                
+                <?php 
+                	if (isset($tab)){
+                	    if ($tab == "2"){
+                	        echo '<div id="Tab2-1" class="content active">';
+                	    }else{
+                	        echo '<div id="Tab2-1" class="content">';
+                	    }
+                	}else{
+                	    echo '<div id="Tab2-1" class="content">';
+                	}
+            	?>
+
                     <h3>Cargar Archivo Nomina</h3>
                     <?php echo form_open_multipart('payments/do_upload');?>
                         <input type="file" name="userfile" size="20" />
                         <br /><br />
                         <input type="submit" value="Cargar" />
-                    </form>
+                    <?= form_close()?>	
                 </div>
             </div>
         </div>
     </div>
 </fieldset>
+
