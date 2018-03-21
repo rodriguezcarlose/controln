@@ -36,6 +36,12 @@ class Payments extends CI_Controller {
          }*/
         $this->load->library('pagination');
         $this->load->model('payments_model');
+        $this->load->model('TiposCuentas_model');
+        $this->load->model('Banco_model');
+        $this->load->model('TipoDocumentoIdentidad_model');
+        $this->load->model('TipoPago_model');
+        $this->load->model('DuracionCheque_model');
+        
     }
     
     public function index()
@@ -47,13 +53,26 @@ class Payments extends CI_Controller {
 
         
         $data = new stdClass();
+        $params = array();
         $data->beneficiario = "";
         
         $this->form_validation->set_rules('beneficiario', 'beneficiario', 'required|alpha_numeric_spaces', array('required' => 'El Campo Beneficiario es requerido','alpha_numeric_spaces' => 'El Campo Beneficiario no debe contener caracteres especiales ni numeros'));
+        
+        //cargamos los datos que van en los select del formulario
+        $data->tiposcuentas =  $this->TiposCuentas_model->getTiposCuentas();
+        $data->bancos =  $this->Banco_model->getBancos();
+        $data->TipoDocumentoIdentidad =  $this->TipoDocumentoIdentidad_model->getTipoDocumentoIdentidad();
+        $data->TipoPago =  $this->TipoPago_model->getTipoPago();
+        $data->DuracionCheque =  $this->DuracionCheque_model->getDuracionCheque();
+        
+        
+        //$data->tiposcuentas = $consulta;
+       
+
         $data->tab ="1";
         
         // si ya existe una tabla temporal en memoria, cargamos la paginación
-        $params = array();
+       
         if (isset($_SESSION['table_temp_nom']) ) {
             // init params
             
@@ -192,17 +211,6 @@ class Payments extends CI_Controller {
             
             redirect(base_url().'payments/load');
             
-            
-            //$this->load->view('user_listing', $params);
-            
-            //cargamos la vistas que mostrarán los registros cargados
-            /*
-            $data->tab ="1";
-            $this->load->view('templates/header');
-            $this->load->view('templates/Navigation',$data);
-            $this->load->view('checkpayments/load',$data);
-            $this->load->view('checkpayments/paymentloadgrid',$params);
-            $this->load->view('templates/footer');*/
         }
     }
     

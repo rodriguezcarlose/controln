@@ -126,21 +126,27 @@ class Payments_model extends CI_Model
      */
     
     public function get_current_page_records($table,$limit, $start){
-        $this->db->limit($limit, $start);
-        $this->db->order_by('id','DESC');
-        $query = $this->db->get($table);
-        
-        if ($query->num_rows() > 0)
+        //si existe la tabla
+        if ($this->db->table_exists($table))
         {
-            foreach ($query->result() as $row)
+            $this->db->limit($limit, $start);
+            $this->db->order_by('id','DESC');
+            $query = $this->db->get($table);
+            
+            if ($query->num_rows() > 0)
             {
-                $data[] = $row;
+                foreach ($query->result() as $row)
+                {
+                    $data[] = $row;
+                }
+                
+                return $data;
             }
             
-            return $data;
+            return false;
+        }else{
+            return false;
         }
-        
-        return false;
     }
     
     
@@ -152,8 +158,10 @@ class Payments_model extends CI_Model
      * @return $data
      */
     public function get_total($table) {
-        
-        return $this->db->count_all($table);
+        if ($this->db->table_exists($table))
+        {
+            return $this->db->count_all($table);
+        }
 
     }
         

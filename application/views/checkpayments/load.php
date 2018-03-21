@@ -49,10 +49,11 @@
                     <div class="field small-3 column">
                         <label for="Enum:">Letra RIF/CI:</label>
                         <select id="letra" name="letra" >
-                            <option selected="selected" value="">Seleccione</option>
-                            <option value="V">Venezolano(a)</option>
-                            <option value="E">Extranjero(A)</option>
-                            <option value="E">Pasaporte</option>
+                            <?php if (isset($TipoDocumentoIdentidad)) { ?>
+                    			<?php foreach ($TipoDocumentoIdentidad->result() as $data) { ?>
+                    				<option value="<?= $data->nombre ?>"><?= $data->descripcion ?></option>
+                              	<?php } ?>
+           					<?php }  ?>
             			</select>
                     </div>
                     <div class="field small-3 column">
@@ -64,8 +65,11 @@
                         <label for="Enum:">Tipo de Cuenta:</label>
                         <select id="tipocuenta" name="tipocuenta">
                             <option selected="selected" value="">Seleccione</option>
-                            <option value="C">Corriente</option>
-                            <option value="A">Ahorro</option>
+                            <?php if (isset($tiposcuentas)) { ?>
+                    			<?php foreach ($tiposcuentas->result() as $data) { ?>
+                    				<option value="<?= $data->tipo ?>"><?= $data->descripcion ?></option>
+                              	<?php } ?>
+           					<?php }  ?>
             			</select>
                     </div>
                     <div class="field small-3 column">
@@ -80,30 +84,35 @@
                         <label for="Enum:">Tipo de Pago:</label>
                         <select id="tipopago" name="tipopago">
                             <option selected="selected" value="">Seleccione</option>
-                            <option value="1">Abono de Cuenta BdV</option>
-                            <option value="2">Transferencia Swift</option>
-                            <option value="3">Cheque de Gerencia</option>
+                            
+                            <?php if (isset($TipoPago)) { ?>
+                    			<?php foreach ($TipoPago->result() as $data) { ?>
+                    				<option value="<?= $data->id ?>"><?= $data->descripcion ?></option>
+                              	<?php } ?>
+           					<?php }  ?>
+
             			</select>
                     </div>
                     <div class="field small-3 column">
                         <label for="Enum:">Banco:</label>
                         <select id="banco" name="banco">
                             <option selected="selected" value="">Seleccione</option>
-                            <option value="1">Banco</option>
-                            <option value="2">Banco</option>
-                            <option value="3">Banco</option>
+                             <?php if (isset($bancos)) { ?>
+                    			<?php foreach ($bancos->result() as $data) { ?>
+                    				<option value="<?= $data->id ?>"><?= $data->nombre ?></option>
+                              	<?php } ?>
+           					<?php }  ?>
             			</select>
                     </div>
                     <div class="field small-3 column">
                         <label for="Enum:">Duraci&oacute;n Cheque:</label>
                         <select  id="duracioncheque" name="duracioncheque">
-                            <option selected="selected" value="">Seleccione</option>
-                            <option value="1">30</option>
-                            <option value="2">45</option>
-                            <option value="3">60</option>
-                            <option value="4">90</option>
-                            <option value="5">120</option>
-                            	<option value="6">180</option>
+                        	<option selected="selected" value="">Seleccione</option>
+                            <?php if (isset($DuracionCheque)) { ?>
+                    			<?php foreach ($DuracionCheque->result() as $data) { ?>
+                    				<option value="<?= $data->id ?>"><?= $data->duracion ?></option>
+                              	<?php } ?>
+           					<?php }  ?>
             			</select>
                     </div>
                     <div class="field small-3 column">
