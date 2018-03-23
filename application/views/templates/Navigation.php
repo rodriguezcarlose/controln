@@ -2,11 +2,10 @@
     <ul class="title-area">
         <li class="name">
             <h1>
-                <a href="/" style="float: left">
+                <a href="<?= base_url()?>" style="float: left">
                     <img src="<?= base_url()?>Content/Images/header-logo.png" />
                 </a>
-               
-                <a href="#" class="show-for-medium-up" style="float: left">  
+                <a href="<?= base_url()?>" class="show-for-medium-up" style="float: left">  
                         <?php 
                             if (isset($_SESSION['logged_in'])  === true) :
                             echo "Bienvenido: ".$_SESSION['nombre']." ".$_SESSION['apellido'];
@@ -56,8 +55,24 @@
                         echo '</li>';
                     endif;
                 ?>
-                
-		
+            <li class="logInOut">
+			
+    			<?php 
+
+                        echo '<a href="'. base_url().'checkidentity/consultar">[CONSULTA ESTATUS PAGOS]</a>';
+
+
+                ?>
+			</li>
+            <li class="logInOut">
+			
+    			<?php 
+
+                        echo '<a href="'. base_url().'claims/registrar">[RECLAMOS]</a>';
+
+
+                ?>
+			</li>		
 			<li class="logInOut">
 			
     			<?php 

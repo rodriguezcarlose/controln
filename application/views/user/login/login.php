@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 <h2 class="show-for-small-only"></h2>
-
+<br>
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
