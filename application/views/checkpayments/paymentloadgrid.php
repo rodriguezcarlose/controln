@@ -30,12 +30,23 @@
 
 
                             <tr>
-                                <td><input id="beneficiario<?= $data->id ?>" name="beneficiario"  <?= $data->vbeneficiario==true ? 'type="text2"' : 'type="text3" title="El Campo Beneficiario no debe contener numeros ni caracteres especiales"'?>value="<?= $data->beneficiario ?>" /></td>
+                                <td>
+                                	<input id="beneficiario<?= $data->id ?>" 
+                                			name="beneficiario<?= $data->id ?>"  
+                                	        <?= $data->vbeneficiario==true ? 
+                                	           'type="text2"' : 
+                                	           'type="text3" title="El Campo Beneficiario no debe contener numeros ni caracteres especiales"'?> 
+                                	            value="<?= $data->beneficiario ?>" />
+                                </td>
                                 <td><input id="referencia_credito<?= $data->id ?>" name="referencia_credito" type="text2" value="<?= $data->referencia_credito ?>" /></td>
     							
                                 <td>
-    
-                                	<select  id="id_cargo<?= $data->id ?>" name="id_cargo<?= $data->id ?>" class = "fontsizetable">
+                                   <select  id="id_cargo<?= $data->id ?>" name="id_cargo<?= $data->id ?>" 
+                                        <?= $data->vcargo==true ? 
+                                	           'class = "fontsizetable"' : 
+                                	           'class = "fontsizetablecolorred" title="Debe Seleccionar un Cargo valido de la lista" '?> >
+                                        
+                                        
                                         <?php if (isset($Cargo)) { 
                                              $seleccionado = false;   ?>
                                 			<?php foreach ($Cargo->result() as $dataSelect) { 
@@ -63,12 +74,20 @@
                                           	?>
                                           	
                        					<?php }  ?>
+                                	
+                                	
                                 	</select>
     
                                 </td>
                                 
     							<td>
-                                	<select  id="id_tipo_documento_identidad<?= $data->id ?>" name="id_tipo_documento_identidad<?= $data->id ?>" class = "fontsizetable">
+                                	
+                                	<select  id="id_tipo_documento_identidad<?= $data->id ?>" name="id_cargo<?= $data->id ?>" 
+                                	<?= $data->vid_tipo_documento_identidad==true ? 
+                                	           'class = "fontsizetable"' : 
+                                	           'class = "fontsizetablecolorred" title="Debe Seleccionar tipo de Documento de Identidad Valido de la lista" '?> >
+                                	
+                                	
                                         <?php if (isset($TipoDocumentoIdentidad)) { 
                                              $seleccionado = false;   ?>
                                 			<?php foreach ($TipoDocumentoIdentidad->result() as $dataSelect) { 
@@ -99,10 +118,38 @@
                                 	</select>
                                 </td>                            
                                 
-                                <td><input id="documento_identidad<?= $data->id ?>" name="documento_identidad" type="text2" value="<?= $data->documento_identidad ?>" /></td>
+                                <td>
+                                
+                                	<?php 
+                                	if($data->vrdocumento_identidad > 1){
+                                	 ?>
+                                	 <input id="documento_identidad<?= $data->id ?>" 
+                                    			name="documento_identidad<?= $data->id ?>"  
+                                    	           type="text3" title="El Campo Nro: Rif / No puede estar repetido dentro de una misma nomina" 
+                                    	            value="<?= $data->documento_identidad ?>" />	
+                                	 <?php 
+                                	}else 
+                                	?>
+                                	<?php if ($data->vrdocumento_identidad <= 1){?>
+                                    	<input id="documento_identidad<?= $data->id ?>" 
+                                    			name="documento_identidad<?= $data->id ?>"  
+                                    			<?= $data->vdocumento_identidad==true ? 
+                                    	           'type="text2"' : 
+                                    	           'type="text3" title="El Campo Nro: Rif / CI debe ser numerico. Debe ser menos a 8 digitos. Es requerido"'?> 
+                                    	            value="<?= $data->documento_identidad ?>" />
+									<?php }?>                                    	   
+                             	</td>
+                               
                                
                                <td>
-                                	<select  id="id_tipo_cuenta<?= $data->id ?>" name="id_tipo_cuenta<?= $data->id ?>" class = "fontsizetable">
+                                          
+                                    <select  id="id_tipo_cuenta<?= $data->id ?>" name="id_tipo_cuenta<?= $data->id ?>" 
+                                    <?= $data->vid_tipo_cuenta==true ? 
+                                	           'class = "fontsizetable"' : 
+                                	           'class = "fontsizetablecolorred" title="Debe Seleccionar un tipo de cuenta valido de la lista" '?> >   
+                                        
+                                        
+                                        
                                         <?php if (isset($tiposcuentas)) { 
                                              $seleccionado = false;   ?>
                                 			<?php foreach ($tiposcuentas->result() as $dataSelect) { 
@@ -136,13 +183,41 @@
                                
                                
                                 
-                                <td><input id="numero_cuenta<?= $data->id ?>" name="numero_cuenta" <?= strlen($data->numero_cuenta)==20 ? 'type="text2"' : 'type="text3" title="Este campo debe ser numerico de 20 caracteres"'?> value="<?= $data->numero_cuenta ?>" /></td>
+                                <td>
                                 
-                                <td><input id="credito<?= $data->id ?>" name="credito" type="text2" value="<?= $data->credito ?>" /></td>
+
+                                    	<input id="numero_cuenta<?= $data->id ?>" 
+                                    			name="numero_cuenta<?= $data->id ?>"  
+                                    			<?= $data->vnumero_cuenta==true ? 
+                                    	           'type="text2"' : 
+                                    	           'type="text3" title="El Campo numero de cuenta debe ser numerico. debe contener 20 digitos. Es requerido"'?> 
+                                    	            value="<?= $data->numero_cuenta ?>" />
+                                    	            
+								</td>                                    	       
+    
+                                
+                                
+                                
+                                <td>
+                                	<input id="credito<?= $data->id ?>" 
+                                    			name="credito<?= $data->id ?>"  
+                                    			<?= $data->vcredito==true ? 
+                                    	           'type="text2"' : 
+                                    	           'type="text3" title="El Campo monto debe ser numerico."'?> 
+                                    	            value="<?= $data->credito ?>" />
+                                
+                                
+                                </td>
                                 
                                 
                                  <td>
-                                	<select  id="id_tipo_pago<?= $data->id ?>" name="id_tipo_pago<?= $data->id ?>" class = "fontsizetable">
+                                	
+                                	<select  id="id_tipo_pago<?= $data->id ?>" name="id_tipo_pago<?= $data->id ?>" 
+                                	<?= $data->vid_tipo_pago==true ? 
+                                	           'class = "fontsizetable"' : 
+                                	           'class = "fontsizetablecolorred" title="El tipo de Pago seleccionado no es valido. Debe Seleccionar un tipo de pago valido de la lista" '?> > 
+                                	
+                                	
                                         <?php if (isset($TipoPago)) { 
                                              $seleccionado = false;   ?>
                                 			<?php foreach ($TipoPago->result() as $dataSelect) { 
@@ -174,7 +249,13 @@
                                 </td>   
                                 
     							<td>
-                                	<select  id="id_banco<?= $data->id ?>" name="id_banco<?= $data->id ?>" class = "fontsizetable">
+                                	
+                                	<select  id="id_banco<?= $data->id ?>" name="id_banco<?= $data->id ?>" 
+                                	<?= $data->vid_banco==true ? 
+                                	           'class = "fontsizetable"' : 
+                                	           'class = "fontsizetablecolorred" title="El Banco seleccionado no es valido. Debe Seleccionar un Banco valido de la lista" '?> > 
+                                	
+                                	
                                         <?php if (isset($bancos)) { 
                                              $seleccionado = false;   ?>
                                 			<?php foreach ($bancos->result() as $dataSelect) { 
@@ -206,7 +287,13 @@
                                 </td>                               
     
     							<td>
-                                	<select  id="id_duracion_cheque<?= $data->id ?>" name="id_duracion_cheque<?= $data->id ?>" class = "fontsizetable">
+
+                                	
+                                	<select  id="id_duracion_cheque<?= $data->id ?>" name="id_duracion_cheque<?= $data->id ?>" 
+                                	<?= $data->vid_duracion_cheque==true ? 
+                                	           'class = "fontsizetable"' : 
+                                	           'class = "fontsizetablecolorred" title="La Duración de cheque seleccionado no es valido. Debe Seleccionar una Duración de cheque valida de la lista" '?> > 
+                                	
                                         <?php if (isset($DuracionCheque)) { 
                                              $seleccionado = false;   ?>
                                 			<?php foreach ($DuracionCheque->result() as $dataSelect) { 
@@ -238,7 +325,16 @@
                                 </td>     
     
     
-                                <td><input id="correo_beneficiario<?= $data->id ?>" name="correo_beneficiario" type="text2" value="<?= $data->correo_beneficiario ?>" class = "fontsizetable"/></td>
+                                <td>
+                                	<input id="correo_beneficiario<?= $data->id ?>" 
+                                    			name="correo_beneficiario<?= $data->id ?>"  
+                                    			<?= $data->vcorreo_beneficiario==true ? 
+                                    	           'type="text2"' : 
+                                    	           'type="text3" title="El Campo Email es invalido."'?> 
+                                    	            value="<?= $data->correo_beneficiario ?>" />
+                                	
+                                	
+                                	</td>
                                 <td><input id="fecha<?= $data->id ?>" name="fecha" type="text" value="<?= $data->fecha ?>" /></td>
     							<td><a href="#" class="imgDeleteBtn"><img alt="Eliminar"  src="<?= base_url()?>Content/Images/Icons/delete_24.png"></a></td>
                             </tr>

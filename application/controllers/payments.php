@@ -95,9 +95,13 @@ class Payments extends CI_Controller {
                 // get current page records
                 $params["results"] = $this->payments_model->get_current_page_records($tablename,$settings['per_page'], $start_index);
                 
-                //$params["validatios"]=$this->validateCSV($params["results"] );
                 
-                $params["results"]=$this->validateCSV($params["results"] );
+                $params["results"]=$this->validateCSV($params["results"] ,  
+                                                        $data->Cargo, $data->TipoDocumentoIdentidad, 
+                                                        $data->tiposcuentas,
+                                                        $data->TipoPago,
+                                                        $data->bancos,
+                                                        $data->DuracionCheque);
                 
                 
                 // use the settings to initialize the library
@@ -248,47 +252,125 @@ class Payments extends CI_Controller {
      * @param mixed $data
      * @return $data
      */
-    private function validateCSV($params){
+    private function validateCSV($params, $cargo, $TipoDocumentoIdentidad, $tiposcuentas, $tipoPago, $bancos, $duracionCheque){
         
         $paramsResult = array();
        // $regisResult = array();
-        
-        
-        
-        
-        
         $message = "";
         
         foreach ($params as $validateparams) {
-            
-            $regisResult = array("beneficiario"=> "",
-                "referencia_credito"=> "",
-                "id_cargo"=> "",
-                "id_tipo_documento_identidad"=> "",
-                "documento_identidad"=> "",
-                "id_tipo_cuenta"=> "",
-                "numero_cuenta"=> "",
-                "credito"=> "",
-                "id_tipo_pago"=> "",
-                "id_banco"=> "",
-                "id_duracion_cheque"=> "",
-                "correo_beneficiario"=> "",
-                "fecha"=> "",
-            );
-            
-           /* $this->form_validation->alpha_numeric_spaces($validateparams->beneficiario) ? $regisResult["beneficiario"] = "" : $regisResult["beneficiario"] = "No se perminten caractaeres especiales ni numericos.";
-            array_push($paramsResult,$regisResult);*/
-            
-            //echo $validateparams->beneficiario."/".$this->form_validation->alpha_numeric_spaces($validateparams->beneficiario);
-            
+
+            //validación del Campo Beneficiario
             $this->form_validation->alpha_spaces($validateparams->beneficiario) == true ? $validateparams->vbeneficiario = true : $validateparams->vbeneficiario = false;
+            
+            
+            //validación del ampo Referencia
+            
+            /*
+             * 
+             * Agregar Validación
+             * 
+             */
+            
+            
+            //validación del Cargo
+            $validatecargo = false;
+            foreach ($cargo->result() as $vcargo){
+                if( $validateparams->id_cargo == $vcargo->id){
+                    $validatecargo = true;
+                }
+            }
+            $validateparams->vcargo = $validatecargo;
+            
+            //Validadcion Tipo Documento Identidad
+            $validatetipodoc = false;
+            foreach ($TipoDocumentoIdentidad->result() as $vTipoDocumentoIdentidad){
+                if( $validateparams->id_tipo_documento_identidad == $vTipoDocumentoIdentidad->nombre){
+                    $validatetipodoc = true;
+                }
+            }
+            $validateparams->vid_tipo_documento_identidad = $validatetipodoc;
+            
+            
+            //validamos que la cédula no este repetida dentro del misnmo archivo
+            $repit = 0;
+            foreach ($params as $validateparamsrepit){
+                if ($validateparamsrepit->documento_identidad == $validateparams->documento_identidad)
+                    $repit ++ ;
+            }
+            
+            $validateparams->vrdocumento_identidad = $repit;
+            //Validacion Documeto Identidad
+            ($this->form_validation->numeric($validateparams->documento_identidad) 
+                && strlen($validateparams->documento_identidad ) <= 8 
+                && $this->form_validation->required($validateparams->documento_identidad)) == true 
+                    ? $validateparams->vdocumento_identidad = true 
+                    : $validateparams->vdocumento_identidad = false;
+
+            //Validamos el campo tipo de cuenta
+            $validatecargo = false;
+            foreach ($tiposcuentas->result() as $vtiposcuentas){
+                if( $validateparams->id_tipo_cuenta == $vtiposcuentas->tipo){
+                    $validatecargo = true;
+                }
+            }
+            $validateparams->vid_tipo_cuenta = $validatecargo;
+                    
+            //validacion del nuero de cuenta
+            ($this->form_validation->numeric($validateparams->numero_cuenta)
+            && strlen($validateparams->numero_cuenta ) == 20
+            && $this->form_validation->required($validateparams->numero_cuenta)) == true
+            ? $validateparams->vnumero_cuenta = true
+            : $validateparams->vnumero_cuenta = false;
+            
+            
+            //Validacion del monto
+            ($this->form_validation->numeric($validateparams->credito)
+            && $this->form_validation->required($validateparams->credito)) == true
+            ? $validateparams->vcredito = true
+            : $validateparams->vcredito = false;
+            
+            //validacion tipo de pago
+            $validatetipopago = false;
+            foreach ($tipoPago->result() as $vtipoPago){
+                if( $validateparams->id_tipo_pago == $vtipoPago->id || $validateparams->id_tipo_pago == null){
+                    $validatetipopago = true;
+                }
+            }
+            $validateparams->vid_tipo_pago = $validatetipopago;
+            
+            //Validacion del Banco
+            $validatebanco = false;
+            foreach ($bancos->result() as $vbancos){
+                if( $validateparams->id_banco == $vbancos->id){
+                    $validatebanco = true;
+                }
+            }
+            $validateparams->vid_banco = $validatebanco;
+            
+            
+            //Validacion Duración Cheque
+            $validatebanco = false;
+            foreach ($duracionCheque->result() as $vduracionCheque){
+                if( $validateparams->id_duracion_cheque == $vduracionCheque->duracion){
+                    $validatebanco = true;
+                }
+            }
+            $validateparams->vid_duracion_cheque = $validatebanco;
+            
+            
+            //validación email
+            ($this->form_validation->valid_email($validateparams->correo_beneficiario)) == true
+            ? $validateparams->vcorreo_beneficiario = true
+            : $validateparams->vcorreo_beneficiario = false;
+            
+            
             array_push($paramsResult,$validateparams);
             
         }
         
 
         return $paramsResult;
-        //return $paramsResult;ue
     }
     
     
