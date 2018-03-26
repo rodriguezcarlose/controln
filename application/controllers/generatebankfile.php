@@ -22,7 +22,7 @@ class Generatebankfile extends CI_Controller {
         $data=array('proyecto'=>$resultProyecto, 'gerencia'=>$resulGerencia,'tipocuenta'=>$resulTiposCuentas);
         
         if($data != null){
-            $this->load->view('generatebankfile/generatebankfile',$data);
+            $this->load->view('payments/generatebankfile/generatebankfile',$data);
         }
         
 

@@ -122,9 +122,9 @@ class Payments extends CI_Controller {
             
             $this->load->view('templates/header');
             $this->load->view('templates/Navigation');
-            $this->load->view('checkpayments/load',$data);
+            $this->load->view('payments/paymentsload/load',$data);
             if (isset($_SESSION['table_temp_nom']) ) {
-                $this->load->view('checkpayments/paymentloadgrid',$params);
+                $this->load->view('payments/paymentsload/paymentloadgrid',$params);
             }
             $this->load->view('templates/footer');
             
@@ -132,9 +132,9 @@ class Payments extends CI_Controller {
             $data->beneficiario = $this->input->post('beneficiario');
             $this->load->view('templates/header');
             $this->load->view('templates/Navigation');
-            $this->load->view('checkpayments/load',$data);
+            $this->load->view('payments/paymentsload/load',$data);
             if (isset($_SESSION['table_temp_nom']) ) {
-                $this->load->view('checkpayments/paymentloadgrid',$params);
+                $this->load->view('payments/paymentsload/paymentloadgrid',$params);
             }
             $this->load->view('templates/footer');
             
@@ -164,7 +164,7 @@ class Payments extends CI_Controller {
             $data->error = $this->upload->display_errors();
             $this->load->view('templates/header');
             $this->load->view('templates/Navigation',$data);
-            $this->load->view('checkpayments/load',$data);
+            $this->load->view('payments/paymentsload/load',$data);
             $this->load->view('templates/footer');
         }
         else{

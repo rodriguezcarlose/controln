@@ -25,7 +25,7 @@ class Checkidentity extends CI_Controller {
             // validation not ok, send validation errors to the view
             $this->load->view('templates/header');
             $this->load->view('templates/navigation');
-            $this->load->view('checkpayments/checkidentity');
+            $this->load->view('checkpaymentsstatus/checkidentity');
             $this->load->view('templates/footer');
             
         } else {
@@ -41,7 +41,7 @@ class Checkidentity extends CI_Controller {
             $dataPayments=array('consulta'=>$result);
             
             if($result != null){
-                $this->load->view('checkpayments/payments',$dataPayments);
+                $this->load->view('checkpaymentsstatus/payments',$dataPayments);
             }
 
             $this->load->model('claims_model');
@@ -49,7 +49,7 @@ class Checkidentity extends CI_Controller {
             $dataClaims=array('consulta'=>$result);
             
             if($result != null){
-                $this->load->view('checkpayments/claims',$dataClaims);
+                $this->load->view('checkpaymentsstatus/claims',$dataClaims);
             }
             
             
