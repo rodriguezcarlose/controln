@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
         <head>
-                <title>Sistema de Gestion de Nómina</title>
+                <title>Sistema de Gestion de Nï¿½mina</title>
                     <link href="<?= base_url()?>Content/foundation/foundation.css" rel="stylesheet"/>
                     <link href="<?= base_url()?>Content/foundation/foundation.mvc.css" rel="stylesheet"/>
                     <link href="<?= base_url()?>Content/foundation/foundation-icons.css" rel="stylesheet"/>
@@ -49,7 +49,6 @@
             <script src="<?= base_url()?>Scripts/CustomValidations/CustomValidations-mindate.js"></script>
             <script src="<?= base_url()?>Scripts/CustomValidations/CustomValidations-requiredIf.js"></script>
             <script src="<?= base_url()?>Scripts/CustomValidations/CustomValidations-showErrors.js"></script>
-        
             <script src="<?= base_url()?>Scripts/xd.datetimepicker/jquery.datetimepicker.full.min.js"></script>
             <script src="<?= base_url()?>Scripts/excle/jquery.excle.toast.js"></script>
             <script src="<?= base_url()?>Scripts/excle/jquery.excle.confirm-with-reveal.js"></script>

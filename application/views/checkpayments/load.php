@@ -49,6 +49,7 @@
                     <div class="field small-3 column">
                         <label for="Enum:">Letra RIF/CI:</label>
                         <select id="letra" name="letra" >
+                        	<option selected="selected" value="">Seleccione</option>
                             <?php if (isset($TipoDocumentoIdentidad)) { ?>
                     			<?php foreach ($TipoDocumentoIdentidad->result() as $data) { ?>
                     				<option value="<?= $data->nombre ?>"><?= $data->descripcion ?></option>

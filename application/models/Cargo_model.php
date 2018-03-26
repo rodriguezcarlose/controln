@@ -21,6 +21,11 @@ class Cargo_model extends CI_Model {
         
     }
     
+    public function  getCargos(){
+        
+        return $this->db->get('cargo');
+        
+    }
     
     
     

@@ -35,12 +35,14 @@ class Payments extends CI_Controller {
          }
          }*/
         $this->load->library('pagination');
+        //$this->load->library('common_validation');
         $this->load->model('payments_model');
         $this->load->model('TiposCuentas_model');
         $this->load->model('Banco_model');
         $this->load->model('TipoDocumentoIdentidad_model');
         $this->load->model('TipoPago_model');
         $this->load->model('DuracionCheque_model');
+        $this->load->model('Cargo_model');
         
     }
     
@@ -64,6 +66,7 @@ class Payments extends CI_Controller {
         $data->TipoDocumentoIdentidad =  $this->TipoDocumentoIdentidad_model->getTipoDocumentoIdentidad();
         $data->TipoPago =  $this->TipoPago_model->getTipoPago();
         $data->DuracionCheque =  $this->DuracionCheque_model->getDuracionCheque();
+        $data->Cargo =  $this->Cargo_model->getCargos();
         
         
         //$data->tiposcuentas = $consulta;
@@ -71,7 +74,7 @@ class Payments extends CI_Controller {
 
         $data->tab ="1";
         
-        // si ya existe una tabla temporal en memoria, cargamos la paginación
+        // si ya existe una tabla temporal en memoria, cargamos la paginaciÃ³n
        
         if (isset($_SESSION['table_temp_nom']) ) {
             // init params
@@ -84,7 +87,7 @@ class Payments extends CI_Controller {
             // load config file
             $this->config->load('pagination', TRUE);
             $settings = $this->config->item('pagination');
-            $settings['total_rows'] = $this->payments_model->get_total($tablename);
+            $settings['total_rows'] = $total_records;
             $settings['base_url'] = base_url().'payments/load';
             
             if ($total_records > 0)
@@ -92,11 +95,20 @@ class Payments extends CI_Controller {
                 // get current page records
                 $params["results"] = $this->payments_model->get_current_page_records($tablename,$settings['per_page'], $start_index);
                 
+                //$params["validatios"]=$this->validateCSV($params["results"] );
+                
+                $params["results"]=$this->validateCSV($params["results"] );
+                
+                
                 // use the settings to initialize the library
                 $this->pagination->initialize($settings);
                 
                 // build paging links
                 $params["links"] = $this->pagination->create_links();
+                
+                
+                
+                
             }
             
             
@@ -123,6 +135,8 @@ class Payments extends CI_Controller {
             $this->load->view('templates/footer');
             
         }
+        
+        
     }
     
     
@@ -173,11 +187,14 @@ class Payments extends CI_Controller {
                 //descartamos la primera linea del archivo que contiene los nembres de los campos
                 if (!$i == 0){
                     
-                    // creamos el arreglo con la información de cada registro que se pasara al metodo de inseción de datos en la 
+                    //quitamos los caracteres especiales del nombre y convertimos todo a Mayuscula
+                    $datafile[0] = strtoupper($this->form_validation->stripAccents($datafile[0]));
+                    
+                    // creamos el arreglo con la informaciï¿½n de cada registro que se pasara al metodo de inseciï¿½n de datos en la 
                     // tabla temporal
                     $row = array("beneficiario"=> $datafile[0],
-                        "id_cargo"=> $datafile[1],
-                        "referencia_credito"=> $datafile[2],
+                        "referencia_credito"=> $datafile[1],
+                        "id_cargo"=> $datafile[2],
                         "id_tipo_documento_identidad"=> $datafile[3],
                         "documento_identidad"=> $datafile[4],
                         "id_tipo_cuenta"=> $datafile[5],
@@ -189,7 +206,13 @@ class Payments extends CI_Controller {
                         "correo_beneficiario"=> $datafile[11],
                         "fecha"=> $datafile[12],
                     );
+
+                    //validamos el registro leido
+                    //$row = $this->validateCSV($row);
+                    
+                    //agregamos el registro en el arreglo
                     array_push($data->records,$row);
+
                 }
                 $num = count ($datafile);
                 $i++;
@@ -198,20 +221,74 @@ class Payments extends CI_Controller {
             //insertamos en la tabla temporal el arreglo con los registros
             $this->payments_model->insertTablepaymentsTem($tablename,$data->records);
             
+                       
             // cerramos el archivo
             fclose ($fp);
+            
+            
             
             $_SESSION['table_temp_nom'] = $tablename;
             
             /*
              * 
-             * Agrgar código para eliminar el archivo cargado, ya que lo tenemos en BD
+             * Agrgar cï¿½digo para eliminar el archivo cargado, ya que lo tenemos en BD
              * 
              */
             
             redirect(base_url().'payments/load');
             
         }
+    }
+    
+    
+    /**
+     * validateCSV function.
+     *
+     * @access private
+     * @param mixed $data
+     * @return $data
+     */
+    private function validateCSV($params){
+        
+        $paramsResult = array();
+       // $regisResult = array();
+        
+        
+        
+        
+        
+        $message = "";
+        
+        foreach ($params as $validateparams) {
+            
+            $regisResult = array("beneficiario"=> "",
+                "referencia_credito"=> "",
+                "id_cargo"=> "",
+                "id_tipo_documento_identidad"=> "",
+                "documento_identidad"=> "",
+                "id_tipo_cuenta"=> "",
+                "numero_cuenta"=> "",
+                "credito"=> "",
+                "id_tipo_pago"=> "",
+                "id_banco"=> "",
+                "id_duracion_cheque"=> "",
+                "correo_beneficiario"=> "",
+                "fecha"=> "",
+            );
+            
+           /* $this->form_validation->alpha_numeric_spaces($validateparams->beneficiario) ? $regisResult["beneficiario"] = "" : $regisResult["beneficiario"] = "No se perminten caractaeres especiales ni numericos.";
+            array_push($paramsResult,$regisResult);*/
+            
+            //echo $validateparams->beneficiario."/".$this->form_validation->alpha_numeric_spaces($validateparams->beneficiario);
+            
+            $this->form_validation->alpha_spaces($validateparams->beneficiario) == true ? $validateparams->vbeneficiario = true : $validateparams->vbeneficiario = false;
+            array_push($paramsResult,$validateparams);
+            
+        }
+        
+
+        return $paramsResult;
+        //return $paramsResult;ue
     }
     
     

@@ -1,4 +1,4 @@
-﻿meta.foundation-version {
+meta.foundation-version {
   font-family: "/5.5.3/"; }
 
 meta.foundation-mq-small {
@@ -2572,6 +2572,58 @@ span.postfix, label.postfix {
   border-left: none;
   color: #333333;
   border-color: #cccccc; }
+ 
+input[type="text2"]{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border-radius: 0;
+  background-color: #FFFFFF;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #cccccc;
+  box-shadow: none;
+  color: #444444;
+  display: block;
+  font-family: inherit;
+  font-size: 0.675rem;
+  height: 1.8125rem;
+  margin: 0 0 1rem 0;
+  padding: 0.33333rem;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: border-color 0.15s linear, background 0.15s linear;
+  -moz-transition: border-color 0.15s linear, background 0.15s linear;
+  -ms-transition: border-color 0.15s linear, background 0.15s linear;
+  -o-transition: border-color 0.15s linear, background 0.15s linear;
+  transition: border-color 0.15s linear, background 0.15s linear; }
+  
+input[type="text3"]{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border-radius: 0;
+  background-color: #FFFFFF;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #f40012;
+  box-shadow: none;
+  color: #444444;
+  display: block;
+  font-family: inherit;
+  font-size: 0.675rem;
+  height: 1.8125rem;
+  margin: 0 0 1rem 0;
+  padding: 0.33333rem;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: border-color 0.15s linear, background 0.15s linear;
+  -moz-transition: border-color 0.15s linear, background 0.15s linear;
+  -ms-transition: border-color 0.15s linear, background 0.15s linear;
+  -o-transition: border-color 0.15s linear, background 0.15s linear;
+  transition: border-color 0.15s linear, background 0.15s linear; }
 
 /* We use this to get basic styling on all basic form elements */
 input:not([type]), input[type="text"], input[type="password"], input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="month"], input[type="week"], input[type="email"], input[type="number"], input[type="search"], input[type="tel"], input[type="time"], input[type="url"], input[type="color"], textarea {
@@ -2599,6 +2651,8 @@ input:not([type]), input[type="text"], input[type="password"], input[type="date"
   -ms-transition: border-color 0.15s linear, background 0.15s linear;
   -o-transition: border-color 0.15s linear, background 0.15s linear;
   transition: border-color 0.15s linear, background 0.15s linear; }
+  
+
   input:not([type]):focus, input[type="text"]:focus, input[type="password"]:focus, input[type="date"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="month"]:focus, input[type="week"]:focus, input[type="email"]:focus, input[type="number"]:focus, input[type="search"]:focus, input[type="tel"]:focus, input[type="time"]:focus, input[type="url"]:focus, input[type="color"]:focus, textarea:focus {
     background-color: #fafafa;
     border-color: #999999;
@@ -2754,6 +2808,16 @@ select {
     cursor: default; }
   select[multiple] {
     height: auto; }
+    
+    
+.fontsizetable {
+   font-size: 0.675rem;
+}
+
+.fontsizetablecolorred {
+	 font-size: 0.675rem;
+   border-color: #f80e2f;
+}
 
 /* Adjust margin for form elements below */
 input[type="file"],
