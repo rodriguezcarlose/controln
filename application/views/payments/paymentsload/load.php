@@ -23,7 +23,6 @@
         </div>
         <div class="TabContent ribbon">
             <div class="tabs-content content">
-            
             	<?php 
                 	if (isset($tab)){
                 	    if ($tab == "1"){
@@ -35,7 +34,6 @@
                 	    echo '<div id="Tab1-1" class="content active">';
                 	}
             	?>
-            
                     <h3>Agregar Beneficiario</h3>
  					<?= form_open('payments/load')?>
             		<div class="field small-3 column">

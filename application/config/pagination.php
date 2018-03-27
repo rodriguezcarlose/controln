@@ -4,7 +4,7 @@ $config["uri_segment"] = 3;
 
 //$config['full_tag_open'] = '<div class="pagination">';
 $config['full_tag_open'] = '<div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate"><ul class="pagination">';
-$config['full_tag_close'] = '</div></ul>';
+$config['full_tag_close'] = '</ul></div>';
 
 $config['first_link'] = 'Primera';
 $config['first_tag_open'] = '<li class="paginate_button previous" aria-controls="dataTable" tabindex="0" id="dataTable_previous">';

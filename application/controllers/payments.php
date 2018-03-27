@@ -4,6 +4,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Payments extends CI_Controller {
     
     
+    private $tiposcuentas = array();
+    private $bancos = array();
+    private $TipoDocumentoIdentidad = array();
+    private $TipoPago = array();
+    private $DuracionCheque = array();
+    private $Cargo = array();
+
+    
+
+    
     /**
      * __construct function.
      *
@@ -43,7 +53,6 @@ class Payments extends CI_Controller {
         $this->load->model('TipoPago_model');
         $this->load->model('DuracionCheque_model');
         $this->load->model('Cargo_model');
-        
     }
     
     public function index()
@@ -52,21 +61,37 @@ class Payments extends CI_Controller {
     }
     
     public function load(){
-
-        
         $data = new stdClass();
         $params = array();
         $data->beneficiario = "";
         
-        $this->form_validation->set_rules('beneficiario', 'beneficiario', 'required|alpha_numeric_spaces', array('required' => 'El Campo Beneficiario es requerido','alpha_numeric_spaces' => 'El Campo Beneficiario no debe contener caracteres especiales ni numeros'));
+        
+        //inicio de la consulta hacia la BD
+        $start_index = 0;
+        
+        //cantidad de registros a consultar
+        $per_page = 10;
+        
+//        $this->form_validation->set_rules('beneficiario', 'beneficiario', 'required|alpha_numeric_spaces', array('required' => 'El Campo Beneficiario es requerido','alpha_numeric_spaces' => 'El Campo Beneficiario no debe contener caracteres especiales ni numeros'));
         
         //cargamos los datos que van en los select del formulario
-        $data->tiposcuentas =  $this->TiposCuentas_model->getTiposCuentas();
-        $data->bancos =  $this->Banco_model->getBancos();
-        $data->TipoDocumentoIdentidad =  $this->TipoDocumentoIdentidad_model->getTipoDocumentoIdentidad();
-        $data->TipoPago =  $this->TipoPago_model->getTipoPago();
-        $data->DuracionCheque =  $this->DuracionCheque_model->getDuracionCheque();
-        $data->Cargo =  $this->Cargo_model->getCargos();
+       
+        
+        $this->tiposcuentas =  $this->TiposCuentas_model->getTiposCuentas();
+        $this->bancos =  $this->Banco_model->getBancos();
+        $this->TipoDocumentoIdentidad =  $this->TipoDocumentoIdentidad_model->getTipoDocumentoIdentidad();
+        $this->TipoPago =  $this->TipoPago_model->getTipoPago();
+        $this->DuracionCheque =  $this->DuracionCheque_model->getDuracionCheque();
+        $this->Cargo =  $this->Cargo_model->getCargos();
+        
+        
+        
+        $data->tiposcuentas =  $this->tiposcuentas;
+        $data->bancos =  $this->bancos;
+        $data->TipoDocumentoIdentidad =  $this->TipoDocumentoIdentidad;
+        $data->TipoPago =  $this->TipoPago;
+        $data->DuracionCheque =  $this->DuracionCheque;
+        $data->Cargo =  $this->Cargo;
         
         
         //$data->tiposcuentas = $consulta;
@@ -75,8 +100,7 @@ class Payments extends CI_Controller {
         $data->tab ="1";
         
         // si ya existe una tabla temporal en memoria, cargamos la paginación
-       
-        if (isset($_SESSION['table_temp_nom']) ) {
+        /*if (isset($_SESSION['table_temp_nom']) ) {
             // init params
             
             $tablename=$_SESSION['table_temp_nom'];
@@ -95,27 +119,55 @@ class Payments extends CI_Controller {
                 // get current page records
                 $params["results"] = $this->payments_model->get_current_page_records($tablename,$settings['per_page'], $start_index);
                 
-                
-                $params["results"]=$this->validateCSV($params["results"] ,  
-                                                        $data->Cargo, $data->TipoDocumentoIdentidad, 
-                                                        $data->tiposcuentas,
-                                                        $data->TipoPago,
-                                                        $data->bancos,
-                                                        $data->DuracionCheque);
-                
-                
+               $params["results"]=$this->validateCSV($params["results"]);
+
                 // use the settings to initialize the library
                 $this->pagination->initialize($settings);
                 
                 // build paging links
                 $params["links"] = $this->pagination->create_links();
-                
-                
-                
-                
+            }
+        }*/
+        
+        
+        if (isset($_SESSION['table_temp_nom']) ) {
+            
+            if (isset($_SESSION['start_index_load_payment']) ){
+                $start_index = $_SESSION['start_index_load_payment'] ;
             }
             
+           
+           
+            $tablename=$_SESSION['table_temp_nom'];
             
+            
+           // $start_index = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+            $total_records = $this->payments_model->get_total($tablename);
+            
+            if (($per_page + $start_index) < $total_records){
+                
+                $_SESSION['start_index_load_payment'] = $start_index + $per_page;
+                
+            } else{
+                
+                $params["guardar"] = true;
+            }
+                
+            
+            
+            if ($total_records > 0 )
+            {
+                // get current page records
+                $params["results"] = $this->payments_model->get_current_page_records($tablename,$per_page, $start_index);
+                
+                $params["results"]=$this->validateCSV($params["results"]);
+                
+                // use the settings to initialize the library
+               // $this->pagination->initialize($settings);
+                
+                // build paging links
+               // $params["links"] = $this->pagination->create_links();
+            }
         }
         
         if ($this->form_validation->run() == false) {
@@ -139,14 +191,21 @@ class Payments extends CI_Controller {
             $this->load->view('templates/footer');
             
         }
-        
-        
     }
     
     
 
     
     public function do_upload(){
+        
+        
+        unset($_SESSION['table_temp_nom']);
+        unset($_SESSION['start_index_load_payment']);
+        
+        
+        
+        
+        
         $data = new stdClass();
         $config['upload_path']          = './uploads/';
         $config['allowed_types']        = 'csv';
@@ -218,7 +277,7 @@ class Payments extends CI_Controller {
                     array_push($data->records,$row);
 
                 }
-                $num = count ($datafile);
+                //$num = count ($datafile);
                 $i++;
             }
             
@@ -252,11 +311,9 @@ class Payments extends CI_Controller {
      * @param mixed $data
      * @return $data
      */
-    private function validateCSV($params, $cargo, $TipoDocumentoIdentidad, $tiposcuentas, $tipoPago, $bancos, $duracionCheque){
-        
+    private function validateCSV($params){
+
         $paramsResult = array();
-       // $regisResult = array();
-        $message = "";
         
         foreach ($params as $validateparams) {
 
@@ -264,7 +321,7 @@ class Payments extends CI_Controller {
             $this->form_validation->alpha_spaces($validateparams->beneficiario) == true ? $validateparams->vbeneficiario = true : $validateparams->vbeneficiario = false;
             
             
-            //validación del ampo Referencia
+            //validación del campo Referencia
             
             /*
              * 
@@ -275,7 +332,7 @@ class Payments extends CI_Controller {
             
             //validación del Cargo
             $validatecargo = false;
-            foreach ($cargo->result() as $vcargo){
+            foreach ($this->Cargo->result() as $vcargo){
                 if( $validateparams->id_cargo == $vcargo->id){
                     $validatecargo = true;
                 }
@@ -284,7 +341,7 @@ class Payments extends CI_Controller {
             
             //Validadcion Tipo Documento Identidad
             $validatetipodoc = false;
-            foreach ($TipoDocumentoIdentidad->result() as $vTipoDocumentoIdentidad){
+            foreach ($this->TipoDocumentoIdentidad->result() as $vTipoDocumentoIdentidad){
                 if( $validateparams->id_tipo_documento_identidad == $vTipoDocumentoIdentidad->nombre){
                     $validatetipodoc = true;
                 }
@@ -309,7 +366,7 @@ class Payments extends CI_Controller {
 
             //Validamos el campo tipo de cuenta
             $validatecargo = false;
-            foreach ($tiposcuentas->result() as $vtiposcuentas){
+            foreach ($this->tiposcuentas->result() as $vtiposcuentas){
                 if( $validateparams->id_tipo_cuenta == $vtiposcuentas->tipo){
                     $validatecargo = true;
                 }
@@ -332,7 +389,7 @@ class Payments extends CI_Controller {
             
             //validacion tipo de pago
             $validatetipopago = false;
-            foreach ($tipoPago->result() as $vtipoPago){
+            foreach ( $this->TipoPago->result() as $vtipoPago){
                 if( $validateparams->id_tipo_pago == $vtipoPago->id || $validateparams->id_tipo_pago == null){
                     $validatetipopago = true;
                 }
@@ -341,7 +398,7 @@ class Payments extends CI_Controller {
             
             //Validacion del Banco
             $validatebanco = false;
-            foreach ($bancos->result() as $vbancos){
+            foreach ($this->bancos->result() as $vbancos){
                 if( $validateparams->id_banco == $vbancos->id){
                     $validatebanco = true;
                 }
@@ -351,7 +408,7 @@ class Payments extends CI_Controller {
             
             //Validacion Duración Cheque
             $validatebanco = false;
-            foreach ($duracionCheque->result() as $vduracionCheque){
+            foreach ($this->DuracionCheque->result() as $vduracionCheque){
                 if( $validateparams->id_duracion_cheque == $vduracionCheque->duracion){
                     $validatebanco = true;
                 }
@@ -363,16 +420,70 @@ class Payments extends CI_Controller {
             ($this->form_validation->valid_email($validateparams->correo_beneficiario)) == true
             ? $validateparams->vcorreo_beneficiario = true
             : $validateparams->vcorreo_beneficiario = false;
-            
-            
+
             array_push($paramsResult,$validateparams);
-            
         }
         
 
         return $paramsResult;
     }
-    
+    public function guardar(){
+        
+        $tablename = "";
+       // $data = new stdClass();
+        $data = array();
+        
+        if (isset($_SESSION['table_temp_nom']) ) {
+            $tablename=$_SESSION['table_temp_nom'];
+            $total_records = $this->payments_model->get_total($tablename);
+            
+            for ($i = 0; $i<= $total_records; $i++){
+                
+                $row = array("beneficiario"=> $this->input->post ("beneficiario".$i),
+                    "referencia_credito"=> $this->input->post ("referencia_credito".$i),
+                    "id_cargo"=> $this->input->post ("id_cargo".$i),
+                    "id_tipo_documento_identidad"=>$this->input->post ("id_tipo_documento_identidad".$i),
+                    "documento_identidad"=> $this->input->post ("documento_identidad".$i),
+                    "id_tipo_cuenta"=> $this->input->post ("id_tipo_cuenta".$i),
+                    "numero_cuenta"=> $this->input->post ("numero_cuenta".$i),
+                    "credito"=> $this->input->post ("credito".$i),
+                    "id_tipo_pago"=> $this->input->post ("id_tipo_pago".$i),
+                    "id_banco"=> $this->input->post ("id_banco".$i),
+                    "id_duracion_cheque"=> $this->input->post ("id_duracion_cheque".$i),
+                    "correo_beneficiario"=> $this->input->post ("correo_beneficiario".$i),
+                    "fecha"=> $this->input->post ("fecha".$i),
+                );
+               // echo ("beneficiario1/".$this->input->post ("beneficiario1".$i))."</br>";
+                
+                //validamos el registro leido
+                //$row = $this->validateCSV($row);
+                
+                //agregamos el registro en el arreglo
+                array_push($data,$row);
+            }
+            
+           // $this->validateCSV($data->records);
+            
+            
+            /*foreach ($data as $result){
+                    echo ($result->beneficiario);
+
+            }*/
+            
+        }
+       // echo count($data);
+        echo "beneficiario/".$data[0]["beneficiario"];
+      $j = 1;
+      echo $this->input->post ("beneficiario".$j);
+        
+        
+        
+        //id_cargo99
+        
+        //echo "id_cargo98->".$this->input->post ('id_cargo98');
+       //echo $total_records;
+        
+    }
     
 }
 
