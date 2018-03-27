@@ -1,85 +1,147 @@
-<?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-?><!DOCTYPE html>
-   <h2 class="show-for-small-only"></h2>    
-	<br>
-   <div class="container">
-    <div class="row">
-    	<h3>Generar Archivo Pago Banco</h3>
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
-    	<?= form_open() ?>
-                        
-        	<div class="form-group">
-        		<label for="String:">Nombre de la Empresa Ordenante</label>
-        		<input id="empresa" name="empresa" placeholder="" type="text" value="" />
-        	</div>
-        	
-        	<div class="form-group">
-        		<label for="String:">RIF de la Empresa</label>
-        		<input id="rif" name="rif" placeholder="" type="text" value="" />
-        	</div>        	
-        	
-        	<div class="form-group">
-        		<label for="String:">N&uacute;mero de Referencia de Lote</label>
-        		<input id="lote" name="lote" placeholder="" type="text" value="" />
-        	</div>        	
+<fieldset class="ribbon no-pad no-pad-bottom">
+    <div class="HorizontalTabLayout">
+        <div class="TabHeader">
+            <ul class="tabs content" data-tab>
+               <?php 
+                	if (isset($tab)){
+                	    if ($tab == "1"){
+                	        echo '<li class="tab-title active"><a href="#Tab1-1">Generar Archivo TXT</a></li>';
+                	        echo '<li class="tab-title"><a href="#Tab2-1">Generar Archivo CSV</a></li>';
+                	    }else{
+                	        echo '<li class="tab-title"><a href="#Tab1-1">Generar Archivo TXT</a></li>';
+                	        echo '<li class="tab-title active"><a href="#Tab2-1">Generar Archivo CSV</a></li>';
+                	    }
+                	}else{
+                	    echo '<li class="tab-title active"><a href="#Tab1-1">Generar Archivo TXT</a></li>';
+                	    echo '<li class="tab-title"><a href="#Tab2-1">Generar Archivo CSV</a></li>';
+                	}
+            	?>
 
-        	<div class="form-group">
-        		<label for="String:">N&uacute;mero de Negociaci&oacute;n</label>
-        		<input id="negociacion" name="negociacion" placeholder="" type="text" value="" />
-        	</div>        	
-
-        	<div class="form-group">
-        		<label for="String:">Fecha de Env&iacute;o</label>
-        		<input id="fecha" name="fecha" placeholder="" type="text" value="" />
-        	</div>        	
-
-            <div class="form-group">
-                <label for="Enum:">Tipo de Cuenta</label>
-            	    <select data-val="true" data-val-required="The Enum field is required." id="tipocuenta" name="tipocuenta" >
-                       	<?php foreach ($tipocuenta->result() as $fila){ ?>
-                       		<option value="<?= $fila->tipo; ?>"><?= $fila->descripcion; ?></option>
-						<?php } ?>
-            		</select>
-            </div>	
-        	
-        	<div class="form-group">
-        		<label for="String:">N&uacute;mero de Cuenta</label>
-        		<input id="numerocuenta" name="numerocuenta" placeholder="" type="text" value="" />
-        	</div>        	        	
-        	
-        	            <div class="form-group">
-                <label for="Enum:">Proyecto</label>
-            	    <select data-val="true" data-val-required="The Enum field is required." id="proyecto" name="proyecto" >
-                       	<?php foreach ($proyecto->result() as $fila){ ?>
-                       		<option value="<?= $fila->id; ?>"><?= $fila->nombre; ?></option>
-						<?php } ?>
-            		</select>
-            </div>
-
-            <div class="form-group">
-                <label for="Enum:">Gerencia</label>
-            	    <select data-val="true" data-val-required="The Enum field is required." id="gerencia" name="gerencia" >
-                       	<?php foreach ($gerencia->result() as $fila){ ?>
-                       		<option value="<?= $fila->id; ?>"><?= $fila->nombre; ?></option>
-						<?php } ?>
-            		</select>
-            </div>
+            </ul>
+        </div>
+        <div class="TabContent ribbon">
+            <div class="tabs-content content">
             
-            <div class="form-group">
-                <label for="Enum:">Consecutivo</label>
-            	    <select data-val="true" data-val-required="The Enum field is required." id="consecutivo" name="consecutivo" >
-                        <option selected="selected" value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-            		</select>
-            </div>
+            	<?php 
+                	if (isset($tab)){
+                	    if ($tab == "1"){
+                	        echo '<div id="Tab1-1" class="content active">';
+                	    }else{
+                	        echo '<div id="Tab1-1" class="content">';
+                	    }
+                	}else{
+                	    echo '<div id="Tab1-1" class="content active">';
+                	}
+            	?>
+ 
+             	<h3>Generar Archivo TXT Pago Banco</h3>
+        
+            	<?= form_open("generatebankfile/generateTXT") ?>
+                                
+                	<div class="row">
+                    	<div class="large-12 columns">
+                    		<label for="String:">Nombre de la Empresa Ordenante</label>
+                    		<input id="empresa" name="empresa" placeholder="" type="text" value="" />
+                    	</div>
+                	</div>
+                	<div class="row">
+                    	<div class="large-4 medium-4 columns">
+                    		<label for="String:">RIF de la Empresa</label>
+                    		<input id="rif" name="rif" placeholder="" type="text" value="" />
+                    	</div>        	
+                    	
+                    	<div class="large-4 medium-4 columns">
+                    		<label for="String:">N&uacute;mero de Referencia de Lote</label>
+                    		<input id="lote" name="lote" placeholder="" type="text" value="" />
+                    	</div>        	
+            
+                    	<div class="large-4 medium-4 columns">
+                    		<label for="String:">N&uacute;mero de Negociaci&oacute;n</label>
+                    		<input id="negociacion" name="negociacion" placeholder="" type="text" value="" />
+                    	</div>        	
+        			</div>
+        			<div class="row">
+                    	<div class="large-4 medium-4 columns">
+                    		<label for="String:">Fecha de Env&iacute;o</label>
+            				<div class="ec-dp-container">
+            					<input data-datetimepicker="" class="ec-dp-input" style="width: 0px; height: 0px; margin: 0px; padding: 0px; position: absolute; visibility: hidden;">
+            					<input id="fecha" name="fecha" class="ec-dp-show-input tip-top" placeholder="dd/mm/YYYY" data-iso-datetime="">
+            				</div>
+                    	</div>        	
+            
+                        <div class="large-4 medium-4 columns">
+                            <label for="Enum:">Tipo de Cuenta</label>
+                        	    <select data-val="true" data-val-required="The Enum field is required." id="tipocuenta" name="tipocuenta" >
+                                   	<?php foreach ($tipocuenta->result() as $fila){ ?>
+                                   		<option value="<?= $fila->tipo; ?>"><?= $fila->descripcion; ?></option>
+            						<?php } ?>
+                        		</select>
+                        </div>	
+        	           	<div class="large-4 medium-4 columns">
+                    		<label for="String:">N&uacute;mero de Cuenta</label>
+                    		<input id="numerocuenta" name="numerocuenta" placeholder="" type="text" value="" />
+                    	</div>        	        	
+                	</div>
+                	<div class="row">
+                    	<div class="large-12 columns">
+                            <label for="Enum:">Nomina</label>
+                        	    <select data-val="true" data-val-required="The Enum field is required." id="nomina" name="nomina" >
+                                   	<?php foreach ($paymentsGenerateBankFile->result() as $fila){ ?>
+                                   		<option value="<?= $fila->id; ?>"><?= '(' . $fila->id . ') ' . $fila->fecha_creacion . ' [' . $fila->estatus . ']' . ' PROYECTO:' . $fila->nombre_proyecto . '. GERENCIA:' .  $fila->nombre_gerencia  . '. DESCRIPCION:'. $fila->descripcion; ?></option>
+            						<?php } ?>
+                        		</select>
+                        </div>
+                    </div>
+        
+        
+                    <div class="small-12 column text-right buttonPanel">
+                        <input id="btnEnviar" class="button small right" value="Generar" type="submit">
+                    </div>
+                <?= form_close() ?>
+            
+ 
+ 
+             </div>
+                
+                <?php 
+                	if (isset($tab)){
+                	    if ($tab == "2"){
+                	        echo '<div id="Tab2-1" class="content active">';
+                	    }else{
+                	        echo '<div id="Tab2-1" class="content">';
+                	    }
+                	}else{
+                	    echo '<div id="Tab2-1" class="content">';
+                	}
+            	?>
 
-            <div class="small-12 column text-right buttonPanel">
-                <input id="btnCloseModalEditor" class="button small left " value="Generar CSV" type="button">
-                <input id="btnEnviar" class="button small right" value="Generar TXT" type="submit">
+             	<h3>Generar Archivo CSV</h3>
+        
+            	<?= form_open("generatebankfile/generateCSV") ?>
+                                
+                	<div class="row">
+                    	<div class="large-12 columns">
+                            <label for="Enum:">Nomina</label>
+                        	    <select data-val="true" data-val-required="The Enum field is required." id="nomina" name="nomina" >
+                                   	<?php foreach ($paymentsGenerateBankFile->result() as $fila){ ?>
+                                   		<option value="<?= $fila->id; ?>"><?= '(' . $fila->id . ') ' . $fila->fecha_creacion . ' [' . $fila->estatus . ']' . ' PROYECTO:' . $fila->nombre_proyecto . '. GERENCIA:' .  $fila->nombre_gerencia  . '. DESCRIPCION:'. $fila->descripcion; ?></option>
+            						<?php } ?>
+                        		</select>
+                        </div>
+                    </div>
+        
+        
+                    <div class="small-12 column text-right buttonPanel">
+                        <input id="btnEnviar" class="button small right" value="Generar" type="submit">
+                    </div>
+                <?= form_close() ?>
+                </div>
             </div>
-        <?= form_close() ?>
+      <?php  echo '</div>'; ?>
+<?php  echo '</div>'; ?>
+</fieldset>
 
-    </div>
-</div>
+
+

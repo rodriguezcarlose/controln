@@ -166,6 +166,78 @@ class Payments_model extends CI_Model
     }
         
 
+    public function getPaymentsGenerateBankFile(){
+        
+        $result=$this->db->query("SELECT 	n.id,
+                                    		n.descripcion,
+                                    		n.fecha_creacion,
+                                    		g.nombre nombre_gerencia,
+                                    		p.nombre nombre_proyecto,
+                                    		en.nombre estatus
+                                    FROM    nomina n,
+                                            gerencia g,
+                                            proyecto p,
+                                            estatus_nomina en
+                                    WHERE n.id_gerencia=g.id
+                                    AND n.id_proyecto=p.id
+                                    AND n.id_estatus=en.id
+                                    
+                                    ORDER BY  en.nombre, n.fecha_creacion DESC, g.nombre,p.nombre");
+        
+        if ($result->num_rows()>0){
+            
+            return $result;
+            
+        }else {
+            
+            return null;
+        }
+        
+    }
+    
+    
+    
+    public function getPaymentsGenerateCSVFile($nomina = ''){
+
+        
+        $result=$this->db->query("SELECT 	dn.id,
+                                            dn.beneficiario,
+                                            dn.referencia_credito,
+                                            tdi.nombre,
+                                            dn.documento_identidad,
+                                            tc.tipo,
+                                            dn.numero_cuenta,
+                                            dn.monto,
+                                            tp.descripcion,
+                                            dn.id_banco,
+                                            dc.duracion,
+                                            dn.correo_beneficiario,
+                                            dn.fecha,
+                                            c.id,
+                                            c.nombre
+                                   FROM 	nomina_detalle dn,
+                                            tipo_documento_identidad tdi,
+                                            tipos_cuentas tc,
+                                            tipo_pago tp,
+                                            duracion_cheque dc,
+                                            cargo c
+                                   WHERE    dn.id_tipo_documento_identidad=tdi.id
+                                            AND dn.id_tipo_cuenta=tc.id
+                                            AND dn.id_tipo_pago=tp.id
+                                            AND dn.id_duracion_cheque=dc.id
+                                            AND dn.id_cargo=c.id
+                                            AND dn.id_nomina=" . $nomina);
+               
+        if ($result->num_rows()>0){
+            
+            return $result;
+            
+        }else {
+            
+            return null;
+        }
+        
+    }
     
     
 }
