@@ -312,10 +312,10 @@ class Payments extends CI_Controller {
             
             
             $row = array(
-                "id"=> $this->input->post ("beneficiario".$i),
+                "id"=> $this->input->post ("id".$i),
                 "beneficiario"=> $this->input->post ("beneficiario".$i),
-                "referencia_credito"=> $this->input->post ("referencia_credito".$i),
                 "id_cargo"=> $this->input->post ("id_cargo".$i),
+                "referencia_credito"=> $this->input->post ("referencia_credito".$i),
                 "id_tipo_documento_identidad"=>$this->input->post ("id_tipo_documento_identidad".$i),
                 "documento_identidad"=> $this->input->post ("documento_identidad".$i),
                 "id_tipo_cuenta"=> $this->input->post ("id_tipo_cuenta".$i),

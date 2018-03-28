@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class addclaim extends CI_Controller {
+class claim extends CI_Controller {
     
     
     /**
@@ -49,10 +49,10 @@ class addclaim extends CI_Controller {
         
         // set validation rules
         $this->form_validation->set_rules('Nacionalidad', 'Nacionalidad', 'required', array('required' => 'El Campo Nacionalidad es requerido'));
-        $this->form_validation->set_rules('Cedula', 'Cedula', 'required|numeric|min_length[5]|max_length[8]',array('required' => 'El Campo Cedula es requerido','numeric' => 'El Campo Cedula solo permite numeros','min_length' => 'El Campo Cedula debe indicar al menos 5 digitos','max_length' => 'El Campo Cedula debe indicar máximo 8 digitos'));
-        $this->form_validation->set_rules('Nombre', 'Nombre', 'required|character|min_length[8]|max_length[30]',array('required' => 'El Campo Nombre es requerido','character' => 'El Campo Nombre solo permite letras','min_length' => 'El Campo Nombre debe indicar al menos 8 caracteres','max_length' => 'El Campo Nombre debe indicar máximo 30 caracteres'));
-        $this->form_validation->set_rules('Apellido', 'Apellido', 'required|character|min_length[8]|max_length[40]',array('required' => 'El Campo Apellido es requerido','character' => 'El Campo Apellido solo permite letras','min_length' => 'El Campo Apellido debe indicar al menos 8 caracteres','max_length' => 'El Campo Apellido debe indicar máximo 40 caracteres'));
-        $this->form_validation->set_rules('Telefono', 'Telefono', 'required|numeric|min_length[11]|max_length[11]',array('required' => 'El Campo Telefono es requerido','numeric' => 'El Campo Cedula solo permite numeros','min_length' => 'El Campo Telefono debe indicar al menos 10 digitos','max_length' => 'El Campo Telefono debe indicar máximo 11 digitos'));
+        $this->form_validation->set_rules('Cedula', 'Cedula', 'required|numeric|min_length[5]|max_length[8]',array('required' => 'El Campo Cedula es requerido','numeric' => 'El Campo Cedula solo permite numeros','min_length' => 'El Campo Cedula debe indicar al menos 5 digitos','max_length' => 'El Campo Cedula debe indicar mï¿½ximo 8 digitos'));
+        $this->form_validation->set_rules('Nombre', 'Nombre', 'required|character|min_length[8]|max_length[30]',array('required' => 'El Campo Nombre es requerido','character' => 'El Campo Nombre solo permite letras','min_length' => 'El Campo Nombre debe indicar al menos 8 caracteres','max_length' => 'El Campo Nombre debe indicar mï¿½ximo 30 caracteres'));
+        $this->form_validation->set_rules('Apellido', 'Apellido', 'required|character|min_length[8]|max_length[40]',array('required' => 'El Campo Apellido es requerido','character' => 'El Campo Apellido solo permite letras','min_length' => 'El Campo Apellido debe indicar al menos 8 caracteres','max_length' => 'El Campo Apellido debe indicar mï¿½ximo 40 caracteres'));
+        $this->form_validation->set_rules('Telefono', 'Telefono', 'required|numeric|min_length[11]|max_length[11]',array('required' => 'El Campo Telefono es requerido','numeric' => 'El Campo Cedula solo permite numeros','min_length' => 'El Campo Telefono debe indicar al menos 10 digitos','max_length' => 'El Campo Telefono debe indicar mï¿½ximo 11 digitos'));
         $this->form_validation->set_rules('Banco', 'Banco', 'required', array('required' => 'El Campo Banco es requerido'));
         $this->form_validation->set_rules('Codigo Banco', 'Codigo Banco', 'required', array('required' => 'El Campo Codigo Banco es requerido'));
         $this->form_validation->set_rules('Proyecto', 'Proyecto', 'required', array('required' => 'El Campo Proyecto es requerido'));
@@ -61,7 +61,7 @@ class addclaim extends CI_Controller {
         $this->form_validation->set_rules('Tipo Error', 'Tipo Error', 'required', array('required' => 'El Campo Tipo Error es requerido'));
         
         
-        //validación del captcha
+        //validaciï¿½n del captcha
          $this->form_validation->set_rules('g-recaptcha-response', '', 'required',array('required' => 'El Campo capcha es requerido'));
         
          
@@ -101,7 +101,7 @@ class addclaim extends CI_Controller {
             $dataPayments=array('consulta'=>$result);
             
             if($result != null){
-                $this->load->view('claims/addclaim',$dataPayments);
+                $this->load->view('claims/claim',$dataPayments);
             }
 
             $this->load->model('claims_model');
@@ -109,7 +109,7 @@ class addclaim extends CI_Controller {
             $dataClaims=array('consulta'=>$result);
             
             if($result != null){
-                $this->load->view('claims/addclaim',$dataClaims);
+                $this->load->view('claims/claim',$dataClaims);
             }
             
             
