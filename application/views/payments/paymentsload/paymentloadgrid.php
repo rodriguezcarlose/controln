@@ -3,9 +3,9 @@
 	<div class="col-md-20">
 
 		<?php if (isset($guardar) && $guardar == true){
-		             echo form_open('payments/guardar');
+		             echo form_open('payments/siguiente');
 		       }else{
-		           echo  form_open('payments/load');
+		           echo  form_open('payments/siguiente');
 	           }
 	     ?>
 
@@ -47,8 +47,12 @@
         		</thead>
         		<tbody>
         		
-                <?php if (isset($results) ) { ?>
-                        <?php foreach ($results as $data) { ?>
+                <?php 
+                    $cant= 0;
+                    if (isset($results) ) { ?>
+                        <?php foreach ($results as $data) { 
+                            $cant ++;
+                            ?>
                                 <tr>
                                     <td>
                                     	<input id="beneficiario<?= $data->id ?>" 
@@ -199,9 +203,6 @@
                            					<?php }  ?>
                                     	</select>
                                     </td>             
-                                   
-                                   
-                                   
                                     
                                     <td>
                                     
@@ -358,6 +359,9 @@
                                     <td><input id="fecha<?= $data->id ?>" name="fecha" type="text" value="<?= $data->fecha ?>" /></td>
         							<td><a href="#" class="imgDeleteBtn"><img alt="Eliminar"  src="<?= base_url()?>Content/Images/Icons/delete_24.png"></a></td>
                                 </tr>
+                                
+                                <input type="hidden" name="id".<? $data->id?> value="<? $data->id?>">
+                               
     
                         <?php } ?>
     
@@ -368,8 +372,7 @@
     
         		</tbody>
         	</table>
-        	
-
+        	<input type="hidden" name="cantreg" value="<?= $cant?>">
     	
  		
        		 <?php /* if (isset($links)) {

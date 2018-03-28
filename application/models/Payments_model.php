@@ -45,7 +45,7 @@ class Payments_model extends CI_Model
     }
     
     /**
-     * createTablepaymentsTem function, para la creación de una tabla temporal para la carga de archivos CSV de la nosminas
+     * createTablepaymentsTem function, para la creaciï¿½n de una tabla temporal para la carga de archivos CSV de la nosminas
      *
      * @access public
      * @param $table      
@@ -73,7 +73,7 @@ class Payments_model extends CI_Model
     }
     
     /**
-     * deleteTablepaymentsTem function, para la eliminacón de una tabla temporal para la carga de archivos CSV de la nosminas
+     * deleteTablepaymentsTem function, para la eliminacï¿½n de una tabla temporal para la carga de archivos CSV de la nosminas
      *
      * @access public
      * @param $table
@@ -87,7 +87,7 @@ class Payments_model extends CI_Model
     
     
     /**
-     * insertTablepaymentsTem function, para la inserción de tatos en la tabla temporar creada
+     * insertTablepaymentsTem function, para la inserciï¿½n de tatos en la tabla temporar creada
      *
      * @access public
      * @param $table
@@ -100,10 +100,10 @@ class Payments_model extends CI_Model
         //si existe la tabla
         if ($this->db->table_exists($table_name))
         {
-            //si es un array y no está vacio
+            //si es un array y no estï¿½ vacio
             if(!empty($sql) && is_array($sql))
             {
-                //si se lleva a cabo la inserción
+                //si se lleva a cabo la inserciï¿½n
                 if($this->db->insert_batch($table_name, $sql))
                 {
                     return TRUE;
@@ -237,6 +237,16 @@ class Payments_model extends CI_Model
             return null;
         }
         
+    }
+    
+    public function updateTableTem($table, $values){
+        
+        foreach ($values as $value){
+            $this->db->set('beneficiario', $value->beneficiario);
+            $this->db->where('id', $value->id);
+            $this->db->update($table);
+            
+        }
     }
     
     
