@@ -68,6 +68,7 @@ class Payments_model extends CI_Model
               `id_duracion_cheque` varchar(255),
               `correo_beneficiario` varchar(255),
               `fecha` varchar(255),
+               `id_estatus`  varchar(255),
                 PRIMARY KEY (`id`))");
         
     }
@@ -112,6 +113,12 @@ class Payments_model extends CI_Model
                 }
             }
         }
+    }
+    
+    public function  getTablepaymentsTem($table_name){
+        
+        return $this->db->get($table_name);
+        
     }
     
     
@@ -207,7 +214,7 @@ class Payments_model extends CI_Model
                                             dn.documento_identidad,
                                             tc.tipo,
                                             dn.numero_cuenta,
-                                            dn.monto,
+                                            dn.credito,
                                             tp.descripcion,
                                             dn.id_banco,
                                             dc.duracion,
@@ -242,11 +249,59 @@ class Payments_model extends CI_Model
     public function updateTableTem($table, $values){
         
         foreach ($values as $value){
-            $this->db->set('beneficiario', $value->beneficiario);
-            $this->db->where('id', $value->id);
+            $this->db->set('beneficiario', $value["beneficiario"]);
+            $this->db->set('referencia_credito', $value["referencia_credito"]);
+            $this->db->set('id_cargo', $value["id_cargo"]);
+            $this->db->set('id_tipo_documento_identidad', $value["id_tipo_documento_identidad"]);
+            $this->db->set('documento_identidad', $value["documento_identidad"]);
+            $this->db->set('id_tipo_cuenta', $value["id_tipo_cuenta"]);
+            $this->db->set('numero_cuenta', $value["numero_cuenta"]);
+            $this->db->set('credito', $value["credito"]);
+            $this->db->set('id_tipo_pago', $value["id_tipo_pago"]);
+            $this->db->set('id_banco', $value["id_banco"]);
+            $this->db->set('id_duracion_cheque', $value["id_duracion_cheque"]);
+            $this->db->set('correo_beneficiario', $value["correo_beneficiario"]);
+            $this->db->set('fecha', $value["fecha"]);
+            $this->db->where('id', $value["id"]);
             $this->db->update($table);
-            
         }
+    }
+    
+    
+    public function insertPayment($descripcion,$proyecto, $gerencia, $usuario, $detalle){
+        
+        //$_SESSION['id']
+        $this->db->trans_start();
+        
+        
+        $this->db->select_max('id','maxid');
+        $id_nomina = $this->db->get('nomina')->row(); 
+        $id_nomina = (int)$id_nomina->maxid + 1;
+
+        $this->db->set('id', $id_nomina);
+        $this->db->set('descripcion', $descripcion);
+        $this->db->set('id_estatus', $proyecto);
+        $this->db->set('id_proyecto', $proyecto);
+        $this->db->set('id_usuario', $usuario);
+        $this->db->set('id_gerencia', $gerencia);
+        $this->db->insert("nomina");
+        
+        foreach ($detalle as $detalleNomina){
+            
+            $detalleNomina->id_nomina = $id_nomina;
+            unset ($detalleNomina->id);
+        }
+        
+        $this->db->insert_batch("nomina_detalle", $detalle);
+        $this->db->trans_complete();
+        
+        
+        if ($this->db->trans_status() === FALSE){
+            return false;
+        }else{
+            return true;
+        }
+        
     }
     
     

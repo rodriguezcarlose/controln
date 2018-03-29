@@ -18,6 +18,27 @@
                     } */
             ?> 
            
+
+<div class="tabs-content content">
+	<div class="row">
+			<div class="page-header">
+				<h3>Datos N&oacute;mina</h3>
+			</div>
+				<div class="form-group">
+					<label for="username">Usuario</label>
+					<input type="text" class="form-control" id="username" name="username" placeholder="Usuario">
+				</div>
+				
+				<div class="form-group">
+					<label for="password">Clave</label>
+					<input type="password" class="form-control" id="password" name="password" placeholder="Clave">
+				</div>
+				
+	</div><!-- .row -->
+</div><!-- .container -->
+
+
+
             
         	<div class="small-12 column text-right buttonPanel">
         		<?php if (isset($guardar) && $guardar == true){?>
@@ -26,6 +47,11 @@
 	            	<input type="submit" id="btnEnviar" class="button small right" value="Siguiente"  />
 	           	<?php }?>
             </div>   
+            
+            
+
+            
+            
         	<table id="dataTable">
         		<thead>
         			<tr>
@@ -49,9 +75,11 @@
         		
                 <?php 
                     $cant= 0;
+                    $inicio = 0;
                     if (isset($results) ) { ?>
                         <?php foreach ($results as $data) { 
                             $cant ++;
+                            $inicio = $data->id;
                             ?>
                                 <tr>
                                     <td>
@@ -62,7 +90,7 @@
                                     	           'type="text3" title="El Campo Beneficiario no debe contener numeros ni caracteres especiales"'?> 
                                     	            value="<?= $data->beneficiario ?>" />
                                     </td>
-                                    <td><input id="referencia_credito<?= $data->id ?>" name="referencia_credito" type="text2" value="<?= $data->referencia_credito ?>" /></td>
+                                    <td><input id="referencia_credito<?= $data->id ?>" name="referencia_credito<?= $data->id ?>"  type="text2" value="<?= $data->referencia_credito ?>" /></td>
         							
                                     <td>
                                        <select  id="id_cargo<?= $data->id ?>" name="id_cargo<?= $data->id ?>" 
@@ -321,11 +349,11 @@
                                     			    if ( $data-> id_duracion_cheque  == $dataSelect->duracion){
                                     			        $seleccionado = true;  
                                             			 ?>
-                                            				<option  selected="selected" value="<?= $dataSelect->id ?>"><?= $dataSelect->duracion ?></option>
+                                            				<option  selected="selected" value="<?= $dataSelect->duracion ?>"><?= $dataSelect->duracion ?></option>
                                             			<?php 
                                             			    }else{
                                             			?>
-                                            				<option value="<?= $dataSelect->id ?>"><?= $dataSelect->duracion ?></option>
+                                            				<option value="<?= $dataSelect->duracion ?>"><?= $dataSelect->duracion ?></option>
                                     					<?php 
                                             			    }
                                     					?>
@@ -356,11 +384,11 @@
                                     	
                                     	
                                     	</td>
-                                    <td><input id="fecha<?= $data->id ?>" name="fecha" type="text" value="<?= $data->fecha ?>" /></td>
+                                    <td><input id="fecha<?= $data->id ?>" name="fecha<?= $data->id ?>" type="text" value="<?= $data->fecha ?>" /></td>
         							<td><a href="#" class="imgDeleteBtn"><img alt="Eliminar"  src="<?= base_url()?>Content/Images/Icons/delete_24.png"></a></td>
                                 </tr>
                                 
-                                <input type="hidden" name="id".<? $data->id?> value="<? $data->id?>">
+                                <input type="hidden" name="id<?=$data->id?>" value="<?=$data->id?>">
                                
     
                         <?php } ?>
@@ -373,6 +401,8 @@
         		</tbody>
         	</table>
         	<input type="hidden" name="cantreg" value="<?= $cant?>">
+        	<input type="hidden" name="inicio" value="<?= $inicio?>">
+
     	
  		
        		 <?php /* if (isset($links)) {
