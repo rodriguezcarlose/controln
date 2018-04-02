@@ -13,10 +13,7 @@ class Payments extends CI_Controller {
     //cantidad de registros a consultar
     private $per_page = 10;
     private $validation = true;
-    private $descripcion = true;
-    private $id_gerencia = true;
-    private $id_proyecto = true;
-    
+
 
     
     /**
@@ -68,6 +65,163 @@ class Payments extends CI_Controller {
         
     }
     
+    public function induvidualload(){
+        
+        
+    }
+    
+    public function loadgrid(){
+        
+        $start_index=0;
+        $tablename ="";
+        $total_records =0;
+        $queryresult = array();
+        $params = array();
+        
+        $data = new stdClass();
+        
+        
+        //estoy hay que cargarlo en memoria para no estar consultando cada vez que se necesite. 
+        //Voy a Crear una Libreria que se encargue de esto.
+        $this->tiposcuentas =  $this->TiposCuentas_model->getTiposCuentas();
+        $this->bancos =  $this->Banco_model->getBancos();
+        $this->TipoDocumentoIdentidad =  $this->TipoDocumentoIdentidad_model->getTipoDocumentoIdentidad();
+        $this->TipoPago =  $this->TipoPago_model->getTipoPago();
+        $this->DuracionCheque =  $this->DuracionCheque_model->getDuracionCheque();
+        $this->Cargo =  $this->Cargo_model->getCargos();
+        
+        $data->tiposcuentas =  $this->tiposcuentas;
+        $data->bancos =  $this->bancos;
+        $data->TipoDocumentoIdentidad =  $this->TipoDocumentoIdentidad;
+        $data->TipoPago =  $this->TipoPago;
+        $data->DuracionCheque =  $this->DuracionCheque;
+        $data->Cargo =  $this->Cargo;
+        $data->proyecto =  $this->Proyecto_model->getProyecto();
+        $data->gerencia =  $this->Gerencia_model->getGerencia();
+        
+        
+        
+        $data->descripcionnomina = $this->input->post("descripcion");
+        $data->id_proyecto = $this->input->post("id_proyecto");
+        $data->id_gerencia = $this->input->post("id_gerencia");
+        
+        
+        $this->form_validation->set_rules('descripcion', 'descripcion', 'required', array('required' => 'El Campo Descripci&oacute;n N&oacute;mina es requerido'));
+        $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required', array('required' => 'El Campo Proyecto es requerido'));
+        $this->form_validation->set_rules('id_gerencia', 'id_gerencia', 'required', array('required' => 'El Campo Gerencia es requerido'));
+        
+        
+        
+        //consultamos de sesion el nombre de la tabla temporal que se esta trabajando.
+        if (isset($_SESSION['table_temp_nom']) ) {
+            $tablename=$_SESSION['table_temp_nom'];
+            $total_records = $this->payments_model->get_total($tablename);
+        }
+        
+        if (isset($_SESSION['start_index_load_payment']) ) {
+            $start_index = $_SESSION['start_index_load_payment'];
+        }
+        if (($start_index + $this->per_page) >= $total_records){
+            $params["guardar"] = true;
+        }
+        
+        
+        
+        //cantidad de registros esperadpos en el formulario
+        $cuount =$this->input->post ("cantreg");
+        
+        $inicio =$this->input->post ("inicio");
+        
+        $datarow = array();
+        $row = array();
+        for ($i = 0; $i< $cuount; $i++){
+            $beneficiario = strtoupper($this->form_validation->stripAccents( $this->input->post ("beneficiario".$inicio)));
+            $row =[
+                "id"=> $this->input->post ("id".$inicio),
+                "beneficiario"=>$beneficiario,
+                "id_cargo"=> $this->input->post ("id_cargo".$inicio),
+                "referencia_credito"=> $this->input->post ("referencia_credito".$inicio),
+                "id_tipo_documento_identidad"=>$this->input->post ("id_tipo_documento_identidad".$inicio),
+                "documento_identidad"=> $this->input->post ("documento_identidad".$inicio),
+                "id_tipo_cuenta"=> $this->input->post ("id_tipo_cuenta".$inicio),
+                "numero_cuenta"=> $this->input->post ("numero_cuenta".$inicio),
+                "credito"=> $this->input->post ("credito".$inicio),
+                "id_tipo_pago"=> $this->input->post ("id_tipo_pago".$inicio),
+                "id_banco"=> $this->input->post ("id_banco".$inicio),
+                "id_duracion_cheque"=> $this->input->post ("id_duracion_cheque".$inicio),
+                "correo_beneficiario"=> $this->input->post ("correo_beneficiario".$inicio),
+                "fecha"=> $this->input->post ("fecha".$inicio),
+            ];
+            $inicio ++;
+            array_push($datarow,$row);
+        }
+        $this->payments_model->updateTableTem( $tablename,$datarow);
+        
+        
+        if ($total_records > 0){
+            $params["results"] = $this->payments_model->get_current_page_records($tablename,$this->per_page, $start_index);
+            $params["results"]=$this->validateCSV( $params["results"]);
+        }
+        
+        if($this->validation && ($start_index + $this->per_page < $total_records)){
+            $_SESSION['start_index_load_payment'] = $start_index + $this->per_page;
+        }
+        
+        
+        
+        if (!$this->validation){
+            $data->error = 'Error. Valide todos los campos que est&eacuten; resaltados en rojo en la tabla, para poder continuar.';
+        }
+        
+        
+        
+        if ($this->form_validation->run()&&($start_index + $this->per_page > $total_records) && $this->validation){
+            // redirect(base_url().'payments/guardar');
+            $this->guardar($this->input->post('descripcion'), $this->input->post('id_proyecto'), $this->input->post('id_gerencia'));
+            
+        }else{
+            $this->load->view('templates/header');
+            $this->load->view('templates/Navigation',$data);
+            $this->load->view('payments/paymentsload/loadgrid',$params);
+            $this->load->view('templates/footer');
+        }
+    }
+    
+    public function guardar($descripcion, $proyecto, $gerencia){
+        
+        
+        $data = new stdClass();
+        
+        
+        if (isset($_SESSION['table_temp_nom']) ) {
+            $detalle =$this->payments_model->getTablepaymentsTem($_SESSION['table_temp_nom']);
+            // $this->payments_model->insertPayment($this->input->post("descripcion"),$this->input->post("id_proyecto"),$this->input->post("id_gerencia"),$_SESSION['id'],$detalle);
+            $resultado =  $this->payments_model->insertPayment($descripcion,$proyecto,$gerencia, $_SESSION['id'],$detalle->result());
+            if ($resultado){
+                $data->success = 'Se ha crado con &Eacutexito la nomina.';
+            }else{
+                $data->error = 'Ha acorrido un error inesperado, por favor intente de nuevo.';
+            }
+        }else{
+            $data->error = 'Ha acorrido un error inesperado, tabla origen no encontrada. Por favor intente de nuevo.';
+        }
+        
+        if (isset($_SESSION['table_temp_nom'])){
+            $this->payments_model->deleteTablepaymentsTem($_SESSION['table_temp_nom']);
+            unset($_SESSION['table_temp_nom']);
+            
+        }
+        if (isset($_SESSION['start_index_load_payment'])){
+            unset($_SESSION['start_index_load_payment']);
+        }
+        
+        $this->load->view('templates/header');
+        $this->load->view('templates/Navigation',$data);
+        $this->load->view('payments/paymentsload/loadgrid');
+        $this->load->view('templates/footer');
+        
+    }
+    
     
     
 
@@ -89,9 +243,7 @@ class Payments extends CI_Controller {
         $config['max_size']             = 100;
         $config['max_width']            = 1024;
         $config['max_height']           = 768;
-        
         $this->load->library('upload', $config);
-        
 
         if (!$this->upload->do_upload('userfile')){
             $data->tab ="2";
@@ -195,11 +347,6 @@ class Payments extends CI_Controller {
         
         foreach ($params as $validateparams) {
             
-            //validación del Campo Beneficiario
-            //$this->form_validation->alpha_spaces($validateparams->beneficiario) == true ? $validateparams->vbeneficiario = true : $validateparams->vbeneficiario = false;
-            
-            
-            
             if ( $this->form_validation->alpha_spaces($validateparams->beneficiario) == true){
                 $validateparams->vbeneficiario = true;
             }else{
@@ -296,15 +443,34 @@ class Payments extends CI_Controller {
             $validateparams->vid_tipo_pago = $validatetipopago;
             $validateparams->vid_tipo_pago == false ? $this->validation = false :  $this->validation = $this->validation;
             
-            //Validacion del Banco
+            //Validacion del Banco seleccionado
             $validatebanco = false;
+            $codBanco;
             foreach ($this->bancos->result() as $vbancos){
                 if( $validateparams->id_banco == $vbancos->id){
                     $validatebanco = true;
+                    $codBanco = $vbancos->codigo;
                 }
             }
             $validateparams->vid_banco = $validatebanco;
             $validateparams->vid_banco == false ? $this->validation = false :  $this->validation = $this->validation;
+            
+           
+            $validateparams->vid_banco_cuenta = true;
+            
+            echo $validateparams->id_banco;
+           
+            if ($validateparams->vid_banco && $validateparams->vnumero_cuenta && $codBanco != "0036"){
+                if (!(substr($validateparams->numero_cuenta, 0, 4) == $codBanco)){
+                    $this->validation = false;
+                    $validateparams->vid_banco_cuenta = false;
+                }
+            }
+            
+            
+            
+            
+                       
             
             //Validacion Duración Cheque
             $validateduracioncheque = false;
@@ -336,162 +502,6 @@ class Payments extends CI_Controller {
         
         
         return $paramsResult;
-    }
-    
-    public function induvidualload(){
-        
-        
-    }
-    
-    public function loadgrid(){
-        
-        $start_index=0;
-        $tablename ="";
-        $total_records =0;
-        $queryresult = array();
-        $params = array();
-        
-        $data = new stdClass();
-        
-        
-        //estoy hay que cargarlo en memoria para no estar consultando cada vez que se necesite.
-        $this->tiposcuentas =  $this->TiposCuentas_model->getTiposCuentas();
-        $this->bancos =  $this->Banco_model->getBancos();
-        $this->TipoDocumentoIdentidad =  $this->TipoDocumentoIdentidad_model->getTipoDocumentoIdentidad();
-        $this->TipoPago =  $this->TipoPago_model->getTipoPago();
-        $this->DuracionCheque =  $this->DuracionCheque_model->getDuracionCheque();
-        $this->Cargo =  $this->Cargo_model->getCargos();
-        
-        $data->tiposcuentas =  $this->tiposcuentas;
-        $data->bancos =  $this->bancos;
-        $data->TipoDocumentoIdentidad =  $this->TipoDocumentoIdentidad;
-        $data->TipoPago =  $this->TipoPago;
-        $data->DuracionCheque =  $this->DuracionCheque;
-        $data->Cargo =  $this->Cargo;
-        $data->proyecto =  $this->Proyecto_model->getProyecto();
-        $data->gerencia =  $this->Gerencia_model->getGerencia();
-        
-        
-        
-        $data->descripcionnomina = $this->input->post("descripcion");
-        $data->id_proyecto = $this->input->post("id_proyecto");
-        $data->id_gerencia = $this->input->post("id_gerencia");
-        
-        
-        $this->form_validation->set_rules('descripcion', 'descripcion', 'required', array('required' => 'El Campo Descripci&oacute;n N&oacute;mina es requerido'));
-        $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required', array('required' => 'El Campo Proyecto es requerido'));
-        $this->form_validation->set_rules('id_gerencia', 'id_gerencia', 'required', array('required' => 'El Campo Gerencia es requerido'));
-        
-        
-        
-        //consultamos de sesion el nombre de la tabla temporal que se esta trabajando.
-        if (isset($_SESSION['table_temp_nom']) ) {
-            $tablename=$_SESSION['table_temp_nom'];
-            $total_records = $this->payments_model->get_total($tablename);
-        }
-        
-        if (isset($_SESSION['start_index_load_payment']) ) {
-            $start_index = $_SESSION['start_index_load_payment'];
-        }
-        if (($start_index + $this->per_page) >= $total_records){
-            $params["guardar"] = true;
-        }
-        
-        
-        
-        //cantidad de registros esperadpos en el formulario
-        $cuount =$this->input->post ("cantreg");
-        
-        $inicio =$this->input->post ("inicio");
-        
-        $datarow = array();
-        $row = array();
-        for ($i = 0; $i< $cuount; $i++){
-            $beneficiario = strtoupper($this->form_validation->stripAccents( $this->input->post ("beneficiario".$inicio)));
-            $row =[
-                "id"=> $this->input->post ("id".$inicio),
-                "beneficiario"=>$beneficiario,
-                "id_cargo"=> $this->input->post ("id_cargo".$inicio),
-                "referencia_credito"=> $this->input->post ("referencia_credito".$inicio),
-                "id_tipo_documento_identidad"=>$this->input->post ("id_tipo_documento_identidad".$inicio),
-                "documento_identidad"=> $this->input->post ("documento_identidad".$inicio),
-                "id_tipo_cuenta"=> $this->input->post ("id_tipo_cuenta".$inicio),
-                "numero_cuenta"=> $this->input->post ("numero_cuenta".$inicio),
-                "credito"=> $this->input->post ("credito".$inicio),
-                "id_tipo_pago"=> $this->input->post ("id_tipo_pago".$inicio),
-                "id_banco"=> $this->input->post ("id_banco".$inicio),
-                "id_duracion_cheque"=> $this->input->post ("id_duracion_cheque".$inicio),
-                "correo_beneficiario"=> $this->input->post ("correo_beneficiario".$inicio),
-                "fecha"=> $this->input->post ("fecha".$inicio),
-            ];
-            $inicio ++;
-            array_push($datarow,$row);
-        }
-        $this->payments_model->updateTableTem( $tablename,$datarow);
-        
-        
-        if ($total_records > 0){
-            $params["results"] = $this->payments_model->get_current_page_records($tablename,$this->per_page, $start_index);
-            $params["results"]=$this->validateCSV( $params["results"]);
-        }
-        
-        if($this->validation && ($start_index + $this->per_page < $total_records)){
-            $_SESSION['start_index_load_payment'] = $start_index + $this->per_page;
-        }
-        
-        
-        
-        if (!$this->validation){
-            $data->error = 'Error. Valide todos los campos que est&eacuten; resaltados en rojo en la tabla, para poder continuar.';
-        }
-        
-        
-        
-        if ($this->form_validation->run()&&($start_index + $this->per_page > $total_records) && $this->validation){
-           // redirect(base_url().'payments/guardar');
-            $this->guardar($this->input->post('descripcion'), $this->input->post('id_proyecto'), $this->input->post('id_gerencia'));
-            
-        }else{
-                $this->load->view('templates/header');
-                $this->load->view('templates/Navigation',$data);
-                $this->load->view('payments/paymentsload/loadgrid',$params);
-                $this->load->view('templates/footer');
-            }
-    }
-    
-    public function guardar($descripcion, $proyecto, $gerencia){
-        
-        
-        $data = new stdClass();
-        
-        
-        if (isset($_SESSION['table_temp_nom']) ) {
-            $detalle =$this->payments_model->getTablepaymentsTem($_SESSION['table_temp_nom']);
-           // $this->payments_model->insertPayment($this->input->post("descripcion"),$this->input->post("id_proyecto"),$this->input->post("id_gerencia"),$_SESSION['id'],$detalle);
-           $resultado =  $this->payments_model->insertPayment($descripcion,$proyecto,$gerencia, $_SESSION['id'],$detalle->result());
-           if ($resultado){
-               $data->success = 'Se ha crado con &Eacutexito la nomina.';
-           }else{
-               $data->error = 'Ha acorrido un error inesperado, por favor intente de nuevo.';
-           }
-        }else{
-            $data->error = 'Ha acorrido un error inesperado, tabla origen no encontrada. Por favor intente de nuevo.';
-        }
-        
-        if (isset($_SESSION['table_temp_nom'])){
-            $this->payments_model->deleteTablepaymentsTem($_SESSION['table_temp_nom']);
-            unset($_SESSION['table_temp_nom']);
-            
-        }
-        if (isset($_SESSION['start_index_load_payment'])){
-            unset($_SESSION['start_index_load_payment']);
-        }
-        
-        $this->load->view('templates/header');
-        $this->load->view('templates/Navigation',$data);
-        $this->load->view('payments/paymentsload/loadgrid');
-        $this->load->view('templates/footer');
-        
     }
     
 }
