@@ -47,7 +47,7 @@ class Generatebankfile extends CI_Controller {
             $resultPayments=$this->payments_model->getPaymentsGenerateCSVFile($nomina);
             
             $this->load->dbutil();
-            $delimiter = ";";
+            $delimiter = "\t";
             $newline = "\n";
             $enclosure = '"';
             $archivo= $this->dbutil->csv_from_result($resultPayments, $delimiter, $newline, $enclosure);

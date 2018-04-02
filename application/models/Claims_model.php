@@ -23,7 +23,7 @@ class Claims_model extends CI_Model
                                         	tipo_documento_identidad tdi
                                         WHERE r.id_gerencia=g.id
                                         AND r.id_proyecto=p.id
-                                        AND r.id_tipo_documento_identidad=tdi.id
+                                        AND r.id_tipo_documento_identidad=tdi.nombre
                                         AND tdi.nombre='" . $nacionalidad . "' " .
                                         "AND r.documento_identidad='" . $cedula . "' " .
                                         "AND r.id_cargo=c.id

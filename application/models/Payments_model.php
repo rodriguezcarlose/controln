@@ -4,7 +4,7 @@ class Payments_model extends CI_Model
 {
     public function getPaymentsByIdentity($nacionalidad = '', $cedula=''){
            
-        $result=$this->db->query("SELECT 	tdi.nombre nacionalidad, 
+        $result=$this->db->query("SELECT nd.id_tipo_documento_identidad nacionalidad, 
                                     nd.documento_identidad,
                                     nd.beneficiario nombre_apellido,
                                     c.nombre nombre_cargo,
@@ -20,13 +20,11 @@ class Payments_model extends CI_Model
                                             gerencia g, 
                                             proyecto p, 
                                             banco b, 
-                                            estatus_nomina_detalle endet,
-                                            tipo_documento_identidad tdi	
+                                            estatus_nomina_detalle endet	
                                     WHERE n.id=nd.id_nomina
                                     AND n.id_gerencia=g.id
                                     AND n.id_proyecto=p.id 
-                                    AND nd.id_tipo_documento_identidad=tdi.id
-                                    AND tdi.nombre='" . $nacionalidad . "' " .
+                                    AND nd.id_tipo_documento_identidad='" . $nacionalidad . "' " .
                                     "AND nd.documento_identidad='" . $cedula . "' " .
                                     "AND nd.id_cargo=c.id 
                                     AND nd.id_banco=b.id
@@ -207,33 +205,28 @@ class Payments_model extends CI_Model
     public function getPaymentsGenerateCSVFile($nomina = ''){
 
         
-        $result=$this->db->query("SELECT 	dn.id,
-                                            dn.beneficiario,
-                                            dn.referencia_credito,
-                                            tdi.nombre,
-                                            dn.documento_identidad,
-                                            tc.tipo,
-                                            dn.numero_cuenta,
-                                            dn.credito,
-                                            tp.descripcion,
-                                            dn.id_banco,
-                                            dc.duracion,
-                                            dn.correo_beneficiario,
-                                            dn.fecha,
-                                            c.id,
-                                            c.nombre
-                                   FROM 	nomina_detalle dn,
-                                            tipo_documento_identidad tdi,
-                                            tipos_cuentas tc,
-                                            tipo_pago tp,
-                                            duracion_cheque dc,
-                                            cargo c
-                                   WHERE    dn.id_tipo_documento_identidad=tdi.id
-                                            AND dn.id_tipo_cuenta=tc.id
-                                            AND dn.id_tipo_pago=tp.id
-                                            AND dn.id_duracion_cheque=dc.id
-                                            AND dn.id_cargo=c.id
-                                            AND dn.id_nomina=" . $nomina);
+        $result=$this->db->query("SELECT 	dn.id numero_credito,
+                                            dn.beneficiario nombre_beneficiario,
+                                            dn.referencia_credito numero_referencia_credito,
+                                            dn.id_tipo_documento_identidad letra,
+                                            dn.documento_identidad numero_ci_rif,
+                                            tc.tipo tipo_cuenta,
+                                            dn.numero_cuenta numero_cuenta_beneficiario,
+                                            dn.credito monto_credito,
+                                            tp.descripcion tipo_pago,
+                                            dn.id_banco banco,
+                                            dc.duracion duracion_cheque,
+                                            dn.correo_beneficiario email_beneficiario,
+                                            dn.fecha fecha_valor,
+                                            c.id id_cargo,
+                                            c.nombre cargo
+                                   FROM 	nomina_detalle dn 
+                                            LEFT JOIN tipo_documento_identidad tdi ON  dn.id_tipo_documento_identidad=tdi.nombre
+                                            LEFT JOIN tipos_cuentas tc ON  dn.id_tipo_cuenta=tc.tipo
+                                            LEFT JOIN tipo_pago tp ON dn.id_tipo_pago=tp.id
+                                            LEFT JOIN duracion_cheque dc ON dn.id_duracion_cheque=dc.duracion
+                                            LEFT JOIN cargo c ON dn.id_cargo=c.id
+                                   WHERE    dn.id_nomina=" . $nomina);
                
         if ($result->num_rows()>0){
             
