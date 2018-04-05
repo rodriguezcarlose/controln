@@ -205,7 +205,7 @@ class Payments_model extends CI_Model
     public function getPaymentsGenerateCSVFile($nomina = ''){
 
         
-        $result=$this->db->query("SELECT 	dn.id numero_credito,
+        $result=$this->db->query("SELECT 	@rownum := @rownum + 1 AS numero_referencia,
                                             dn.beneficiario nombre_beneficiario,
                                             dn.referencia_credito numero_referencia_credito,
                                             dn.id_tipo_documento_identidad letra,
@@ -220,7 +220,7 @@ class Payments_model extends CI_Model
                                             dn.fecha fecha_valor,
                                             c.id id_cargo,
                                             c.nombre cargo
-                                   FROM 	nomina_detalle dn 
+                                   FROM 	(SELECT @rownum := 0) r, nomina_detalle dn 
                                             LEFT JOIN tipo_documento_identidad tdi ON  dn.id_tipo_documento_identidad=tdi.nombre
                                             LEFT JOIN tipos_cuentas tc ON  dn.id_tipo_cuenta=tc.tipo
                                             LEFT JOIN tipo_pago tp ON dn.id_tipo_pago=tp.id
@@ -228,6 +228,44 @@ class Payments_model extends CI_Model
                                             LEFT JOIN cargo c ON dn.id_cargo=c.id
                                    WHERE    dn.id_nomina=" . $nomina);
                
+        if ($result->num_rows()>0){
+            
+            return $result;
+            
+        }else {
+            
+            return null;
+        }
+        
+    }
+
+    public function getPaymentsGenerateTXTFile($nomina = ''){
+        
+        
+        $result=$this->db->query("SELECT 	@rownum := @rownum + 1 AS numero_referencia,
+                                            dn.beneficiario nombre_beneficiario,
+                                            dn.referencia_credito numero_referencia_credito,
+                                            dn.id_tipo_documento_identidad,
+                                            dn.documento_identidad numero_ci_rif,
+                                            tc.tipo tipo_cuenta,
+                                            dn.numero_cuenta numero_cuenta_beneficiario,
+                                            dn.credito monto_credito,
+                                            tp.id tipo_pago,
+                                            b.swift banco,
+                                            dc.duracion duracion_cheque,
+                                            dn.correo_beneficiario email_beneficiario,
+                                            dn.fecha fecha_valor,
+                                            c.id id_cargo,
+                                            c.nombre cargo
+                                   FROM 	(SELECT @rownum := 0) r, nomina_detalle dn
+                                            LEFT JOIN tipo_documento_identidad tdi ON  dn.id_tipo_documento_identidad=tdi.nombre
+                                            LEFT JOIN tipos_cuentas tc ON  dn.id_tipo_cuenta=tc.tipo
+                                            LEFT JOIN tipo_pago tp ON dn.id_tipo_pago=tp.id
+                                            LEFT JOIN duracion_cheque dc ON dn.id_duracion_cheque=dc.duracion
+                                            LEFT JOIN cargo c ON dn.id_cargo=c.id
+                                            LEFT JOIN banco b ON dn.id_banco=b.id
+                                   WHERE    dn.id_nomina=" . $nomina);
+        
         if ($result->num_rows()>0){
             
             return $result;
@@ -297,6 +335,23 @@ class Payments_model extends CI_Model
         
     }
     
+    
+    public function updateNumeroLote($value){
+        
+            $this->db->set('numero_lote', $value["numero_lote"]);
+            $this->db->where('id', $value["id"]);
+            $this->db->update('nomina');
+
+    }
+    
+    public function updateFechaValor($values){
+        
+        foreach ($values as $value){
+            $this->db->set('fecha', $value["fecha"]);
+            $this->db->where('id_nomina', $value["id_nomina"]);
+            $this->db->update('nomina_detalle');
+        }
+    }
     
 }
 

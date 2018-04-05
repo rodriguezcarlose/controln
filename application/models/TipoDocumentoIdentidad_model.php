@@ -27,7 +27,22 @@ class TipoDocumentoIdentidad_model extends CI_Model {
         
     }
     
-    
+    public function  getTipoDocumentoIdentidadbyTipo($tipo){
+        
+        $result=$this->db->query("SELECT id, nombre, descripcion
+                                FROM 	tipo_documento_identidad tdi
+                                WHERE tdi.nombre='" . $tipo . "'");
+        
+        if ($result->num_rows()>0){
+            
+            return $result;
+            
+        }else {
+            
+            return null;
+        }
+        
+    }
     
     
 }

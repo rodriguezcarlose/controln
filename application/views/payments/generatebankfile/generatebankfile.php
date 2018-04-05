@@ -37,29 +37,29 @@
             	?>
  
              	<h3>Generar Archivo TXT Pago Banco</h3>
-        
+				<?php $fila=$empresaOrdenante->result(); ?>        
             	<?= form_open("generatebankfile/generateTXT") ?>
                                 
                 	<div class="row">
                     	<div class="large-12 columns">
                     		<label for="String:">Nombre de la Empresa Ordenante</label>
-                    		<input id="empresa" name="empresa" placeholder="" type="text" value="" />
+                    		<input id="empresa" name="empresa" placeholder="" type="text" value="<?= $fila[0]->nombre_empresa; ?>" />
                     	</div>
                 	</div>
                 	<div class="row">
                     	<div class="large-4 medium-4 columns">
                     		<label for="String:">RIF de la Empresa</label>
-                    		<input id="rif" name="rif" placeholder="" type="text" value="" />
+                    		<input id="rif" name="rif" placeholder="" type="text" value="<?= $fila[0]->nombre_tipo_documento_identidad . $fila[0]->rif; ?>" />
                     	</div>        	
                     	
                     	<div class="large-4 medium-4 columns">
                     		<label for="String:">N&uacute;mero de Referencia de Lote</label>
-                    		<input id="lote" name="lote" placeholder="" type="text" value="" />
+                    		<input id="lote" name="lote" placeholder="<?= $fila[0]->numero_ref_lote; ?>" type="text" value="" />
                     	</div>        	
             
                     	<div class="large-4 medium-4 columns">
                     		<label for="String:">N&uacute;mero de Negociaci&oacute;n</label>
-                    		<input id="negociacion" name="negociacion" placeholder="" type="text" value="" />
+                    		<input id="negociacion" name="negociacion" placeholder="" type="text" value="<?= $fila[0]->numero_negociacion; ?>" />
                     	</div>        	
         			</div>
         			<div class="row">
@@ -74,22 +74,23 @@
                         <div class="large-4 medium-4 columns">
                             <label for="Enum:">Tipo de Cuenta</label>
                         	    <select data-val="true" data-val-required="The Enum field is required." id="tipocuenta" name="tipocuenta" >
-                                   	<?php foreach ($tipocuenta->result() as $fila){ ?>
-                                   		<option value="<?= $fila->tipo; ?>"><?= $fila->descripcion; ?></option>
+                                   		<option value="<?= $fila[0]->id_tipo_cuenta; ?>"><?= $fila[0]->descripcion; ?></option>
+                                   	<?php foreach ($tipoCuenta->result() as $fila2){ ?>
+                                   		<option value="<?= $fila2->id; ?>"><?= $fila2->descripcion; ?></option>
             						<?php } ?>
                         		</select>
                         </div>	
         	           	<div class="large-4 medium-4 columns">
                     		<label for="String:">N&uacute;mero de Cuenta</label>
-                    		<input id="numerocuenta" name="numerocuenta" placeholder="" type="text" value="" />
+                    		<input id="numerocuenta" name="numerocuenta" placeholder="" type="text" value="<?= $fila[0]->numero_cuenta; ?>" />
                     	</div>        	        	
                 	</div>
                 	<div class="row">
                     	<div class="large-12 columns">
                             <label for="Enum:">Nomina</label>
                         	    <select data-val="true" data-val-required="The Enum field is required." id="nomina" name="nomina" >
-                                   	<?php foreach ($paymentsGenerateBankFile->result() as $fila){ ?>
-                                   		<option value="<?= $fila->id; ?>"><?= '(' . $fila->id . ') ' . $fila->fecha_creacion . ' [' . $fila->estatus . ']' . ' PROYECTO:' . $fila->nombre_proyecto . '. GERENCIA:' .  $fila->nombre_gerencia  . '. DESCRIPCION:'. $fila->descripcion; ?></option>
+                                   	<?php foreach ($paymentsGenerateBankFile->result() as $fila3){ ?>
+                                   		<option value="<?= $fila3->id; ?>"><?= '(' . $fila3->id . ') ' . $fila3->fecha_creacion . ' [' . $fila3->estatus . ']' . ' PROYECTO:' . $fila3->nombre_proyecto . '. GERENCIA:' .  $fila3->nombre_gerencia  . '. DESCRIPCION:'. $fila3->descripcion; ?></option>
             						<?php } ?>
                         		</select>
                         </div>
