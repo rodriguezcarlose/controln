@@ -29,19 +29,14 @@ class TiposCuentas_model extends CI_Model {
     }
     
     public function  getTipoCuentabyTipo($tipo){
-        
+    
         $result=$this->db->query("SELECT id, tipo, descripcion
                                 FROM 	tipos_cuentas tdc
                                 WHERE tdi.tipo='" . $tipo . "'");
-        
         if ($result->num_rows()>0){
-            
             return $result;
-            
         }else {
-            
             return null;
         }
-        
     }
 }

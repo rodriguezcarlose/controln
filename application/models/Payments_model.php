@@ -67,6 +67,7 @@ class Payments_model extends CI_Model
               `correo_beneficiario` varchar(255),
               `fecha` varchar(255),
                `id_estatus`  varchar(255),
+                `valid`  BOOLEAN NOT NULL,
                 PRIMARY KEY (`id`))");
         
     }
@@ -114,7 +115,7 @@ class Payments_model extends CI_Model
     }
     
     public function  getTablepaymentsTem($table_name){
-        
+        $this->db->order_by('id','DESC');
         return $this->db->get($table_name);
         
     }
@@ -130,12 +131,13 @@ class Payments_model extends CI_Model
      * @return $data
      */
     
-    public function get_current_page_records($table,$limit, $start){
+    public function get_current_page_records($table,$limit, $start, $valid, $order){
         //si existe la tabla
         if ($this->db->table_exists($table))
         {
+            $this->db->where('valid', $valid);
             $this->db->limit($limit, $start);
-            $this->db->order_by('id','DESC');
+            $this->db->order_by($order,'ASC');
             $query = $this->db->get($table);
             
             if ($query->num_rows() > 0)
@@ -162,10 +164,11 @@ class Payments_model extends CI_Model
      * @param $table
      * @return $data
      */
-    public function get_total($table) {
+    public function get_total($table, $valid) {
         if ($this->db->table_exists($table))
         {
-            return $this->db->count_all($table);
+            $this->db->where('valid', $valid);
+            return $this->db->count_all_results($table);
         }
 
     }
@@ -200,6 +203,38 @@ class Payments_model extends CI_Model
         
     }
     
+    /*
+     * Funcion para retornar las nominas con estatus procesado (3) o Pagadas (4).
+     */
+    public function getPaymentsProcessed(){
+        
+        $result=$this->db->query("SELECT 	n.id,
+                                    		n.descripcion,
+                                    		n.fecha_creacion,
+                                    		g.nombre nombre_gerencia,
+                                    		p.nombre nombre_proyecto,
+                                    		en.nombre estatus
+                                    FROM    nomina n,
+                                            gerencia g,
+                                            proyecto p,
+                                            estatus_nomina en
+                                    WHERE n.id_gerencia=g.id
+                                    AND n.id_proyecto=p.id
+                                    AND n.id_estatus=en.id
+                                    AND n.id_estatus in (3,4)
+            
+                                    ORDER BY  en.nombre, n.fecha_creacion DESC, g.nombre,p.nombre");
+        
+        if ($result->num_rows()>0){
+            
+            return $result;
+            
+        }else {
+            
+            return null;
+        }
+        
+    }
     
     
     public function getPaymentsGenerateCSVFile($nomina = ''){
@@ -238,9 +273,8 @@ class Payments_model extends CI_Model
         }
         
     }
-
     public function getPaymentsGenerateTXTFile($nomina = ''){
-        
+    
         
         $result=$this->db->query("SELECT 	@rownum := @rownum + 1 AS numero_referencia,
                                             dn.beneficiario nombre_beneficiario,
@@ -265,13 +299,9 @@ class Payments_model extends CI_Model
                                             LEFT JOIN cargo c ON dn.id_cargo=c.id
                                             LEFT JOIN banco b ON dn.id_banco=b.id
                                    WHERE    dn.id_nomina=" . $nomina);
-        
         if ($result->num_rows()>0){
-            
             return $result;
-            
         }else {
-            
             return null;
         }
         
@@ -281,23 +311,41 @@ class Payments_model extends CI_Model
         
         foreach ($values as $value){
             $this->db->set('beneficiario', $value["beneficiario"]);
-            $this->db->set('referencia_credito', $value["referencia_credito"]);
+            //$this->db->set('referencia_credito', $value["referencia_credito"]);
             $this->db->set('id_cargo', $value["id_cargo"]);
             $this->db->set('id_tipo_documento_identidad', $value["id_tipo_documento_identidad"]);
             $this->db->set('documento_identidad', $value["documento_identidad"]);
             $this->db->set('id_tipo_cuenta', $value["id_tipo_cuenta"]);
             $this->db->set('numero_cuenta', $value["numero_cuenta"]);
             $this->db->set('credito', $value["credito"]);
-            $this->db->set('id_tipo_pago', $value["id_tipo_pago"]);
+            //$this->db->set('id_tipo_pago', $value["id_tipo_pago"]);
             $this->db->set('id_banco', $value["id_banco"]);
-            $this->db->set('id_duracion_cheque', $value["id_duracion_cheque"]);
-            $this->db->set('correo_beneficiario', $value["correo_beneficiario"]);
-            $this->db->set('fecha', $value["fecha"]);
+           // $this->db->set('id_duracion_cheque', $value["id_duracion_cheque"]);
+           // $this->db->set('correo_beneficiario', $value["correo_beneficiario"]);
+           // $this->db->set('fecha', $value["fecha"]);
             $this->db->where('id', $value["id"]);
             $this->db->update($table);
+            
         }
     }
     
+    
+    /**
+     *  TableTem function, actialuza los registros de la tabla temporal, de acuerdo a los arreglos realizados en la vista
+     * de los campos con eror
+     *
+     * @access public
+     * @param $table
+     * @return $data
+     */
+    
+    public function updateTableTempRow($table, $row, $value){
+        
+        //echo "tabla-> ".$table. " row: ".$row. " value: ".$value;
+        $this->db->set('valid',$value);
+        $this->db->where('id', $row);
+        $this->db->update($table);
+    }
     
     public function insertPayment($descripcion,$proyecto, $gerencia, $usuario, $detalle){
         
@@ -311,21 +359,20 @@ class Payments_model extends CI_Model
 
         $this->db->set('id', $id_nomina);
         $this->db->set('descripcion', $descripcion);
-        $this->db->set('id_estatus', $proyecto);
+        $this->db->set('id_estatus', 1);
         $this->db->set('id_proyecto', $proyecto);
         $this->db->set('id_usuario', $usuario);
         $this->db->set('id_gerencia', $gerencia);
         $this->db->insert("nomina");
         
         foreach ($detalle as $detalleNomina){
-            
             $detalleNomina->id_nomina = $id_nomina;
             unset ($detalleNomina->id);
+            unset ($detalleNomina->valid);
         }
         
         $this->db->insert_batch("nomina_detalle", $detalle);
         $this->db->trans_complete();
-        
         
         if ($this->db->trans_status() === FALSE){
             return false;
@@ -337,21 +384,16 @@ class Payments_model extends CI_Model
     
     
     public function updateNumeroLote($value){
-        
             $this->db->set('numero_lote', $value["numero_lote"]);
             $this->db->where('id', $value["id"]);
             $this->db->update('nomina');
-
     }
-    
     public function updateFechaValor($values){
-        
         foreach ($values as $value){
             $this->db->set('fecha', $value["fecha"]);
             $this->db->where('id_nomina', $value["id_nomina"]);
             $this->db->update('nomina_detalle');
         }
     }
-    
 }
 
