@@ -1,72 +1,65 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-?>
+defined('BASEPATH') OR exit('No direct script access allowed');?>
    <h2 class="show-for-small-only"></h2>    
-	<br><br>
-
-   
+   </br>
+   <div class="container">
+   		<div class="row">
     	<h3>Reclamo de Pago </h3>
-    	<br>
     	
     <h4>Datos Personales</h4>
     		
-    <?=form_open("controllers/addclaim") ?> 
-     	   <div class="field small-2 columns">
+    		<form method='post' action= "<?php base_url();?>addclaims" > 
+      			<div class="form-group">
+      					<div class="field small-3 columns">
      	   
-     	     <div class="row"> 
             <label for="num:">Nacionalidad:</label>
-             <select data-val="true" data-val-required="The Nacionalidad field is required." id="Nacionalidad" name="Nacionalidad">
+                         	<select id="id_tipo_documento_identidad" name="id_tipo_documento_identidad">
         		<option selected="selected" value="">Seleccione</option>
                            <?php if (isset($tipodocumentoidentidad)) { ?>
                    	<?php foreach ($tipodocumentoidentidad->result() as $data) { ?>
-                   	<option value="<?= $data->id ?>"><?= $data->descripcion ?></option>
+                                       	<option value="<?= $data->nombre ?>"><?= $data->descripcion ?></option>
                              	<?php } ?>
          						 <?php }  ?>
            	</select>
              </div>
              
-             </div>
-             <div class="row1"> 
+
              <div class="field small-3 columns">
-            <label for="Tlf:">Cedula:</label>
-            <input data-val="true" data-val-number="The field Cedula must be a number." data-val-required="The Cedula: field is required." id="cedula:" name="cedula:" type="number" value="" />
+                        	<label for="Cedula:">Cedula:</label>
+                        	<input id="documento_identidad" name="documento_identidad" type="text" value="" />
             </div>
-             </div>
               
-             <div class="row">  
     	    <div class="field small-3 columns">
             <label for="Nombre:">Nombre:</label>
             <input id="Nombre" name="Nombre" type="text" value="" />
         	</div>  
-        	</div>
+
         	 
-        	<div class="row-1"> 
-        	 <div class="field small-2 columns">
+                    	<div class="field small-3 columns">
             <label for="Apellido:">Apellido:</label>
             <input id="Apellido" name="Apellido" type="text" value="" />
         	</div>   
-        	 </div>
         	
-            <div class="ro"> 
-            <div class="field small-3 columns">
-            <label for="Tlf:">Telefono:</label>
-            <input data-val="true" data-val-number="The field Telefono: must be a number." data-val-required="The Tlf: field is required." id="Tlf:" name="Tlf:" type="number" value="" />
+          		   		<div class="field small-4 columns">
+                        	<label for="Telefono">Telefono:</label>
+                        	<input id="telefono" name="telefono" type="text" value="" />
             </div>
+                        <div class="field small-4 columns">
+                        	<label for="Correo">Correo Electronico:</label>
+                       		<input id="correo" name="correo" type="text" value="" />
            </div>
            
-            <div class="row"> 
-            <div class="field small-3 columns">
-            <label for="Correo Electronico">Correo Electronico:</label>
-            <input id="Correo Electronico" name="Correo Electronico" type="text" value="" />
+                     	<div class="field small-4 columns">
+                        	<label for="Confirmacion">Confirmacion Correo Electronico:</label>
+                       		<input id="confirmacion" name="confirmacion" type="text" value="" />
         	</div>  
-            </div>
         
 <h4>Datos Bancarios</h4>
    
    
-			<div class="field small-3 columns">
+    			<div class="field small-6 columns">
             <label for="Enum:">Banco:</label>
-            <select data-val="true" data-val-required="The Banco field is required." id="Banco" name="Banco">
+                	<select id="id_banco" name="id_banco">
 
 <option selected="selected" value="">Seleccione</option>
                            <?php if (isset($bancos)) { ?>
@@ -76,33 +69,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           <?php }  ?>
            	</select>
              </div>
-            <div class="row1">        
-			<div class="field small-2 columns">
-            <label for="Enum:">Codigo Banco:</label>
-            <select data-val="true" data-val-required="The Codigo Banco field is required." id="Codigo Banco" name="Codigo Banco">
-<option selected="selected" value="">Seleccione</option>
-                           <?php if (isset($bancos)) { ?>
-                   	<?php foreach ($bancos->result() as $data) { ?>
-                   	<option value="<?= $data->id ?>"><?= $data->codigo ?></option>
-                             	<?php } ?>
-          <?php }  ?>
-           	</select>
+           
+ 				<div class="field small-6 columns">
+                    <label for="numerocuenta">Numero de Cuenta:</label>
+                    <input id="numero_cuenta" name="numero_cuenta" type="text" value="" />
                </div>
- 				</div>
  				
- 				<div class="field small-3 columns">
-            <label for="numero de cuenta">Numero de Cuenta:</label>
-            <input data-val="true" data-val-number="The field Numero de Cuenta must be a number." data-val-required="The Numero de Cuenta: field is required." id="Numero de Cuenta:" name="Numero de Cuenta:" type="number" value="" />
-            </div>
-			<?php 
-			echo form_open_multipart('file_model/insertimagen');
-			echo form_upload('');
-			?>  
+				<div class="field small-12 columns">	
+				<?php echo form_open_multipart('claim/do_upload');?>
+                           	<label for="Enum:">Imagen:</label>
+   							<input type="file" name="userfile" size="20"/>
+                   			<input type="submit" value="Cargar" name = "btnCargar" id="btnCargar" class="button small"  />
+				<?= form_close()?>
+			
 <h4>Datos Evento</h4>
-				<div class="row1"> 
 				<div class="field small-3 columns">
             <label for="num:">Proyecto:</label>
-             <select data-val="true" data-val-required="The Proyecto field is required." id="Proyecto" name="Proyecto">
+             			<select  id="id_proyecto" name="id_proyecto">
         		<option selected="selected" value="">Seleccione</option>
                            <?php if (isset($proyecto)) { ?>
                    	<?php foreach ($proyecto->result() as $data) { ?>
@@ -111,10 +94,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           <?php }  ?>
            	</select>
                 </div>
-                </div>
 				<div class="field small-3 columns">
             <label for="num:">Gerencia:</label>
-             <select data-val="true" data-val-required="The Gerencia field is required." id="Gerencia" name="Gerencia">
+             			<select  id="id_gerencia" name="id_gerencia">
         		<option selected="selected" value="">Seleccione</option>
                            <?php if (isset($gerencia)) { ?>
                    	<?php foreach ($gerencia->result() as $data) { ?>
@@ -123,9 +105,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           <?php }  ?>
            	</select>
                  </div>
-			     <div class="field small-2 columns">
+			     	<div class="field small-3 columns">
             <label for="num:">Cargo:</label>
-             <select data-val="true" data-val-required="The Cargo field is required." id="cargo" name="cargo">
+             			<select  id="id_cargo" name="id_cargo">
         		<option selected="selected" value="">Seleccione</option>
                            <?php if (isset($cargo)) { ?>
                    	<?php foreach ($cargo->result() as $data) { ?>
@@ -134,24 +116,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           <?php }  ?>
            	</select>
                  </div>
-                 <div class="row-1"> 
+                
                  <div class="field small-3 columns">
             <label for="Enum:">Tipo Error:</label>
-            <select data-val="true" data-val-required="The Tipo Error field is required." id="Banco" name="Banco">
+            		<select  id="id_tipo_error" name="id_tipo_error">
 
 <option selected="selected" value="">Seleccione</option>
-<option value="1">Pago Incompleto</option>
-<option value="2">Pago No Recibido</option>
-
-                     
+						<?php if (isset($tipoerror)) { ?>
+                   				<?php foreach ($tipoerror->result() as $data) { ?>
+                   					<option value="<?= $data->id ?>"><?= $data->nombre_error ?></option>
+                             	<?php } ?>
+          					<?php }  ?>
            	</select>
                   </div>
+            <div class="small-12 column text-right buttonPanel">
+					<input type="submit" id="btnEnviar" name = "btnEnviar" class="button small right" value="Enviar Reclamo"  />
  				</div>
 				
-    <div class=" left buttonPanel">
-
-<input id="btn-" class="button small right" value="Enviar Reclamo" type="submit">
-
+		</div>
+		</form>
+	</div>
 </div>
-<?=form_close()  ?>
+
+	|
 
