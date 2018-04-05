@@ -82,8 +82,8 @@ class claim extends CI_Controller {
             
             $nacionalidad = $this->input->post('id_tipo_documento_identidad');
             $cedula = $this->input->post('documento_identidad');
-            $nombre = $this->input->post('Nombre');
-            $apellido = $this->input->post('Apellido');
+            $nombre = $this->input->post('nombre');
+            $apellido = $this->input->post('apellido');
             $telefono = $this->input->post('telefono');
             $correo = $this->input->post('correo');
             $banco = $this->input->post('id_banco');

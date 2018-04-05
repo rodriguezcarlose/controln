@@ -31,13 +31,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
               
     	    <div class="field small-3 columns">
             <label for="Nombre:">Nombre:</label>
-            <input id="Nombre" name="Nombre" type="text" value="" />
+            <input id="nombre" name="nombre" type="text" value="" />
         	</div>  
 
         	 
                     	<div class="field small-3 columns">
             <label for="Apellido:">Apellido:</label>
-            <input id="Apellido" name="Apellido" type="text" value="" />
+            <input id="apellido" name="apellido" type="text" value="" />
         	</div>   
         	
           		   		<div class="field small-4 columns">
