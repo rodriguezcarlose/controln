@@ -189,7 +189,7 @@ class Payments_model extends CI_Model
                                     WHERE n.id_gerencia=g.id
                                     AND n.id_proyecto=p.id
                                     AND n.id_estatus=en.id
-                                    
+                                    AND n.id_estatus in (2)
                                     ORDER BY  en.nombre, n.fecha_creacion DESC, g.nombre,p.nombre");
         
         if ($result->num_rows()>0){
@@ -388,12 +388,27 @@ class Payments_model extends CI_Model
             $this->db->where('id', $value["id"]);
             $this->db->update('nomina');
     }
-    public function updateFechaValor($values){
-        foreach ($values as $value){
+    public function updateFechaValor($value){
+
             $this->db->set('fecha', $value["fecha"]);
             $this->db->where('id_nomina', $value["id_nomina"]);
             $this->db->update('nomina_detalle');
-        }
+
     }
+
+    public function updateEstatusNominabyId($idNomina, $idEstatus){
+        $this->db->set('id_estatus', $idEstatus);
+        $this->db->where('id', $idNomina);
+        $this->db->update('nomina');
+    }
+    public function updateEstatusNominaDetallebyId($idNomina, $idEstatus){
+
+            $this->db->set('id_estatus', $idEstatus);
+            $this->db->where('id_nomina', $idNomina);
+            $this->db->update('nomina_detalle');
+
+    }
+
+
 }
 

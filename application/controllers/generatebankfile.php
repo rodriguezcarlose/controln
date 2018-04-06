@@ -21,10 +21,14 @@ class Generatebankfile extends CI_Controller {
         $resultEmpresa=$this->empresaordenante_model->getEmpresaOrdenante();
         $data=array('paymentsGenerateBankFile'=>$resultPayments, 'empresaOrdenante'=>$resultEmpresa, 'tipoCuenta'=>$resultTipoCuenta);
         
-        if($data != null){
-            $this->load->view('payments/generatebankfile/generatebankfile',$data);
-        }
-        
+            if ($resultPayments!=null){
+                if($data != null){
+                    $this->load->view('payments/generatebankfile/generatebankfile',$data);
+                }
+            }else{
+                
+                $this->load->view('payments/generatebankfile/generatebankfileNotFound');
+            }
 
         $this->load->view('templates/footer');
         
@@ -96,47 +100,73 @@ class Generatebankfile extends CI_Controller {
             $tipocuenta = $this->input->post('tipocuenta');
             $numerocuenta = $this->input->post('numerocuenta');
             $nomina = $this->input->post('nomina');
+            
             $this->load->model('empresaordenante_model');
             $this->load->model('tipodocumentoidentidad_model');
             $this->load->model('payments_model');
+            $estatus_nomina_procesada=3;
+            $estatus_nominadetalle_procesada=2;
+            
             //Guardo datos en el BD tabla empresa_ordenante
             $resultTipoDocumento=$this->tipodocumentoidentidad_model->getTipoDocumentoIdentidadbyTipo(substr($rif,0,1));
             $tdi=$resultTipoDocumento->result();
+            
             $value = array ('id_tipo_documento_identidad'=>$tdi[0]->id, 
                             'rif' => substr($rif,1), 
                             'nombre' => $empresa, 
                             'numero_negociacion' => $negociacion, 
                             'id_tipo_cuenta' => $tipocuenta, 
                             'numero_cuenta' => $numerocuenta );
+            
             $resultEmpresaOrdenante=$this->empresaordenante_model->updateEmpresaOrdenante($value);
+            
             //Asocio el numero de lote a la nomina y modifico la nomina detalle con la fecha de envio
             $value = array ('numero_lote'=>$lote,
                             'id'=>$nomina
                             );
             $resultPayments=$this->payments_model->updateNumeroLote($value);
+
             $value = array ('fecha'=>$fecha,
                 'id_nomina'=>$nomina
             );
             $resultPayments=$this->payments_model->updateFechaValor($value);
-            //Si la nomina detalle tiene mas de 500 registros genero otro archivo, es decir, un archivo cada 500 registros.
+
+            
+            $resultPayments=$this->payments_model->updateEstatusNominabyId($nomina,$estatus_nomina_procesada);
+            $resultPayments=$this->payments_model->updateEstatusNominaDetallebyId($nomina,$estatus_nominadetalle_procesada);
+            
+            
+            
             //Genero el TXT del banco
             $resultPayments=$this->payments_model->getPaymentsGenerateTXTFile($nomina);
             $this->load->helper('file');
             $salt="\r\n";
-            // Encabezado del archivo TXT
-            $header=    "HEADER  " . 
-                        str_pad($lote, 8, "0", STR_PAD_LEFT) . 
-                        str_pad($negociacion, 8, "0", STR_PAD_LEFT) . 
-                        substr($rif,0,1) . 
-                        str_pad(substr($rif,1),9,"0", STR_PAD_LEFT) . 
-                        $fecha . 
-                        $fecha .
-                        $salt;
-            write_file('txttemp', $header,'w');
+            
+
+                      
             // Debito y Credito de cada pago del archivo TXT
+            $id_archivos=0;
+            $nombre_archivo='PROV_' . date('Ymd') . '_' . $lote . '_'; 
             $cantidad_registros=0;
             $suma_registros=0;
             foreach ($resultPayments->result() as $fila){
+                // Si la cantidad de registros es cero, se crea un nuevo archivo.
+                if ($cantidad_registros==0){
+                    // Encabezado del archivo TXT
+                    $header=    "HEADER  " .
+                        str_pad($lote, 8, "0", STR_PAD_LEFT) .
+                        str_pad($negociacion, 8, "0", STR_PAD_LEFT) .
+                        substr($rif,0,1) .
+                        str_pad(substr($rif,1),9,"0", STR_PAD_LEFT) .
+                        $fecha .
+                        $fecha .
+                        $salt;
+                        $id_archivos=$id_archivos+1;
+                        
+                        write_file($nombre_archivo . $id_archivos . '.txt', $header,'w');
+                        
+                }
+                
                 $monto_entero=0;
                 $monto_decimal=0;
                 $aux_monto=explode(".", $fila->monto_credito);
@@ -190,29 +220,69 @@ class Generatebankfile extends CI_Controller {
                             $salt;
                 $cantidad_registros=$cantidad_registros+1;
                 $suma_registros=$suma_registros+$fila->monto_credito;
-                write_file('txttemp',$debito,'a');
-                write_file('txttemp',$credito,'a');
-            }
-            
-            $monto_entero=0;
-            $monto_decimal=0;
-            $aux_monto=explode(".", $suma_registros);
-            if (count($aux_monto)>0){$monto_entero=$aux_monto[0];}
-            if (count($aux_monto)>1){$monto_decimal=$aux_monto[1];}
-
-            //Pie del archivo con resumen del total
-            $footer=    "TOTAL   " . 
+                write_file($nombre_archivo . $id_archivos . '.txt',$debito,'a');
+                write_file($nombre_archivo . $id_archivos . '.txt',$credito,'a');
+                
+                //El archivo TXT soporta hasta 500 transacciones, si el archivo tiene mas de 500 se cierra en esta condición para abrir otro archivo.
+                if ($cantidad_registros==500){
+                    $monto_entero=0;
+                    $monto_decimal=0;
+                    $aux_monto=explode(".", $suma_registros);
+                    if (count($aux_monto)>0){$monto_entero=$aux_monto[0];}
+                    if (count($aux_monto)>1){$monto_decimal=$aux_monto[1];}
+                    
+                    //Pie del archivo con resumen del total
+                    $footer=    "TOTAL   " .
                         str_pad($cantidad_registros, 5, "0", STR_PAD_LEFT) .
                         str_pad($cantidad_registros, 5, "0", STR_PAD_LEFT) .
                         str_pad($monto_entero, 15, "0", STR_PAD_LEFT) .
                         "," .
                         str_pad($monto_decimal, 2, "0", STR_PAD_LEFT).
                         $salt;
-            write_file('txttemp',$footer,'a');
-            //Se carga el archivo y se descarga
-            $archivo= read_file('txttemp');
-            $this->load->helper('download');
-            force_download('PROV_' . date('Ymd') .'.txt', $archivo);
+                        write_file($nombre_archivo . $id_archivos . '.txt',$footer,'a');
+                       
+                        $cantidad_registros=0;
+                        $suma_registros=0;
+                }
+            
+            }
+            //El archivo TXT soporta hasta 500 transacciones, si el archivo tiene menos de 500 se cierra en esta condición.
+            if ($cantidad_registros<500){
+                $monto_entero=0;
+                $monto_decimal=0;
+                $aux_monto=explode(".", $suma_registros);
+                if (count($aux_monto)>0){$monto_entero=$aux_monto[0];}
+                if (count($aux_monto)>1){$monto_decimal=$aux_monto[1];}
+                
+                //Pie del archivo con resumen del total
+                $footer=    "TOTAL   " .
+                    str_pad($cantidad_registros, 5, "0", STR_PAD_LEFT) .
+                    str_pad($cantidad_registros, 5, "0", STR_PAD_LEFT) .
+                    str_pad($monto_entero, 15, "0", STR_PAD_LEFT) .
+                    "," .
+                    str_pad($monto_decimal, 2, "0", STR_PAD_LEFT).
+                    $salt;
+                    write_file($nombre_archivo . $id_archivos . '.txt',$footer,'a');
+                    
+                    
+                    $cantidad_registros=0;
+                    $suma_registros=0;
+            }
+            
+            $this->load->library('zip');
+            
+            for($i=0;$i<=$id_archivos;$i=$i+1){
+                //Se Agregan los archivos de nominas a un archivos al ZIP
+                $this->zip->read_file($nombre_archivo . $i . '.txt');
+                
+                //Se Eliminan los archivos temporales de nomina
+                unlink($nombre_archivo . $i . '.txt');
+            }
+            
+            
+            //Se Descargar el archivo Zip con las nominas
+            $this->zip->download('PROV_' . date('Ymd') . '_' . $lote. '.zip');
+            
         }
     }
 
