@@ -470,7 +470,7 @@
                                     </td> 
                                     
                                     <td>
-                                            <?= number_format($data->credito, 2, ",", ".")?>
+                                            <?= $data->credito//number_format($data->credito, 2, ",", ".")?>
                                     </td>  
                                     
                                     <td>

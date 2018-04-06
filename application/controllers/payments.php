@@ -145,6 +145,7 @@ class Payments extends CI_Controller {
             for ($i = 1; $i<= $cuount; $i++){
                 $row = array();
                 $id = $this->input->post ($i);
+                
                     
                 $beneficiario = strtoupper($this->form_validation->stripAccents( $this->input->post ("beneficiario".$id)));
                 $row =[
@@ -330,6 +331,9 @@ class Payments extends CI_Controller {
                     else 
                         $tipo_pago = "2";
                         
+                        
+                    $credito = str_replace('.','',$datafile[7]);
+                    $credito = str_replace(',','.',$credito);
                     
                     $row = array("beneficiario"=> $datafile[0],
                        // "referencia_credito"=> $datafile[1],
@@ -339,7 +343,7 @@ class Payments extends CI_Controller {
                         "documento_identidad"=> $datafile[4],
                         "id_tipo_cuenta"=> $datafile[5],
                         "numero_cuenta"=> $datafile[6],
-                        "credito"=> $datafile[7],
+                        "credito"=>$credito,
                         "id_tipo_pago"=> $tipo_pago,
                         "id_banco"=> $datafile[9],
                         //"id_duracion_cheque"=> $datafile[10],
@@ -482,7 +486,16 @@ class Payments extends CI_Controller {
             
             
             //Validacion del monto
-            ($this->form_validation->numeric($validateparams->credito)
+            
+            //str_replace
+            $credito = 0;
+            if (isset($validateparams->credito)){
+                $credito = str_replace('.','',$validateparams->credito);
+                $credito = str_replace(',','.',$credito);
+                
+            }
+            
+            ($this->form_validation->numeric($credito)
             && $this->form_validation->required($validateparams->credito)) == true
             ? $validateparams->vcredito = true
             : $validateparams->vcredito = false;
