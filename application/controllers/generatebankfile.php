@@ -185,7 +185,7 @@ class Generatebankfile extends CI_Controller {
                             str_pad($fila->numero_referencia_credito, 8, "0", STR_PAD_LEFT) . 
                             substr($rif,0,1) . 
                             str_pad(substr($rif,1),9,"0", STR_PAD_LEFT) . 
-                            str_pad($empresa,35," ", STR_PAD_RIGHT) . 
+                            str_pad(strtoupper($empresa),35," ", STR_PAD_RIGHT) . 
                             $fecha . 
                             $tipocuenta .
                             $numerocuenta . 
