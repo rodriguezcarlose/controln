@@ -118,6 +118,13 @@ class Generatebankfile extends CI_Controller {
                             'id_tipo_cuenta' => $tipocuenta, 
                             'numero_cuenta' => $numerocuenta );
             
+            if ($tipocuenta=="1"){
+                $tipocuenta="00";
+            }else{
+                $tipocuenta="01";
+            }
+            
+            
             $resultEmpresaOrdenante=$this->empresaordenante_model->updateEmpresaOrdenante($value);
             
             //Asocio el numero de lote a la nomina y modifico la nomina detalle con la fecha de envio
@@ -172,18 +179,22 @@ class Generatebankfile extends CI_Controller {
                 $aux_monto=explode(".", $fila->monto_credito);
                 if (count($aux_monto)>0){$monto_entero=$aux_monto[0];}
                 if (count($aux_monto)>1){$monto_decimal=$aux_monto[1];}
+
+                
                 $debito=    "DEBITO  " . 
                             str_pad($fila->numero_referencia_credito, 8, "0", STR_PAD_LEFT) . 
                             substr($rif,0,1) . 
                             str_pad(substr($rif,1),9,"0", STR_PAD_LEFT) . 
                             str_pad($empresa,35," ", STR_PAD_RIGHT) . 
                             $fecha . 
+                            $tipocuenta .
                             $numerocuenta . 
                             str_pad($monto_entero, 15, "0", STR_PAD_LEFT) . 
                             "," . 
                             str_pad($monto_decimal, 2, "0", STR_PAD_LEFT) . 
                             "VEB40" .
                             $salt;
+
                 if (strlen($fila->nombre_beneficiario)>30) {
                     $nombre=substr($fila->nombre_beneficiario,0,30);
                 }else {
@@ -215,7 +226,7 @@ class Generatebankfile extends CI_Controller {
                             $tp . 
                             str_pad($fila->banco,11, " ", STR_PAD_RIGHT) . 
                             $fila->duracion_cheque . 
-                            "501" . 
+                          //  "501" . 
                             $fila->email_beneficiario .
                             $salt;
                 $cantidad_registros=$cantidad_registros+1;
