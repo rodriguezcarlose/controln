@@ -359,7 +359,7 @@ class Payments_model extends CI_Model
 
         $this->db->set('id', $id_nomina);
         $this->db->set('descripcion', $descripcion);
-        $this->db->set('id_estatus', 1);
+        $this->db->set('id_estatus', 2);
         $this->db->set('id_proyecto', $proyecto);
         $this->db->set('id_usuario', $usuario);
         $this->db->set('id_gerencia', $gerencia);

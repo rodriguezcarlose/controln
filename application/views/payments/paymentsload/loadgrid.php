@@ -508,7 +508,7 @@
         	           <?php  } ?>
         	           
                 	<div class="small-12 column text-right buttonPanel">
-	  	            	<input type="submit" id="btnEnviar" class="button small right" value="Guardar"  />
+	  	            	<input type="submit" id="btnEnviar" class="button small right" value="Guardar y Liberar"  />
                     </div>   	
 		 <?php }  ?>
 		 <?= form_close()?>    
