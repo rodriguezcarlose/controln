@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class claim extends CI_Controller {
     
+    private $validation = true;
     
     /**
      * __construct function.
@@ -25,7 +26,7 @@ class claim extends CI_Controller {
         $this->load->model('Gerencia_model');
         $this->load->model('Cargo_model');
         $this->load->model('tipoerror_model');
-        
+        $this->load->model('TiposCuentas_model');
     }
     
     public function index()
@@ -35,8 +36,8 @@ class claim extends CI_Controller {
         
     }
     
-    public function addclaims()
-    {
+    public function addclaims() {
+        
         
         $data = new stdClass();
         $data->bancos =  $this->Banco_model->getBancos();
@@ -45,6 +46,31 @@ class claim extends CI_Controller {
         $data->gerencia =  $this->Gerencia_model->getGerencia();
         $data->cargo =  $this->Cargo_model->getCargos();
         $data->tipoerror =  $this->tipoerror_model->gettipoerror();
+        $data->tiposcuentas =  $this->TiposCuentas_model->gettiposcuentas();
+        
+        ///
+     
+     
+        
+        
+        //// permite dejar los campos con la informacion sin ser borrada luego de las validaciones
+        
+        $data->id_tipo_documento_identidad = $this->input->post("id_tipo_documento_identidad");
+        $data->documento_identidad = $this->input->post("documento_identidad");
+        $data->nombre = $this->input->post("nombre");
+        $data->apellido = $this->input->post("apellido");
+        $data->telefono = $this->input->post("telefono");
+        $data->correo = $this->input->post("correo");
+        $data->id_banco = $this->input->post("id_banco");
+        $data->id_tipos_cuentas = $this->input->post("id_tipos_cuentas");
+        $data->numero_cuenta = $this->input->post("numero_cuenta");
+        $data->id_proyecto = $this->input->post("id_proyecto");
+        $data->id_gerencia = $this->input->post("id_gerencia");
+        $data->id_cargo = $this->input->post("id_cargo");
+        $data->id_tipo_error = $this->input->post("id_tipo_error");
+        $data->cantidad_dias = $this->input->post("cantidad_dias");
+        
+        
         
         // set validation rules
         $this->form_validation->set_rules('id_tipo_documento_identidad', 'id_tipo_documento_identidad', 'required', array('required' => 'El Campo Nacionalidad es requerido'));
@@ -55,19 +81,19 @@ class claim extends CI_Controller {
         $this->form_validation->set_rules('correo', 'correo', 'required|valid_email|min_length[8]|max_length[30]',array('required' => 'El Campo Correo es requerido','valid_email'=>'El campo Correo debe ser Valido con @/.com','min_length' => 'El Campo Correo debe tenr un minimo de 8 caracteres','max_length' => 'El Campo Correo debe tener un maximo 30 caracteres'));
         $this->form_validation->set_rules('confirmacion', 'confirmacion', 'required|matches[correo]',array('required'=>'El Campo Confirmacion es requerido','matches'=>'El Campo Confirmacion Correo Electronico debe coincidir con Correo Electronico'));
         $this->form_validation->set_rules('id_banco', 'id_banco', 'required', array('required' => 'El Campo Banco es requerido'));
+        $this->form_validation->set_rules('id_tipos_cuentas', 'id_tipos_cuentas', 'required', array('required' => 'El Campo Tipo de Cuenta es requerido'));
         $this->form_validation->set_rules('numero_cuenta', 'numero_cuenta', 'required|numeric|exact_length[20]',array('required' => 'El N&uacute;mero de cuenta es requerido','numeric' => 'El N&uacute;mero de Cuenta solo permite numeros','exact_length' => 'El N&uacute;mero de Cuenta debe ser de 20 d&iacute;gitos'));
         $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required', array('required' => 'El Campo Proyecto es requerido'));
         $this->form_validation->set_rules('id_gerencia', 'id_gerencia', 'required', array('required' => 'El Campo Gerencia es requerido'));
         $this->form_validation->set_rules('id_cargo', 'id_cargo', 'required', array('required' => 'El Campo Cargo es requerido'));
         $this->form_validation->set_rules('id_tipo_error', 'id_tipo_error', 'required', array('required' => 'El Campo Tipo Error es requerido'));
+        $this->form_validation->set_rules('cantidad_dias', 'cantidad_dias', 'required|numeric',array('required' => 'El Campo Dias trabajados es requerido','numeric' => 'El Campo Dias Trabajados solo permite numeros'));
         
         
         //validaci�n del captcha
        //  $this->form_validation->set_rules('g-recaptcha-response', '', 'required',array('required' => 'El Campo capcha es requerido'));
         
-         
-         
-        
+       
         if ($this->form_validation->run() == false) {
             
             // validation not ok, send validation errors to the view
@@ -92,20 +118,16 @@ class claim extends CI_Controller {
             $gerencia = $this->input->post('id_gerencia');
             $cargo = $this->input->post('id_cargo');
             $tipoerror = $this->input->post('id_tipo_error');
+            $cantidaddias= $this->input->post('cantidad_dias');
             
             
             $this->load->view('templates/header');
             $this->load->view('templates/navigation');
             
-            
-
-            
-            $this->load->view('claims/uploadclaim_success');
-            
+      
             
             $this->load->view('templates/footer');
-            
-
+            echo" Reclamo enviado exitosamente";
         }
         
        

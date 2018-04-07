@@ -58,10 +58,14 @@ class Claims_model extends CI_Model
             'correo'=>$this->input->post('correo'),
             'id_banco'=> $this->input->post('id_banco'),
             'numero_cuenta'=> $this->input->post('numero_cuenta'),
+            'id_tipos_cuentas'=>$this->input->post('id_tipos_cuentas'),
             'id_proyecto'=>$this->input->post('id_proyecto'),
             'id_gerencia'=> $this->input->post('id_gerencia'),
             'id_cargo'=>$this->input->post('id_cargo'),
             'id_tipo_error'=>$this->input->post('id_tipo_error'),
+            'cantidad_dias'=>$this->input->post('cantidad_dias'),
+            'fecha_reclamo'=>$this->input->post('fecha_reclamo'),
+            'id_estatus_reclamo'=>1,
        );
         $this->db->insert('reclamo',$data);
     }

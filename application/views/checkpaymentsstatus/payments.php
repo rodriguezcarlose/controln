@@ -34,7 +34,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <td><?= $fila->numero_cuenta; ?></td>
                         <td><?= $fila->fecha; ?></td>
                        	<td><?= $fila->estatus;?></td>
-                       	<td><a href=<?= base_url() . 'claims/registrar';?> >reclamo</a></td>
+                       	<td><a href=<?= base_url() . 'claim/addclaims';?> >reclamo</a></td>
                 </tr>
          
                 <?php }?>
