@@ -4,6 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Paymentsrejected extends CI_Controller {
     
     
+    
     /**
      * __construct function.
      *
@@ -16,7 +17,7 @@ class Paymentsrejected extends CI_Controller {
         
         //Para impedir el acceso directo desde la URL
         //Validamos si es el path principal ? , si lo es deje accesar desde url
-        /*if ($this->uri->uri_string()) {
+        if ($this->uri->uri_string()) {
          //Carga Libraria User_agent
          $this->load->library('user_agent');
          //Verifica si llega desde un enlace
@@ -33,7 +34,7 @@ class Paymentsrejected extends CI_Controller {
          //Podemos aqui crear un mensaje antes de redirigir que informe
          redirect(base_url());
          }
-         }*/
+         }
         $this->load->model('payments_model');
         
     }
@@ -45,15 +46,85 @@ class Paymentsrejected extends CI_Controller {
     
     
     public function loadgrid(){
-        $this->load->view('templates/header');
-        $this->load->view('templates/Navigation');
         
-        $resultPayments=$this->payments_model->getPaymentsProcessed();
+        $data = new stdClass();
+        $this->form_validation->set_rules('nomina', 'nomina', 'required', array('required' => 'Debe seleccionar una N&oacute;mina de la lista'));
         
-        $data=array('paymentsProcessed'=>$resultPayments);
+        if (isset($_SESSION['data_rejected'])){
+            $data = $_SESSION['data_rejected'];
+        }
         
-        $this->load->view('payments/paymentsrejected/loadgrid',$data);
-        $this->load->view('templates/footer');
+        if ($this->form_validation->run() == false){
+            $this->load->view('templates/header');
+            $this->load->view('templates/Navigation');
+            $resultPayments=$this->payments_model->getPaymentsProcessed();
+            $data->paymentsProcessed = $resultPayments;
+            $this->load->view('payments/paymentsrejected/loadgrid',$data);
+            $this->load->view('templates/footer');
+        }else{
+            //echo "procesar";
+            
+            
+            
+            
+            //vamos cambiando el estatus de los rechazados uno a uno
+            
+            $records = $_SESSION['data_rejected'];
+            
+           // $data->records = array();
+            
+            $noDataRecords= array();
+           // $data->records = array();
+           
+            $update_successful = false; 
+            
+            foreach ($data->records as $dataRecords) {    
+                $count= $this->payments_model->getCantidadEstatusNominabyReferenciaCredito($dataRecords["credito"],$this->input->post("nomina"));
+                if ($count > 0 ){
+                    $resultPayments=$this->payments_model->updateEstatusNominaDetallebyReferenciaCredito($dataRecords["credito"],4,$this->input->post("nomina"));
+                    $update_successful = true;
+                }else{
+                    array_push($noDataRecords,$dataRecords);
+                    
+                }
+            }
+            unset($_SESSION['data_rejected']);
+            
+            if ($update_successful){
+                // cambiamos el estatus de todos los registros a 3 (pagada) en detalkle nomina;
+                $this->payments_model->updateEstatusNominaDetallePagadas($this->input->post("nomina"),3);
+                //cambiaos el estaus de la nómina a 4 (pagada en el banco
+                $this->payments_model->updateEstatusNominabyId($this->input->post("nomina"),4);
+            }
+            
+            if ( count($noDataRecords) > 0){
+                if(count($data->records) == count($noDataRecords))
+                    $data->error = 'No se ha cargado ning&uacute;n registro, valide que haya seleccionado la n&oacutemina corecta.';
+                else 
+                    $data->success = 'Se ha cargado con &Eacute;xito el archivo de Rechazados, pero fallaron los siguientes registros.';
+                
+                $params["nodatarecords"] = $noDataRecords;
+                //hay reachazos que no se encontraron en la BD
+                $this->load->view('templates/header');
+                $this->load->view('templates/Navigation',$data);
+                $this->load->view('payments/paymentsrejected/loadgridresult',$params);
+                $this->load->view('templates/footer');
+            }else{
+                unset($data->records);
+                $data->success = 'Se ha cargado con &Eacute;xito el archivo de Rechazados.';
+                $resultPayments=$this->payments_model->getPaymentsProcessed();
+                $data->paymentsProcessed = $resultPayments;
+                $this->load->view('templates/header');
+                $this->load->view('templates/Navigation',$data);
+                $this->load->view('payments/paymentsrejected/loadgrid');
+                $this->load->view('templates/footer');
+
+            }
+            
+           
+        }
+        
+        
     
         
     }
@@ -78,7 +149,6 @@ class Paymentsrejected extends CI_Controller {
             $this->load->view('templates/footer');
         }
         else{
-            //$data->upload = array('upload_data' => $this->upload->data());
             
             //cargamos el arcivo
             $file = $this->upload->data('file_path').$this->upload->data('file_name');
@@ -108,7 +178,6 @@ class Paymentsrejected extends CI_Controller {
                         "fecha"=> $datafile[8],
                    );
                     
-                    
                     //agregamos el registro en el arreglo
                     array_push($data->records,$row);
                     
@@ -122,16 +191,10 @@ class Paymentsrejected extends CI_Controller {
             // eliminamos el archivo cargado
             unlink($this->upload->data('file_path').$this->upload->data('file_name'));
             
+            $_SESSION['data_rejected'] = $data;
+
+            $this->loadgrid();
             
-            $this->load->view('templates/header');
-            $this->load->view('templates/Navigation',$data);
-            $resultPayments=$this->payments_model->getPaymentsProcessed();
-            $data=array('paymentsProcessed'=>$resultPayments);
-            //$data->paymentsProcessed = $resultPayments;
-            $this->load->view('payments/paymentsrejected/loadgrid',$data);
-            $this->load->view('templates/footer');
-            
-           // redirect(base_url().'payments/loadgrid');
             
         }
         

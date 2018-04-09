@@ -317,7 +317,7 @@
                                         			name="credito<?= $data->id ?>"  
                                         			<?= $data->vcredito==true ? 
                                         	           'type="text2"' : 
-                                        	           'type="text3" title="El Campo monto debe ser numerico."'?> 
+                                        	           'type="text3" title="El Campo monto debe ser numerico mayor a cero."'?> 
                                         	            value="<?= $data->credito ?>" />
                                     
                                     

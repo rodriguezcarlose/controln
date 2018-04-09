@@ -457,7 +457,7 @@ class Payments extends CI_Controller {
             
             //Validacion Documeto Identidad
             ($this->form_validation->numeric($validateparams->documento_identidad)
-            && strlen($validateparams->documento_identidad ) <= 8
+            && strlen($validateparams->documento_identidad ) <= 9
             && $this->form_validation->required($validateparams->documento_identidad)) == true
             ? $validateparams->vdocumento_identidad = true
             : $validateparams->vdocumento_identidad = false;
@@ -496,7 +496,8 @@ class Payments extends CI_Controller {
             }
             
             ($this->form_validation->numeric($credito)
-            && $this->form_validation->required($validateparams->credito)) == true
+            && $this->form_validation->required($validateparams->credito)
+            && $credito > 0) == true
             ? $validateparams->vcredito = true
             : $validateparams->vcredito = false;
             $validateparams->vcredito == false ? $this->validation = false :  $this->validation = $this->validation;

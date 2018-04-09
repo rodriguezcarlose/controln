@@ -82,7 +82,6 @@ class Payments_model extends CI_Model
     
     public function deleteTablepaymentsTem($table){
         $result=$this->db->query("DROP TABLE IF EXISTS ".$table.";");
-        
     }
     
     
@@ -407,6 +406,32 @@ class Payments_model extends CI_Model
             $this->db->where('id_nomina', $idNomina);
             $this->db->update('nomina_detalle');
 
+    }
+    
+    public function updateEstatusNominaDetallePagadas($idNomina, $idEstatus){
+        
+        $this->db->set('id_estatus', $idEstatus);
+        $this->db->where('id_nomina', $idNomina);
+        $this->db->where('id_estatus', 2);
+        $this->db->update('nomina_detalle');
+        
+    }
+    
+    public function updateEstatusNominaDetallebyReferenciaCredito($referenciaCredito, $idEstatus, $idnomina){
+        
+        
+        $this->db->set('id_estatus', $idEstatus);
+        $this->db->where('referencia_credito', $referenciaCredito);
+        $this->db->where("id_nomina", $idnomina);
+        return $this->db->update('nomina_detalle');
+        
+    }
+    
+    public function getCantidadEstatusNominabyReferenciaCredito($referenciaCredito, $idnomina){
+        
+        $this->db->where('referencia_credito', $referenciaCredito);
+        $this->db->where("id_nomina", $idnomina);
+        return $this->db->count_all_results('nomina_detalle');
     }
 
 

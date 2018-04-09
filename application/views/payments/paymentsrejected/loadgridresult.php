@@ -2,49 +2,20 @@
 </br>
 <div class="container">
 	<div class="col-md-20">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="page-header">
-					<?php echo form_open_multipart('paymentsrejected/do_upload');?>
-   						<h3>Cargar Pagos Rechazados</h3>
-   						<div class="field small-3 column">
-                           	<label for="Enum:">Archivo:</label>
-   							<input type="file" name="userfile" size="20"/>
-   						</div>
-                           <input type="submit" value="Cargar" id="btnCargar" class="button small"  />
-                  	<?= form_close()?>
-				</div>
-			</div>
-		</div>
 
-		<?=form_open('paymentsrejected/loadgrid')?>
-         	<div class="row">
-               	<div class="large-12 columns">
-	                <label for="Enum:">N&oacute;mina:</label>
-					<select id="nomina" name="nomina" >
-                    	<option value="">Seleccione</option>
-                    	
-                      	<?php
-                      	if (isset($paymentsProcessed)){
-                      	         foreach ($paymentsProcessed->result() as $fila){ ?>
-                     					<option value="<?= $fila->id; ?>"><?= '(' . $fila->id . ') ' . $fila->fecha_creacion . ' [' . $fila->estatus . ']' . ' PROYECTO:' . $fila->nombre_proyecto . '. GERENCIA:' .  $fila->nombre_gerencia  . '. DESCRIPCION:'. $fila->descripcion; ?></option>
-            			<?php 
-                      	         
-                      	         }
-                      	}?>
-                  	</select>
-            	</div>
-        	</div>		
-        	<?php $i = 1?>
-        	<?php if (isset($records) ) { ?>
+
+		<?=form_open('/')?>
+			<h3>Cargar Pagos Rechazados</h3>
+			</br>	
+			<h4>Los siguientes registros no fueron procesados ya que no encontraron en la Base de Datos, por favor valide los datos.</h4>
+        	<?php if (isset($nodatarecords) ) { ?>
         		
         		<table id="dataTable">
                 		<thead>
                 			<tr>
-                				<td>ID</td>
                     			<td>Nro. Ticket</td>
                                 <td>Nro. D&eacute;bito</td>
-                                <td>Nro. Cr&eacute;dito</td>
+                                <td>Nro. Cr&eacute;dito</td>	
                                 <td>Nro. RIF/CI</td>
                                 <td>Beneficiario</td>
                                 <td>Tipo Cuenta</td>
@@ -54,13 +25,10 @@
                 			</tr>
                 		</thead>
                 		<tbody>
-                		 <?php foreach ($records as $dataRecords) { ?>
-                		 	<?php $i ++;?>
+                		 <?php foreach ($nodatarecords as $dataRecords) { ?>
                     		 <tr>
-                    		 			<td><?= $i?></td>
                                         <td>
                                         	<?php echo ($dataRecords["ticket"])?>
-                                        	<input type ="hidden"  name = "ticket" value="<?= $dataRecords["ticket"]?>" >
                                         </td>
                                         <td>
                                         	<?php echo ($dataRecords["debito"])?>
@@ -93,7 +61,7 @@
                 </table>
                 
                 <div class="small-12 column text-right buttonPanel">
-					<input type="submit" id="btnEnviar" class="button small right" value="Procesar" />
+					<input type="submit" id="btnEnviar" class="button small right" value="Aceptar" />
 				</div>   
         	
         	<?php }?>
