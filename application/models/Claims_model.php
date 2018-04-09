@@ -68,6 +68,7 @@ class Claims_model extends CI_Model
             'id_estatus_reclamo'=>1,
        );
         $this->db->insert('reclamo',$data);
+        
     }
     
     public function  getUploadclaim(){

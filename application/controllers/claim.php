@@ -3,6 +3,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class claim extends CI_Controller {
     
+    public function success()
+    {
+        $this->session->set_flashdata('success', 'User Updated successfully');
+        return $this->load->view('myPages');
+    }
+    
     private $validation = true;
     
     /**
@@ -11,10 +17,11 @@ class claim extends CI_Controller {
      * @access public
      * @return void
      */
+ 
     public function __construct() {
         
         parent::__construct();
-        
+        $this->load->library("session");
 
         $this->load->model('TiposCuentas_model');
         $this->load->model('Banco_model');
@@ -73,25 +80,26 @@ class claim extends CI_Controller {
         
         
         // set validation rules
+        
         $this->form_validation->set_rules('id_tipo_documento_identidad', 'id_tipo_documento_identidad', 'required', array('required' => 'El Campo Nacionalidad es requerido'));
-        $this->form_validation->set_rules('documento_identidad', 'documento_identidad', 'required|numeric|min_length[5]|max_length[9]',array('required' => 'El Campo Cedula es requerido','numeric' => 'El Campo Cedula solo permite numeros','min_length' => 'El Campo Cedula debe indicar al menos 5 digitos','max_length' => 'El Campo Cedula debe indicar maximo 9 digitos'));
-        $this->form_validation->set_rules('nombre', 'nombre', 'required|alpha_spaces|min_length[3]|max_length[30]',array('required' => 'El Campo Nombre es requerido','alpha_spaces' => 'El Campo Nombre solo permite Letra','min_length' => 'El Campo Nombre debe indicar al menos 3 caracteres','max_length' => 'El Campo Nombre debe indicar maximo 30 caracteres'));
-        $this->form_validation->set_rules('apellido', 'apellido', 'required|alpha_spaces|min_length[3]|max_length[30]',array('required' => 'El Campo Apellido es requerido','alpha_spaces' => 'El Campo Apellido solo permite Letras','min_length' => 'El Campo Apellido debe indicar al menos 8 caracteres','max_length' => 'El Campo Apellido debe indicar maximo 40 caracteres'));
-        $this->form_validation->set_rules('telefono', 'telefono', 'required|numeric|exact_length[11]',array('required' => 'El Campo Telefono es requerido','numeric' => 'El Campo Telefono solo permite numeros','exact_length' => 'El Campo Telefono debe indicar 11 digitos'));
-        $this->form_validation->set_rules('correo', 'correo', 'required|valid_email|min_length[8]|max_length[30]',array('required' => 'El Campo Correo es requerido','valid_email'=>'El campo Correo debe ser Valido con @/.com','min_length' => 'El Campo Correo debe tenr un minimo de 8 caracteres','max_length' => 'El Campo Correo debe tener un maximo 30 caracteres'));
-        $this->form_validation->set_rules('confirmacion', 'confirmacion', 'required|matches[correo]',array('required'=>'El Campo Confirmacion es requerido','matches'=>'El Campo Confirmacion Correo Electronico debe coincidir con Correo Electronico'));
+        $this->form_validation->set_rules('documento_identidad', 'documento_identidad', 'trim|required|numeric|min_length[5]|max_length[9]',array('required' => 'El Campo Cedula es requerido','numeric' => 'El Campo Cedula solo permite numeros','min_length' => 'El Campo Cedula debe indicar al menos 5 digitos','max_length' => 'El Campo Cedula debe indicar maximo 9 digitos'));
+        $this->form_validation->set_rules('nombre', 'nombre', 'trim|required|alpha_spaces|min_length[3]|max_length[30]',array('required' => 'El Campo Nombre es requerido','alpha_spaces' => 'El Campo Nombre solo permite Letra','min_length' => 'El Campo Nombre debe indicar al menos 3 caracteres','max_length' => 'El Campo Nombre debe indicar maximo 30 caracteres'));
+        $this->form_validation->set_rules('apellido', 'apellido', 'trim|required|alpha_spaces|min_length[3]|max_length[30]',array('required' => 'El Campo Apellido es requerido','alpha_spaces' => 'El Campo Apellido solo permite Letras','min_length' => 'El Campo Apellido debe indicar al menos 8 caracteres','max_length' => 'El Campo Apellido debe indicar maximo 40 caracteres'));
+        $this->form_validation->set_rules('telefono', 'telefono', 'trim|required|numeric|exact_length[11]',array('required' => 'El Campo Telefono es requerido','numeric' => 'El Campo Telefono solo permite numeros','exact_length' => 'El Campo Telefono debe indicar 11 digitos'));
+        $this->form_validation->set_rules('correo', 'correo', 'trim|required|valid_email|min_length[8]|max_length[30]',array('required' => 'El Campo Correo es requerido','valid_email'=>'El campo Correo debe ser Valido con @/.com','min_length' => 'El Campo Correo debe tenr un minimo de 8 caracteres','max_length' => 'El Campo Correo debe tener un maximo 30 caracteres'));
+        $this->form_validation->set_rules('confirmacion', 'confirmacion', 'trim|required|matches[correo]',array('required'=>'El Campo Confirmacion es requerido','matches'=>'El Campo Confirmacion Correo Electronico debe coincidir con Correo Electronico'));
         $this->form_validation->set_rules('id_banco', 'id_banco', 'required', array('required' => 'El Campo Banco es requerido'));
         $this->form_validation->set_rules('id_tipos_cuentas', 'id_tipos_cuentas', 'required', array('required' => 'El Campo Tipo de Cuenta es requerido'));
-        $this->form_validation->set_rules('numero_cuenta', 'numero_cuenta', 'required|numeric|exact_length[20]',array('required' => 'El N&uacute;mero de cuenta es requerido','numeric' => 'El N&uacute;mero de Cuenta solo permite numeros','exact_length' => 'El N&uacute;mero de Cuenta debe ser de 20 d&iacute;gitos'));
+        $this->form_validation->set_rules('numero_cuenta', 'numero_cuenta', 'trim|required|numeric|exact_length[20]',array('required' => 'El N&uacute;mero de cuenta es requerido','numeric' => 'El N&uacute;mero de Cuenta solo permite numeros','exact_length' => 'El N&uacute;mero de Cuenta debe ser de 20 d&iacute;gitos'));
         $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required', array('required' => 'El Campo Proyecto es requerido'));
         $this->form_validation->set_rules('id_gerencia', 'id_gerencia', 'required', array('required' => 'El Campo Gerencia es requerido'));
         $this->form_validation->set_rules('id_cargo', 'id_cargo', 'required', array('required' => 'El Campo Cargo es requerido'));
         $this->form_validation->set_rules('id_tipo_error', 'id_tipo_error', 'required', array('required' => 'El Campo Tipo Error es requerido'));
-        $this->form_validation->set_rules('cantidad_dias', 'cantidad_dias', 'required|numeric',array('required' => 'El Campo Dias trabajados es requerido','numeric' => 'El Campo Dias Trabajados solo permite numeros'));
+        $this->form_validation->set_rules('cantidad_dias', 'cantidad_dias', 'trim|required|numeric',array('required' => 'El Campo Dias trabajados es requerido','numeric' => 'El Campo Dias Trabajados solo permite numeros'));
         
         
         //validaci�n del captcha
-       //  $this->form_validation->set_rules('g-recaptcha-response', '', 'required',array('required' => 'El Campo capcha es requerido'));
+         $this->form_validation->set_rules('g-recaptcha-response', '', 'required',array('required' => 'El Campo capcha es requerido'));
         
        
         if ($this->form_validation->run() == false) {
@@ -124,10 +132,12 @@ class claim extends CI_Controller {
             $this->load->view('templates/header');
             $this->load->view('templates/navigation');
             
-      
-            
+      //set flash data
+            $this->session->set_flashdata('success','Reclamo Enviado con Exito');
+      redirect('claim/addclaims');
+           
             $this->load->view('templates/footer');
-            echo" Reclamo enviado exitosamente";
+
         }
         
        

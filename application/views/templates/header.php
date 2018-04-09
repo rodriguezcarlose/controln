@@ -11,9 +11,14 @@
                     <link href="<?= base_url()?>Content/excle/excle.autocomplete.multiple.css" rel="stylesheet" />
                     <link href="<?= base_url()?>Content/Site.css" rel="stylesheet"/>
                     <script src='https://www.google.com/recaptcha/api.js'></script>
-                
+               		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+					<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet" />
+
         </head>
         <body>
+        <?php
+	  $this->load->view('alert');
+	?>
         	<script src="<?= base_url()?>Scripts/jquery-1.10.2.js"></script>
             <script src="<?= base_url()?>Scripts/modernizr-2.6.2.js"></script>
         
@@ -63,7 +68,9 @@
                     element: '#EC-Menu'
                 });
             </script>
-            
-            
+ 
+
+
+
             
        

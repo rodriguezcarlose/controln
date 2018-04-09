@@ -2,6 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');?>
    <h2 class="show-for-small-only"></h2>    
    </br>
+  
    <div class="container">
    		<div class="row">
     	<h3>Reclamo de Pago </h3>
@@ -75,7 +76,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
         
 <h4>Datos Bancarios</h4>
    
-   
     			<div class="field small-4 columns">
             <label for="Enum:">Banco:</label>
                 	<select id="id_banco" name="id_banco">
@@ -143,7 +143,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
    							<input type="file" name="userfile" size="20"/>
                    			<input type="submit" value="Cargar" name = "btnCargar" id="btnCargar" class="button small"  />
 				<?= form_close()?>
-			
+				</div>
 <h4>Datos Evento</h4>
 				<div class="field small-3 columns">
             <label for="num:">Proyecto:</label>
@@ -252,19 +252,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
                					<?php }  ?>  
            			</select>
                   </div>
-                  
+                 
                   <div class="field small-3 columns">
             <label for="cantidad_dias">Dias Trabajados:</label>
             		   <input id="numeric" name="cantidad_dias" type="text" value="<?php if(isset($cantidad_dias)) echo $cantidad_dias; ?>" />
         		  </div>  
-            	
-            <div class="small-12 column text-right buttonPanel">
+          	<left>
+          		<div class="field small-12 columns">
+				<div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC">
+				</div>
+				</div>
+				</center>
+           <br> <div class=" right buttonPanel">
 					<input type="submit" id="btnEnviar" name = "btnEnviar" class="button small right" value="Enviar Reclamo"  />
- 				</div>
-				
-		</div>
+					
+ 						</div>
+ 						</div>
 		</form>
 	</div>
-
 </div>
 
