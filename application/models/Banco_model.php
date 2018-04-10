@@ -27,6 +27,13 @@ class Banco_model extends CI_Model {
         
     }
     
+    public function  getBancosbyId($id){
+        $this->db->select("codigo");
+        $this->db->where("id",$id);
+        return $this->db->get('banco');
+        
+    }
+    
     
     
 }

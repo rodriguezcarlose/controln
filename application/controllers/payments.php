@@ -29,7 +29,7 @@ class Payments extends CI_Controller {
         
         //Para impedir el acceso directo desde la URL
         //Validamos si es el path principal ? , si lo es deje accesar desde url
-        if ($this->uri->uri_string()) {
+        /*if ($this->uri->uri_string()) {
              //Carga Libraria User_agent
              $this->load->library('user_agent');
              //Verifica si llega desde un enlace
@@ -48,7 +48,7 @@ class Payments extends CI_Controller {
              }
              
              
-         }
+         }*/
         $this->load->library('pagination');
         //$this->load->library('common_validation');
         $this->load->model('payments_model');
@@ -79,7 +79,188 @@ class Payments extends CI_Controller {
         
     }
     
-    public function induvidualload(){
+    
+    
+    public function individualload(){
+        $data = new stdClass();
+        
+        $data->tiposcuentas =  $this->tiposcuentas;
+        $data->bancos =  $this->bancos;
+        $data->TipoDocumentoIdentidad =  $this->TipoDocumentoIdentidad;
+        $data->Cargo =  $this->Cargo;
+        $data->proyecto =  $this->Proyecto_model->getProyecto();
+        $data->gerencia =  $this->Gerencia_model->getGerencia();
+        
+        //obtenemos los valores del formulario, para retornarlos en caso de algun error de válidación
+        $data->descripcionnomina = $this->input->post("descripcion");
+        $data->id_proyecto = $this->input->post("id_proyecto");
+        $data->id_gerencia = $this->input->post("id_gerencia");
+        $data->id_cargo = $this->input->post("id_cargo");
+        $data->tipoDocumentoIdentidad = $this->input->post("tipoDocumentoIdentidad");
+        $data->tipocuenta = $this->input->post("tipocuenta");
+        $data->banco = $this->input->post("banco");
+        $data->beneficiario = $this->input->post("beneficiario");
+        $data->rifci =  $this->input->post("rifci");
+        $data->cuenta = $this->input->post("cuenta");
+        $data->monto = $this->input->post("monto");
+        
+        //inicio validaciones
+        $this->form_validation->set_rules('beneficiario', 'beneficiario', 'required|alpha_spaces', array('required' => 'El Campo beneficiario es requerido.','alpha_spaces'=>'El Campo beneficiario debe ser alfabetico.'));
+        $this->form_validation->set_rules('tipoDocumentoIdentidad', 'tipoDocumentoIdentidad', 'required', array('required' => 'El Campo Letra RIF/CI es requerido.'));
+        $this->form_validation->set_rules('id_cargo', 'id_cargo', 'required', array('required' => 'El Campo Cargo es requerido.'));
+        $this->form_validation->set_rules('rifci', 'rifci', 'required|numeric|max_length[9]', array('required' => 'El Campo Nro. RIF/CI es requerido','numeric'=>'El Campo Nro. RIF/CI debe ser n&uacutemerico.','max_length'=>'El Campo Nro. RIF/CI no debe ser mayor a 9 disgitos.'));
+        $this->form_validation->set_rules('tipocuenta', 'tipocuenta', 'required', array('required' => 'El Campo Tipo de Cuenta es requerido.'));
+        $this->form_validation->set_rules('banco', 'banco', 'required', array('required' => 'El Campo Banco es requerido.'));
+        $this->form_validation->set_rules('cuenta', 'cuenta', 'required|numeric|exact_length[20]', 
+                    array('required' => 'El Campo Nro. Cuenta es requerido.',
+                        'numeric' => 'El Campo Nro. Cuenta debe ser n&uacute;merico.',
+                        'exact_length' => 'El Campo Nro. Cuenta debe ser de 20 digitos.'
+                    ));
+        $this->form_validation->set_rules('monto', 'monto', 'required|numeric', array('required' => 'El Monto es requerido.','numeric' => 'El Monto deber ser n&uacutemerico.'));
+        
+        
+        $codbanco = $this->Banco_model->getBancosbyId($this->input->post("banco"));
+        // validamos que no este repetida la cédula
+        $validate = true;
+        $errorValidacion =  "";
+        if (isset($_SESSION['addrecords']) ){
+            // validamos que no este repetida la cédula
+            foreach ($_SESSION['addrecords'] as $records){
+                if ($records["documento_identidad"] == $this->input->post("rifci")) {
+                    $errorValidacion = $errorValidacion."El Nro. RIF/CI que intenmta introducir ya se encuentra en la lista.<br>";
+                    $validate = false;
+                }
+            }
+            
+            // validamos que el banco seleccionado coincida con el número de cuenta
+        
+            
+            foreach ($codbanco->result() as $records){
+                if ($records->codigo != substr($this->input->post("cuenta"),0,4)) {
+                    $errorValidacion = $errorValidacion."El Nro. de Cuenta  no coincide con el Banco seleccionado.<br>";
+                    $validate = false;
+                }
+            }
+            
+            if ($validate == false)
+                $data->error = $errorValidacion;
+            
+        }
+        
+
+        
+        // fin validaciones
+        if ($this->form_validation->run() == false || $validate == false){
+            $this->load->view('templates/header');
+            $this->load->view('templates/Navigation',$data);
+            $this->load->view('payments/paymentsload/loadindividual',$data);
+            $this->load->view('templates/footer');
+        }else{
+            $row = array();
+            if (isset($_SESSION['addrecords']) )
+                $datarow = $_SESSION['addrecords'];
+            else
+                $datarow = array();
+               
+            $idTipoPago = 1;
+            
+            $this->input->post ("banco") == "1" ? $idTipoPago = 1 : $idTipoPago = 2;
+            
+            $beneficiario = strtoupper($this->form_validation->stripAccents( $this->input->post ("beneficiario")));
+            $row =[
+                "beneficiario"=>$beneficiario,
+                "id_cargo"=> $this->input->post ("id_cargo"),
+                "referencia_credito"=> "",
+                "id_tipo_documento_identidad"=>$this->input->post ("tipoDocumentoIdentidad"),
+                "documento_identidad"=> $this->input->post ("rifci"),
+                "id_tipo_cuenta"=> $this->input->post ("tipocuenta"),
+                "numero_cuenta"=> $this->input->post ("cuenta"),
+                "credito"=> $this->input->post ("monto"),
+                "id_tipo_pago"=> $idTipoPago,
+                "id_banco"=> $this->input->post ("banco"),
+                "id_duracion_cheque"=> "",
+                "correo_beneficiario"=> "",
+                "fecha"=> "",
+                "id_estatus"=>"1",
+                "id_nomina"=> "",
+            ];
+            array_push($datarow,$row);
+            
+           
+            $_SESSION['addrecords'] = $datarow;
+            
+
+            $data->id_cargo = "";
+            $data->tipoDocumentoIdentidad = "";
+            $data->tipocuenta = "";
+            $data->banco = "";
+            $data->beneficiario = "";
+            $data->rifci =  "";
+            $data->cuenta = "";
+            $data->monto = "";
+            
+           // $data->addrecords = $datarow;
+            $this->load->view('templates/header');
+            $this->load->view('templates/Navigation',$data);
+            $this->load->view('payments/paymentsload/loadindividual',$data);
+            $this->load->view('templates/footer');
+        }
+    }
+    
+    public function  guardarIndividualload(){
+        
+        $data = new stdClass();
+        $data->tiposcuentas =  $this->tiposcuentas;
+        $data->bancos =  $this->bancos;
+        $data->TipoDocumentoIdentidad =  $this->TipoDocumentoIdentidad;
+        $data->Cargo =  $this->Cargo;
+        $data->proyecto =  $this->Proyecto_model->getProyecto();
+        $data->gerencia =  $this->Gerencia_model->getGerencia();
+        
+        //obtenemos los valores del formulario, para retornarlos en caso de algun error de válidación
+        $data->descripcionnomina = $this->input->post("descripcion");
+        $data->id_proyecto = $this->input->post("id_proyecto");
+        $data->id_gerencia = $this->input->post("id_gerencia");
+        
+        
+        $this->form_validation->set_rules('descripcion', 'descripcion', 'required|alpha_numeric_spaces', array('required' => 'El Campo Descripcion es requerido.','alpha_spaces'=>'El Campo Descripcion debe ser alfanumerico.'));
+        $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required', array('required' => 'El campo Proyecto es requerido.'));
+        $this->form_validation->set_rules('id_gerencia', 'id_gerencia', 'required', array('required' => 'El campo Gerencia es requerido.'));
+        
+        if ($this->form_validation->run() == false ){
+            $this->load->view('templates/header');
+            $this->load->view('templates/Navigation',$data);
+            $this->load->view('payments/paymentsload/loadindividual',$data);
+            $this->load->view('templates/footer');
+        }else{
+            
+            if (isset($_SESSION['addrecords']) ) {
+               // $detalle =$this->payments_model->getTablepaymentsTem($_SESSION['addrecords']);
+                $resultado =  $this->payments_model->insertPaymentIndividual($this->input->post("descripcion"),
+                                                                    $this->input->post("id_proyecto"),
+                                                                    $this->input->post("id_gerencia"), 
+                                                                    $_SESSION['id'],
+                                                                    $_SESSION['addrecords']);
+                if ($resultado){
+                    $data->success = 'Se ha crado con &Eacutexito la nomina.';
+                    unset( $_SESSION['addrecords']);
+                    $data->descripcionnomina = "";
+                    $data->id_proyecto = "";
+                    $data->id_gerencia = "";
+                }else{
+                    $data->error = 'Ha acorrido un error inesperado, por favor intente de nuevo.';
+                }
+            }else{
+                $data->error = 'Ha acorrido un error inesperado, tabla origen no encontrada. Por favor intente de nuevo.';
+            }
+            
+            
+            $this->load->view('templates/header');
+            $this->load->view('templates/Navigation',$data);
+            $this->load->view('payments/paymentsload/loadindividual',$data);
+            $this->load->view('templates/footer');
+            
+        }
         
         
     }
@@ -103,8 +284,6 @@ class Payments extends CI_Controller {
         $data->proyecto =  $this->Proyecto_model->getProyecto();
         $data->gerencia =  $this->Gerencia_model->getGerencia();
         
-        
-        
         $data->descripcionnomina = $this->input->post("descripcion");
         $data->id_proyecto = $this->input->post("id_proyecto");
         $data->id_gerencia = $this->input->post("id_gerencia");
@@ -113,9 +292,6 @@ class Payments extends CI_Controller {
         $this->form_validation->set_rules('descripcion', 'descripcion', 'required', array('required' => 'El Campo Descripci&oacute;n N&oacute;mina es requerido'));
         $this->form_validation->set_rules('id_proyecto', 'id_proyecto', 'required', array('required' => 'El Campo Proyecto es requerido'));
         $this->form_validation->set_rules('id_gerencia', 'id_gerencia', 'required', array('required' => 'El Campo Gerencia es requerido'));
-        
-        
-        
         
         //consultamos de sesion el nombre de la tabla temporal que se esta trabajando.
         if (isset($_SESSION['table_temp_nom']) ) {

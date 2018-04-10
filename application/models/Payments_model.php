@@ -348,7 +348,6 @@ class Payments_model extends CI_Model
     
     public function insertPayment($descripcion,$proyecto, $gerencia, $usuario, $detalle){
         
-        //$_SESSION['id']
         $this->db->trans_start();
         
         
@@ -371,6 +370,42 @@ class Payments_model extends CI_Model
         }
         
         $this->db->insert_batch("nomina_detalle", $detalle);
+        $this->db->trans_complete();
+        
+        if ($this->db->trans_status() === FALSE){
+            return false;
+        }else{
+            return true;
+        }
+        
+    }
+    
+    public function insertPaymentIndividual($descripcion,$proyecto, $gerencia, $usuario, $detalle){
+        
+        $this->db->trans_start();
+        
+        $this->db->select_max('id','maxid');
+        $id_nomina = $this->db->get('nomina')->row();
+        $id_nomina = (int)$id_nomina->maxid + 1;
+        
+        
+        
+        $this->db->set('id', $id_nomina);
+        $this->db->set('descripcion', $descripcion);
+        $this->db->set('id_estatus', 2);
+        $this->db->set('id_proyecto', $proyecto);
+        $this->db->set('id_usuario', $usuario);
+        $this->db->set('id_gerencia', $gerencia);
+        $this->db->insert("nomina");
+        
+        $detalleInsert = array();
+        
+        foreach ($detalle as $detalleNomina){
+            $detalleNomina["id_nomina"] = $id_nomina;
+            array_push($detalleInsert,$detalleNomina);
+        }
+        
+        $this->db->insert_batch("nomina_detalle", $detalleInsert);
         $this->db->trans_complete();
         
         if ($this->db->trans_status() === FALSE){
