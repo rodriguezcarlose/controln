@@ -119,6 +119,13 @@ class Payments_model extends CI_Model
         
     }
     
+    public function  getTablepaymentsTemlidNoValid($table_name){
+        //$this->db->order_by('id','DESC');
+        $this->db->set("valid","0");
+        return $this->db->get($table_name);
+        
+    }
+    
     
     /**
      * get_current_page_records function
@@ -138,6 +145,33 @@ class Payments_model extends CI_Model
             $this->db->limit($limit, $start);
             $this->db->order_by($order,'ASC');
             $query = $this->db->get($table);
+            //log_message('info', 'Payment|loadgrid '.$sql = $this->db->last_query());
+            if ($query->num_rows() > 0)
+            {
+                foreach ($query->result() as $row)
+                {
+                    $data[] = $row;
+                }
+                
+                return $data;
+            }
+            
+            return false;
+        }else{
+            return false;
+        }
+    }
+    
+    
+    
+    public function getTableTempLimit($table,$limit, $start){
+        //si existe la tabla
+        if ($this->db->table_exists($table))
+        {
+
+            $this->db->limit($limit, $start);
+            $query = $this->db->get($table);
+           // log_message('info', 'Payment_model|getTableTempLimit '.$this->db->last_query());
             
             if ($query->num_rows() > 0)
             {
@@ -167,6 +201,7 @@ class Payments_model extends CI_Model
         if ($this->db->table_exists($table))
         {
             $this->db->where('valid', $valid);
+           // log_message('info', 'Payment|get_total'.$sql = $this->db->last_query());
             return $this->db->count_all_results($table);
         }
 
@@ -344,6 +379,7 @@ class Payments_model extends CI_Model
         $this->db->set('valid',$value);
         $this->db->where('id', $row);
         $this->db->update($table);
+        //log_message('info', 'Payment|updateTableTempRow'.$sql = $this->db->last_query());
     }
     
     public function insertPayment($descripcion,$proyecto, $gerencia, $usuario, $detalle){

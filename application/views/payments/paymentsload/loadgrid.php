@@ -7,6 +7,17 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="page-header">
+						<?= form_open('payments/downloads')?>
+    						<h3>Descargar Plantilla</h3>
+                            <input type="submit" value="Descargar" id="btnCargar" class="button small"  />
+                       	<?= form_close()?>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col-md-12">
+					<div class="page-header">
 						<?php echo form_open_multipart('payments/do_upload');?>
     						<h3>Cargar Pago Masivo</h3>
     						<div class="field small-3 column">

@@ -266,6 +266,7 @@ class Payments extends CI_Controller {
     }
     
     public function loadgrid(){
+        log_message('info', 'Payment|loadgrid|inicio loadgrid');
         
         $start_index=0;
         $tablename ="";
@@ -284,6 +285,7 @@ class Payments extends CI_Controller {
         $data->proyecto =  $this->Proyecto_model->getProyecto();
         $data->gerencia =  $this->Gerencia_model->getGerencia();
         
+        //datos de la nóimina
         $data->descripcionnomina = $this->input->post("descripcion");
         $data->id_proyecto = $this->input->post("id_proyecto");
         $data->id_gerencia = $this->input->post("id_gerencia");
@@ -296,11 +298,14 @@ class Payments extends CI_Controller {
         //consultamos de sesion el nombre de la tabla temporal que se esta trabajando.
         if (isset($_SESSION['table_temp_nom']) ) {
             $tablename=$_SESSION['table_temp_nom'];
+            
             $total_records = $this->payments_model->get_total($tablename, 0);
+            log_message('info', 'Payment|loadgrid|hay '.$total_records.' pendientes por ajustar');
         }
         
-        //si ahy registros pendientes por modificar
+        //si hay registros pendientes por ajustar
         if ($total_records > 0){
+            
         
             if (isset($_SESSION['start_index_load_payment']) ) {
                 $start_index = $_SESSION['start_index_load_payment'];
@@ -318,44 +323,53 @@ class Payments extends CI_Controller {
             
             $datarow = array();
             $row = array();
-            for ($i = 1; $i<= $cuount; $i++){
-                $row = array();
-                $id = $this->input->post ($i);
-                
-                    
-                $beneficiario = strtoupper($this->form_validation->stripAccents( $this->input->post ("beneficiario".$id)));
-                $row =[
-                    "id"=> $id,
-                    "beneficiario"=>$beneficiario,
-                    "id_cargo"=> $this->input->post ("id_cargo".$id),
-                    "referencia_credito"=> $this->input->post ("referencia_credito".$id),
-                    "id_tipo_documento_identidad"=>$this->input->post ("id_tipo_documento_identidad".$id),
-                    "documento_identidad"=> $this->input->post ("documento_identidad".$id),
-                    "id_tipo_cuenta"=> $this->input->post ("id_tipo_cuenta".$id),
-                    "numero_cuenta"=> $this->input->post ("numero_cuenta".$id),
-                    "credito"=> $this->input->post ("credito".$id),
-                    "id_tipo_pago"=> $this->input->post ("id_tipo_pago".$id),
-                    "id_banco"=> $this->input->post ("id_banco".$id),
-                    "id_duracion_cheque"=> $this->input->post ("id_duracion_cheque".$id),
-                    "correo_beneficiario"=> $this->input->post ("correo_beneficiario".$id),
-                    "fecha"=> $this->input->post ("fecha".$id),
-                ];
-                $inicio ++;
-                array_push($datarow,$row);
-            }
-            $this->payments_model->updateTableTem( $tablename,$datarow);
-            
-            if ($total_records > 0){
-                $detalle =$this->payments_model->getTablepaymentsTem($tablename);
-                $this->validateCSV($detalle->result());
-                if ($this->payments_model->get_total($tablename, 0)){
-                    $params["results_valid"] = $this->payments_model->get_current_page_records($tablename,$this->per_page, $start_index,0,'documento_identidad, id');
-                    $params["results_valid"]=$this->validateCSV( $params["results_valid"]);
-                   
-                    $params["total_records"] = $this->payments_model->get_total($tablename, 0);;
-                    $params["start_index"] = $start_index;
+                log_message('info', 'Payment|loadgrid|inicio validación post total'.$cuount);
+                for ($i = 1; $i<= $cuount; $i++){
+                    $row = array();
+                    $id = $this->input->post ($i);
+                        
+                    $beneficiario = strtoupper($this->form_validation->stripAccents( $this->input->post ("beneficiario".$id)));
+                    $row =[
+                        "id"=> $id,
+                        "beneficiario"=>$beneficiario,
+                        "id_cargo"=> $this->input->post ("id_cargo".$id),
+                        "referencia_credito"=> $this->input->post ("referencia_credito".$id),
+                        "id_tipo_documento_identidad"=>$this->input->post ("id_tipo_documento_identidad".$id),
+                        "documento_identidad"=> $this->input->post ("documento_identidad".$id),
+                        "id_tipo_cuenta"=> $this->input->post ("id_tipo_cuenta".$id),
+                        "numero_cuenta"=> $this->input->post ("numero_cuenta".$id),
+                        "credito"=> $this->input->post ("credito".$id),
+                        "id_tipo_pago"=> $this->input->post ("id_tipo_pago".$id),
+                        "id_banco"=> $this->input->post ("id_banco".$id),
+                        "id_duracion_cheque"=> $this->input->post ("id_duracion_cheque".$id),
+                        "correo_beneficiario"=> $this->input->post ("correo_beneficiario".$id),
+                        "fecha"=> $this->input->post ("fecha".$id),
+                    ];
+                    $inicio ++;
+                    array_push($datarow,$row);
                 }
+                
+                log_message('info', 'Payment|loadgrid|fin validación post total'.$cuount);
+                
+                //actualizamos los registros recibidos en la BD temporal
+                $this->payments_model->updateTableTem( $tablename,$datarow);
+                
+    
+               //$detalle =$this->payments_model->getTablepaymentsTemlidNoValid($tablename);
+                $detalle =$this->payments_model->get_current_page_records($tablename,$this->per_page, $start_index,0,'documento_identidad, id');
+                    
+                log_message('info', 'Payment|loadgrid|inicio validación CSV '.count($detalle));
+                $this->validateCSV($detalle);
+                log_message('info', 'Payment|loadgrid|fin validación CSV');
+            
+            
+            if ($this->payments_model->get_total($tablename, 0)){
+                $params["results_valid"] = $this->payments_model->get_current_page_records($tablename,$this->per_page, $start_index,0,'documento_identidad, id');
+                $params["results_valid"]=$this->validateCSV($params["results_valid"]);
+                $params["total_records"] = $this->payments_model->get_total($tablename, 0);;
+                $params["start_index"] = $start_index;
             }
+            
             
             if($this->validation && ($start_index + $this->per_page < $total_records)){
                 $_SESSION['start_index_load_payment'] = $start_index + $this->per_page;
@@ -368,14 +382,21 @@ class Payments extends CI_Controller {
             }
             
             if ($this->validation == false){
+                
+                log_message('info', 'Payment|loadgrid|validación falsa, cargao de nuevo las vistas');
                 $this->load->view('templates/header');
                 $this->load->view('templates/Navigation',$data);
                 $this->load->view('payments/paymentsload/loadgrid',$params);
                 $this->load->view('templates/footer');
             }else{
+                log_message('info', 'Payment|loadgrid|redirigiendo de nuevo al controler');
                 redirect(base_url().'payments/loadgrid');
                 
             }
+            
+            
+            
+            
         //sitodos los registros cargados fueron modificados y corregidos
         }else{
             $start_index = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
@@ -405,6 +426,7 @@ class Payments extends CI_Controller {
                 $this->guardar($this->input->post('descripcion'), $this->input->post('id_proyecto'), $this->input->post('id_gerencia'));
             }
         }
+        log_message('info', 'Payment|loadgrid|fin loadgrid');
     }
     
     public function guardar($descripcion, $proyecto, $gerencia){
@@ -447,6 +469,9 @@ class Payments extends CI_Controller {
     
     public function do_upload(){
         
+        log_message('info', 'Payment|inicio do_upload');
+        
+        
         if (isset($_SESSION['table_temp_nom'])){
                $this->payments_model->deleteTablepaymentsTem($_SESSION['table_temp_nom']);
                 unset($_SESSION['table_temp_nom']);
@@ -459,7 +484,7 @@ class Payments extends CI_Controller {
         $data = new stdClass();
         $config['upload_path']          = './uploads/';
         $config['allowed_types']        = 'csv';
-        $config['max_size']             = 100;
+        $config['max_size']             = 0;
         $config['max_width']            = 1024;
         $config['max_height']           = 768;
         $this->load->library('upload', $config);
@@ -467,6 +492,7 @@ class Payments extends CI_Controller {
         if (!$this->upload->do_upload('userfile')){
             $data->tab ="2";
             $data->error = $this->upload->display_errors();
+            log_message('error', 'Payment|do_upload|'.$data->error);
             $this->load->view('templates/header');
             $this->load->view('templates/Navigation',$data);
             $this->load->view('payments/paymentsload/loadgrid',$data);
@@ -490,6 +516,7 @@ class Payments extends CI_Controller {
             $this->payments_model->createTablepaymentsTem($tablename);
             
             $i = 0;
+            log_message('info', 'Payment|do_upload|inicio recorrido archivo cargado');
             while ($datafile = fgetcsv ($fp, 1000, ";")) {
                
                 //descartamos la primera linea del archivo que contiene los nembres de los campos
@@ -537,7 +564,7 @@ class Payments extends CI_Controller {
                 }
                 $i++;
             }
-            
+            log_message('info', 'Payment|do_upload|fin recorrido archivo cargado');
             
             // cerramos el archivo
             fclose ($fp);
@@ -552,10 +579,30 @@ class Payments extends CI_Controller {
             
             $_SESSION['table_temp_nom'] = $tablename;
             //validamos los registros
-            $detalle =$this->payments_model->getTablepaymentsTem($tablename);
-            $this->validateCSV($detalle->result());
+            //$detalle =$this->payments_model->getTablepaymentsTem($tablename);
+            //$this->validateCSV($detalle->result());
+            
+            $start =0;
+            $limit = 1000;
+            $total_records = $this->payments_model->get_total($tablename, 0);
+            
+            log_message('info', 'Payment|inivicio valiadcion registros');
+            //quitamos el limite de tie,po de ejecución
+            ini_set('max_execution_time', 0); 
+            while ($start < $total_records){
+                $detalle =$this->payments_model->getTableTempLimit($tablename,$limit,$start);
+                $this->validateCSV($detalle);
+                $start = $start + $limit;
+                
+            }
+            //colocamos el limite de tie,po de ejecución en su valor inicial
+            ini_set('max_execution_time', 30); 
+            log_message('info', 'Payment|fin valiadcion registros');
+            
+            log_message('info', 'Payment|fin do_upload');
             redirect(base_url().'payments/loadgrid');
         }
+        log_message('info', 'Payment|fin do_upload');
     }
     
     
@@ -570,13 +617,14 @@ class Payments extends CI_Controller {
      */
     private function validateCSV($params){
         
-        
+       // log_message('info', 'Payment|validateCSV|inicio validateCSV');
         $paramsResult = array();
         
         $this->validation = true;
-       
+       $i = 0;
         
         foreach ($params as $validateparams) {
+            $i++;
             $this->validation = true;
             
             
@@ -741,12 +789,20 @@ class Payments extends CI_Controller {
             
             array_push($paramsResult,$validateparams);
                         
-            if ($this->validation)
+            if ($this->validation){
                 $this->payments_model->updateTableTempRow($_SESSION['table_temp_nom'], $validateparams->id, true);
+            }else{
+                log_message('info', 'Payment|validateCSV|validación NO exitosa del registro: '.$validateparams->id);
+            }
             
         }
-        
+       // log_message('info', 'Payment|validateCSV|frin validateCSV: '.$i);
         return $paramsResult;
+    }
+    
+    public  function downloads(){
+        $this->load->helper('download');
+        force_download('./plantilla/plantilla.csv', NULL);
     }
     
 }
