@@ -510,7 +510,7 @@ class Payments extends CI_Controller {
             $data->records = array();
                       
             
-            $tablename = "detalle_nomina_temp".now();
+            $tablename = "detalle_nomina_temp".$_SESSION['id'];
            
             //Creamos una tabla temporal para cargar los archivos
             $this->payments_model->createTablepaymentsTem($tablename);

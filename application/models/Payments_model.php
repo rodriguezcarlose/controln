@@ -51,6 +51,9 @@ class Payments_model extends CI_Model
      */
     
     public function createTablepaymentsTem($table){
+        
+        $this->db->query("DROP TABLE IF EXISTS ".$table.";");
+        
         $result=$this->db->query("CREATE TABLE ".$table. " (
               `id` int(10) NOT NULL AUTO_INCREMENT,
               `beneficiario` varchar(255),

@@ -1,4 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+
+ 
 </br>
 <div class="container">
 	<div class="col-md-20">
@@ -18,19 +20,20 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="page-header">
-						<?php echo form_open_multipart('payments/do_upload');?>
+						<?php echo form_open_multipart('payments/do_upload','id="formulario_ajax"');?>
     						<h3>Cargar Pago Masivo</h3>
     						<div class="field small-3 column">
                             	<label for="Enum:">Archivo:</label>
     							<input type="file" name="userfile" size="20"/>
     						</div>
                             <input type="submit" value="Cargar" id="btnCargar" class="button small"  />
+                            <input type="hidden" name="grabar" />
                        	<?= form_close()?>
 					</div>
 				</div>
 			</div>
 
-		<?=form_open('payments/loadgrid')?>
+		<?=form_open('payments/loadgrid', 'id="formulario_ajax"')?>
 			
 			
 			<div class="row">

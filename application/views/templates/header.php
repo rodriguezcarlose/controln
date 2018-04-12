@@ -17,8 +17,8 @@
         </head>
         <body>
         <?php
-	  $this->load->view('alert');
-	?>
+	           $this->load->view('alert');
+	   ?>
         	<script src="<?= base_url()?>Scripts/jquery-1.10.2.js"></script>
             <script src="<?= base_url()?>Scripts/modernizr-2.6.2.js"></script>
         
