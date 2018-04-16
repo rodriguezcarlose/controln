@@ -8,8 +8,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
     	<h3>Reclamo de Pago </h3>
     	
     <h4>Datos Personales</h4>
-    		
-    		<form method='post' action= "<?php base_url();?>addclaims" > 
+    		<?=form_open_multipart() ?>
       			<div class="form-group">
       					<div class="field small-3 columns">
      	   
@@ -20,15 +19,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
                                         $selected = false;
                                     ?>
                         				<?php foreach ($tipodocumentoidentidad->result() as $data) { 
-                        				    if ($id_tipo_documento_identidad == $data->id){
+                        				    if ($id_tipo_documento_identidad == $data->nombre){
                         			                 $selected = true;
                         			    ?>
-                        						<option selected="selected" value="<?= $data->id ?>"><?= $data->descripcion ?></option>
+                        						<option selected="selected" value="<?= $data->nombre ?>"><?= $data->descripcion ?></option>
                         							
                         				<?php 
                         			             }else{
                         				?>
-                        						<option value="<?= $data->id ?>"><?= $data->descripcion ?></option>
+                        						<option value="<?= $data->nombre ?>"><?= $data->descripcion ?></option>
                         						
                         				<?php 
                         			             } 
@@ -42,7 +41,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
 
              <div class="field small-3 columns">
                         	<label for="Cedula:">Cedula:</label>
-                        	<input id="documento_identidad" name="documento_identidad" type="text" value="<?php if(isset($documento_identidad)) echo $documento_identidad; ?>" />
+                        	<input id="documento_identidad" name="documento_identidad" type="text" value="<?php if(isset($documento_identidad)) echo $documento_identidad; ?>"  maxlength = "9"/>
                         	
                         	
             </div>
@@ -50,23 +49,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
               
     	    <div class="field small-3 columns">
             <label for="Nombre:">Nombre:</label>
-                      <input id="nombre" name="nombre" type="text" value="<?php if(isset($nombre)) echo $nombre; ?>" />
+                      <input id="nombre" name="nombre" type="text" value="<?php if(isset($nombre)) echo $nombre; ?>"maxlength = "30" />
         	</div>  
 
         	 
                     	<div class="field small-3 columns">
             <label for="Apellido:">Apellido:</label>
-            <input id="apellido" name="apellido" type="text" value="<?php if(isset($apellido)) echo $apellido; ?>" />
+            <input id="apellido" name="apellido" type="text" value="<?php if(isset($apellido)) echo $apellido; ?>""maxlength = "30" />
             
         	</div>   
         	
           		   		<div class="field small-4 columns">
                         	<label for="Telefono">Telefono:</label>
-                        	<input id="telefono" name="telefono" type="text" value="<?php if(isset($telefono)) echo $telefono; ?>" />
+                        	<input id="telefono" name="telefono" type="text" value="<?php if(isset($telefono)) echo $telefono; ?>"maxlength = "11"/>
             </div>
                         <div class="field small-4 columns">
                         	<label for="Correo">Correo Electronico:</label>
-                       		<input id="correo" name="correo" type="text" value="<?php if(isset($correo)) echo $correo; ?>" />
+                       		<input id="correo" name="correo" type="text" value="<?php if(isset($correo)) echo $correo; ?>" "maxlength = "30"/>
            </div>
            
                      	<div class="field small-4 columns">
@@ -106,7 +105,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
            
  				<div class="field small-4 columns">
                     <label for="numerocuenta">Numero de Cuenta:</label>
-                    <input id="numero_cuenta" name="numero_cuenta" type="text" value="<?php if(isset($numero_cuenta)) echo $numero_cuenta; ?>" />
+                    <input id="numero_cuenta" name="numero_cuenta" type="text" value="<?php if(isset($numero_cuenta)) echo $numero_cuenta; ?>"  maxlength = "20"/>
                </div>
  				
  					<div class="field small-4 columns">
@@ -137,13 +136,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
            	</select>
              </div>
              
-				<div class="field small-12 columns">	
-				<?php echo form_open_multipart('claim/do_upload');?>
-                           	<label for="Enum:">Imagen:</label>
-   							<input type="file" name="userfile" size="20"/>
-                   			<input type="submit" value="Cargar" name = "btnCargar" id="btnCargar" class="button small"  />
-				<?= form_close()?>
-				</div>
+             
+             
+             	<?php if (!isset($soportereclamos)){?>
+             
+    				<div class="field small-12 columns">	
+                               	<label for="Enum:">Imagen:</label>
+       							<input type="file" name="file_name" size="20"/>
+                       			<input type="submit" value="Cargar" name = "file_name" id="btnCargar" class="button small"  onclick = "this.form.action = 'do_upload'"/>
+    				</div>
+				
+				<?php } else{?>
+    				<div class="field small-12 columns">	
+    					<label for="Enum:">Soporte Cargado: <?= $soportereclamos?><input type="submit" value="eliminar" name = "btnCargar" id="btnCargar" class="button small"  onclick = "this.form.action = 'eliminar'"/></label>
+    					<input id="soportereclamos" name="soportereclamos" type="hidden" value="<?= $soportereclamos?>">
+    					ias.extension(new IASSpinnerExtension({
+   						src: '<spinner.gif>'}));
+    				</div>
+				
+				<?php }?>
+				
 <h4>Datos Evento</h4>
 				<div class="field small-3 columns">
             <label for="num:">Proyecto:</label>
@@ -255,7 +267,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
                  
                   <div class="field small-3 columns">
             <label for="cantidad_dias">Dias Trabajados:</label>
-            		   <input id="numeric" name="cantidad_dias" type="text" value="<?php if(isset($cantidad_dias)) echo $cantidad_dias; ?>" />
+            		   <input id="numeric" name="cantidad_dias" type="text" value="<?php if(isset($cantidad_dias)) echo $cantidad_dias; ?>" maxlength = "3/>
         		  </div>  
           	<left>
           		<div class="field small-12 columns">
@@ -263,12 +275,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
 				</div>
 				</div>
 				</center>
-           <br> <div class=" right buttonPanel">
-					<input type="submit" id="btnEnviar" name = "btnEnviar" class="button small right" value="Enviar Reclamo"  />
+           		 <div class=" right buttonPanel">
+					<input type="submit" id="btnEnviar" name = "btnEnviar" class="button small right" value="Enviar Reclamo"  onclick = "this.form.action = 'addclaims'"/>
 					
  						</div>
  						</div>
-		</form>
+		<? form_close()?>	
 	</div>
 </div>
 

@@ -6,7 +6,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  *
  * @extends CI_Model
  */
-class tipoerror_model extends CI_Model {
+class Tipoerror_model extends CI_Model {
     
     /**
      * __construct function.
@@ -14,7 +14,8 @@ class tipoerror_model extends CI_Model {
      * @access public
      * @return void
      */
-    public function __construct() {
+    public function __construct() { 
+        
         
         parent::__construct();
         $this->load->database();

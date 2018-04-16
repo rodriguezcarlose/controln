@@ -73,6 +73,7 @@
 
                 ?>
 			</li>		
+		
 			<li class="logInOut">
 			
     			<?php 
@@ -82,6 +83,7 @@
                         echo '<a href="'. base_url().'user/login">[INGRESAR]</a>';
                 ?>
 			</li>
+			
         </ul>
     </section>
     

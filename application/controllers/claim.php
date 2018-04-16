@@ -22,7 +22,8 @@ class claim extends CI_Controller {
         
         parent::__construct();
         $this->load->library("session");
-
+      
+        
         $this->load->model('TiposCuentas_model');
         $this->load->model('Banco_model');
         $this->load->model('TipoDocumentoIdentidad_model');
@@ -34,6 +35,7 @@ class claim extends CI_Controller {
         $this->load->model('Cargo_model');
         $this->load->model('tipoerror_model');
         $this->load->model('TiposCuentas_model');
+        
     }
     
     public function index()
@@ -41,6 +43,90 @@ class claim extends CI_Controller {
         
        
         
+    }
+    
+    public function do_upload(){
+        
+        //// permite dejar los campos con la informacion sin ser borrada luego de las validaciones
+        $data = new stdClass();
+        $data->bancos =  $this->Banco_model->getBancos();
+        $data->tipodocumentoidentidad =$this->TipoDocumentoIdentidad_model->getTipoDocumentoIdentidad();
+        $data->proyecto =  $this->Proyecto_model->getProyecto();
+        $data->gerencia =  $this->Gerencia_model->getGerencia();
+        $data->cargo =  $this->Cargo_model->getCargos();
+        $data->tipoerror =  $this->tipoerror_model->gettipoerror();
+        $data->tiposcuentas =  $this->TiposCuentas_model->gettiposcuentas();
+        
+        $data->id_tipo_documento_identidad = $this->input->post("id_tipo_documento_identidad");
+        $data->documento_identidad = $this->input->post("documento_identidad");
+        $data->nombre = $this->input->post("nombre");
+        $data->apellido = $this->input->post("apellido");
+        $data->telefono = $this->input->post("telefono");
+        $data->correo = $this->input->post("correo");
+        $data->id_banco = $this->input->post("id_banco");
+        $data->id_tipos_cuentas = $this->input->post("id_tipos_cuentas");
+        $data->numero_cuenta = $this->input->post("numero_cuenta");
+        $data->id_proyecto = $this->input->post("id_proyecto");
+        $data->id_gerencia = $this->input->post("id_gerencia");
+        $data->id_cargo = $this->input->post("id_cargo");
+        $data->id_tipo_error = $this->input->post("id_tipo_error");
+        $data->cantidad_dias = $this->input->post("cantidad_dias");
+        //$data->soportereclamos = $this->input->post("file_name");
+        
+        
+        $config['upload_path']          = './soportereclamos/';
+        $config['allowed_types']           = 'png|jpg';
+        $config['max_size']             = 3000;
+        $config['max_width']            = 1024;
+        $config['max_height']           = 768;
+        $config['file_name']           = "SOPORTE".now();
+        $this->load->library('upload', $config);
+        
+        if (!$this->upload->do_upload('file_name')){
+            $data->error = $this->upload->display_errors();
+        }else{
+            $data->success ="Archivo cargado con &eacute;xito.";
+            $data->soportereclamos = $this->input->post("file_name");
+        }
+        
+        $this->load->view('templates/header');
+        $this->load->view('templates/navigation',$data);
+        $this->load->view('claims/addclaim',$data);
+        $this->load->view('templates/footer');
+    }
+    
+    public function eliminar(){
+       
+        $data = new stdClass();
+        $data->bancos =  $this->Banco_model->getBancos();
+        $data->tipodocumentoidentidad =$this->TipoDocumentoIdentidad_model->getTipoDocumentoIdentidad();
+        $data->proyecto =  $this->Proyecto_model->getProyecto();
+        $data->gerencia =  $this->Gerencia_model->getGerencia();
+        $data->cargo =  $this->Cargo_model->getCargos();
+        $data->tipoerror =  $this->tipoerror_model->gettipoerror();
+        $data->tiposcuentas =  $this->TiposCuentas_model->gettiposcuentas();
+        
+        $data->id_tipo_documento_identidad = $this->input->post("id_tipo_documento_identidad");
+        $data->documento_identidad = $this->input->post("documento_identidad");
+        $data->nombre = $this->input->post("nombre");
+        $data->apellido = $this->input->post("apellido");
+        $data->telefono = $this->input->post("telefono");
+        $data->correo = $this->input->post("correo");
+        $data->id_banco = $this->input->post("id_banco");
+        $data->id_tipos_cuentas = $this->input->post("id_tipos_cuentas");
+        $data->numero_cuenta = $this->input->post("numero_cuenta");
+        $data->id_proyecto = $this->input->post("id_proyecto");
+        $data->id_gerencia = $this->input->post("id_gerencia");
+        $data->id_cargo = $this->input->post("id_cargo");
+        $data->id_tipo_error = $this->input->post("id_tipo_error");
+        $data->cantidad_dias = $this->input->post("cantidad_dias");
+        
+        $this->load->view('templates/header');
+        $this->load->view('templates/navigation',$data);
+        $this->load->view('claims/addclaim',$data);
+        $this->load->view('templates/footer');
+     
+     
     }
     
     public function addclaims() {
@@ -57,8 +143,7 @@ class claim extends CI_Controller {
         
         ///
      
-     
-        
+
         
         //// permite dejar los campos con la informacion sin ser borrada luego de las validaciones
         
@@ -76,8 +161,8 @@ class claim extends CI_Controller {
         $data->id_cargo = $this->input->post("id_cargo");
         $data->id_tipo_error = $this->input->post("id_tipo_error");
         $data->cantidad_dias = $this->input->post("cantidad_dias");
-        
-        
+        $data->soportereclamos = $this->input->post("file_name");
+       
         
         // set validation rules
         
@@ -96,13 +181,24 @@ class claim extends CI_Controller {
         $this->form_validation->set_rules('id_cargo', 'id_cargo', 'required', array('required' => 'El Campo Cargo es requerido'));
         $this->form_validation->set_rules('id_tipo_error', 'id_tipo_error', 'required', array('required' => 'El Campo Tipo Error es requerido'));
         $this->form_validation->set_rules('cantidad_dias', 'cantidad_dias', 'trim|required|numeric',array('required' => 'El Campo Dias trabajados es requerido','numeric' => 'El Campo Dias Trabajados solo permite numeros'));
+       
+        $codbanco = $this->Banco_model->getBancosbyId($this->input->post("id_banco"));
+        $validate = true;
         
+        foreach ($codbanco->result() as $records){
+            if ($records->codigo != substr($this->input->post("numero_cuenta"),0,4)) {
+                $data->error = "El Nro. de Cuenta  no coincide con el Banco seleccionado.<br>";
+                $validate = false;
+            }
+        }
         
-        //validaci�n del captcha
-         $this->form_validation->set_rules('g-recaptcha-response', '', 'required',array('required' => 'El Campo capcha es requerido'));
+
+        
+        //validaci�n del captcha FUNCIONA CON INTERNET
+       //  $this->form_validation->set_rules('g-recaptcha-response', '', 'required',array('required' => 'El Campo capcha es requerido'));
         
        
-        if ($this->form_validation->run() == false) {
+         if ($this->form_validation->run() == false || $validate == false) {
             
             // validation not ok, send validation errors to the view
             $this->load->view('templates/header');
@@ -111,6 +207,10 @@ class claim extends CI_Controller {
             $this->load->view('templates/footer');
             
         } else {
+            
+            
+            
+            
             
             $this->Claims_model->addclaims($this->input->post);
             
@@ -127,20 +227,76 @@ class claim extends CI_Controller {
             $cargo = $this->input->post('id_cargo');
             $tipoerror = $this->input->post('id_tipo_error');
             $cantidaddias= $this->input->post('cantidad_dias');
+            $soportereclamos = $this->input->post('soportereclamos');
+            
+            $this->input->post = "";
+            $data->id_tipo_documento_identidad = "";
+            $data->documento_identidad = "";
+            $data->nombre = "";
+            $data->apellido = "";
+            $data->telefono ="";
+            $data->correo = "";
+            $data->id_banco = "";
+            $data->id_tipos_cuentas = "";
+            $data->numero_cuenta ="";
+            $data->id_proyecto = "";
+            $data->id_gerencia = "";
+            $data->id_cargo = "";
+            $data->id_tipo_error = "";
+            $data->cantidad_dias ="";
+            $data->file_name="";
             
             
+            
+            $data->success = "Reclamo Enviado con Exito";
+            $this->load->view('templates/header');
+            $this->load->view('templates/navigation',$data);
+            $this->load->view('claims/addclaim',$data);
+            $this->load->view('templates/footer');
+        
+        }
+  
+    }
+    public function checkclaims() {
+       
+        
+            $this->load->model('claims_model');
+            $data['query']=  $this->claims_model->checkclaims();
             $this->load->view('templates/header');
             $this->load->view('templates/navigation');
-            
-      //set flash data
-            $this->session->set_flashdata('success','Reclamo Enviado con Exito');
-      redirect('claim/addclaims');
-           
+            $this->load->view('claims/checkclaims',$data);
+      
             $this->load->view('templates/footer');
-
-        }
+                                    }
+          
         
-       
-    }
+        public function details($idreclamo){
+          
+          
+          $this->load->model('claims_model');
+          $result=$this->claims_model->details($idreclamo);
+          $data=array('query'=>$result);
+          
+          $this->load->view('templates/header');
+          $this->load->view('templates/navigation');
+          $this->load->view('claims/details',$data);
+          
+          $this->load->view('templates/footer');
+          
+        }
+                                    
+        public function download($archivosoporte){    
+
+          
+
+          force_download('soportereclamos/'.$archivosoporte,NULL);
+          
+         /* $this->load->view('templates/header');
+          $this->load->view('templates/navigation');
+          $this->load->view('claims/details',$data);
+          
+          $this->load->view('templates/footer');
+*/
+     }
 }
 

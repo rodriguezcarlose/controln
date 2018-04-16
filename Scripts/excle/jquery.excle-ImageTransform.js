@@ -105,6 +105,14 @@
             }
         };
 
+        /////////////////////AJAX SCROLL//////////
+        var ias = jQuery.ias({
+        	  container:  '#posts',
+        	  item:       '.post',
+        	  pagination: '#pagination',
+        	  next:       '.next'
+        	});
+        
         var loadComplete = {
             status: false,
             get: function () {
