@@ -150,8 +150,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
     				<div class="field small-12 columns">	
     					<label for="Enum:">Soporte Cargado: <?= $soportereclamos?><input type="submit" value="eliminar" name = "btnCargar" id="btnCargar" class="button small"  onclick = "this.form.action = 'eliminar'"/></label>
     					<input id="soportereclamos" name="soportereclamos" type="hidden" value="<?= $soportereclamos?>">
-    					ias.extension(new IASSpinnerExtension({
-   						src: '<spinner.gif>'}));
+    				
     				</div>
 				
 				<?php }?>
