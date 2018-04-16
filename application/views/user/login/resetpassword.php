@@ -5,17 +5,18 @@
 	<div class="row">
 		<div class="col-md-12">
 			<div class="page-header">
-				<h3>Ingresar</h3>
+				<h3>Cambiar Clave</h3>
 			</div>
-    			<?= form_open() ?>
-    				<div class="form-group">
-    					<label for="username">Usuario</label>
-    					<input type="text" class="form-control" id="username" name="username" placeholder="Usuario">
-    				</div>
-    				
+    			<?= form_open("user/resetpassword/".$id_user) ?>
+    				<input type="hidden" id="reset" name="reset"/>
     				<div class="form-group">
     					<label for="password">Clave</label>
     					<input type="password" class="form-control" id="password" name="password" placeholder="Clave">
+    				</div>
+    				
+    				<div class="form-group">
+    					<label for="confirpassword">Confirmar Clave</label>
+    					<input type="password" class="form-control" id="confirpassword" name="confirpassword" placeholder="Clave">
     				</div>
     				
     				<center>
@@ -23,6 +24,7 @@
     				</center>
     
     				<div class="small-12 column text-right buttonPanel">
+    				 	<input type="submit" id="btnCloseModalEditor" class="button small right alert" value="Cancelar" formaction="<?= base_url()?>">
                         <input type="submit" id="btnEnviar" class="button small right" value="Aceptar"/>
            			</div>
            			
