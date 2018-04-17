@@ -3,6 +3,39 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Generatebankfile extends CI_Controller {
     
+    /**
+     * __construct function.
+     *
+     * @access public
+     * @return void
+     */
+    public function __construct() {
+        
+        parent::__construct();
+        
+        
+        //Para impedir el acceso directo desde la URL
+        //Validamos si es el path principal ? , si lo es deje accesar desde url
+        if ($this->uri->uri_string()) {
+            //Carga Libraria User_agent
+            $this->load->library('user_agent');
+            //Verifica si llega desde un enlace
+            if ($this->agent->referrer()) {
+                //Busca si el enlace llega de una URL diferente
+                $post = strpos($this->agent->referrer(), base_url());
+                if ($post === FALSE) {
+                    //Podemos aqui crear un mensaje antes de redirigir que informe
+                    redirect(base_url());
+                }
+            }
+            //Si no se llega desde un enlace se redirecciona al inicio
+            else {
+                //Podemos aqui crear un mensaje antes de redirigir que informe
+                redirect(base_url());
+            }
+        }
+    }
+    
     public function index()
     {
         
@@ -37,7 +70,7 @@ class Generatebankfile extends CI_Controller {
     public function generateCSV()
     {
         
-        /*Para la generación del CSV solo se requiere la nomina*/
+        /*Para la generaciï¿½n del CSV solo se requiere la nomina*/
         $this->form_validation->set_rules('nomina', 'nomina', 'required',array('required' => 'La N&oacute;mina a generar es requerida'));
 
         if ($this->form_validation->run() == false) {
@@ -73,7 +106,7 @@ class Generatebankfile extends CI_Controller {
     public function generateTXT()
     {
         
-        /*Para la generación del TXT del Banco todos los campos son obligatorios*/
+        /*Para la generaciï¿½n del TXT del Banco todos los campos son obligatorios*/
         $this->form_validation->set_rules('empresa', 'empresa', 'required|alpha_numeric_spaces', array('required' => 'El Nombre de la Empresa es requerido', 'alpha_numeric_spaces' => 'El Nombre de la Empresa tiene caracteres inv&aacute;lidos'));
         $this->form_validation->set_rules('rif', 'rif', 'required|alpha_numeric', array('required' => 'El RIF de la Empresa es requerido','alpha_numeric'=>'El RIF de la Empresa tiene caracteres inv&aacute;lidos'));
         $this->form_validation->set_rules('lote', 'lote', 'required|numeric',array('required' => 'El N&uacute;mero de Lote es requerido','numeric' => 'El N&uacute;mero de Lote solo permite numeros'));
@@ -234,7 +267,7 @@ class Generatebankfile extends CI_Controller {
                 write_file($nombre_archivo . $id_archivos . '.txt',$debito,'a');
                 write_file($nombre_archivo . $id_archivos . '.txt',$credito,'a');
                 
-                //El archivo TXT soporta hasta 500 transacciones, si el archivo tiene mas de 500 se cierra en esta condición para abrir otro archivo.
+                //El archivo TXT soporta hasta 500 transacciones, si el archivo tiene mas de 500 se cierra en esta condiciï¿½n para abrir otro archivo.
                 if ($cantidad_registros==500){
                     $monto_entero=0;
                     $monto_decimal=0;
@@ -257,7 +290,7 @@ class Generatebankfile extends CI_Controller {
                 }
             
             }
-            //El archivo TXT soporta hasta 500 transacciones, si el archivo tiene menos de 500 se cierra en esta condición.
+            //El archivo TXT soporta hasta 500 transacciones, si el archivo tiene menos de 500 se cierra en esta condiciï¿½n.
             if ($cantidad_registros<500){
                 $monto_entero=0;
                 $monto_decimal=0;

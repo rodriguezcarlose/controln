@@ -29,7 +29,7 @@ class Payments extends CI_Controller {
         
         //Para impedir el acceso directo desde la URL
         //Validamos si es el path principal ? , si lo es deje accesar desde url
-        /*if ($this->uri->uri_string()) {
+        if ($this->uri->uri_string()) {
              //Carga Libraria User_agent
              $this->load->library('user_agent');
              //Verifica si llega desde un enlace
@@ -48,7 +48,8 @@ class Payments extends CI_Controller {
              }
              
              
-         }*/
+         }
+         
         $this->load->library('pagination');
         //$this->load->library('common_validation');
         $this->load->model('payments_model');

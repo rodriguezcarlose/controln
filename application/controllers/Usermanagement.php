@@ -18,7 +18,7 @@ class Usermanagement extends CI_Controller {
         parent::__construct();
         //Para impedir el acceso directo desde la URL
         //Validamos si es el path principal ? , si lo es deje accesar desde url
-        /*if ($this->uri->uri_string()) {
+        if ($this->uri->uri_string()) {
             //Carga Libraria User_agent
             $this->load->library('user_agent');
             //Verifica si llega desde un enlace
@@ -35,7 +35,7 @@ class Usermanagement extends CI_Controller {
                 //Podemos aqui crear un mensaje antes de redirigir que informe
                 redirect(base_url());
             }
-        }*/
+        }
         
         $this->load->model('tipoDocumentoIdentidad_model');
         $this->load->model('cargo_model');
