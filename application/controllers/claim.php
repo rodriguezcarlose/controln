@@ -71,10 +71,10 @@ class claim extends CI_Controller {
         $data->id_cargo = $this->input->post("id_cargo");
         $data->id_tipo_error = $this->input->post("id_tipo_error");
         $data->cantidad_dias = $this->input->post("cantidad_dias");
-        //$data->soportereclamos = $this->input->post("file_name");
+        $data->soportereclamos = $this->input->post("file_name");
         
         
-        $config['upload_path']          = './soportereclamos/';
+        $config['upload_path']          = './soportereclamostemp/';
         $config['allowed_types']           = 'png|jpg';
         $config['max_size']             = 3000;
         $config['max_width']            = 1024;
@@ -86,7 +86,7 @@ class claim extends CI_Controller {
             $data->error = $this->upload->display_errors();
         }else{
             $data->success ="Archivo cargado con &eacute;xito.";
-            $data->soportereclamos = $this->input->post("file_name");
+            $data->soportereclamos = $this->upload->data("file_name");
         }
         
         $this->load->view('templates/header');
