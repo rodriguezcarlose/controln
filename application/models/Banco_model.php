@@ -23,6 +23,7 @@ class Banco_model extends CI_Model {
     
     public function  getBancos(){
         
+        
         return $this->db->get('banco');
         
     }

@@ -51,6 +51,7 @@ class Payments extends CI_Controller {
          }
          
         $this->load->library('pagination');
+        
         //$this->load->library('common_validation');
         $this->load->model('payments_model');
         $this->load->model('TiposCuentas_model');
@@ -65,6 +66,10 @@ class Payments extends CI_Controller {
         
         //estoy hay que cargarlo en memoria para no estar consultando cada vez que se necesite.
         //Voy a Crear una Libreria que se encargue de esto.
+        
+        
+        
+        
         $this->tiposcuentas =  $this->TiposCuentas_model->getTiposCuentas();
         $this->bancos =  $this->Banco_model->getBancos();
         $this->TipoDocumentoIdentidad =  $this->TipoDocumentoIdentidad_model->getTipoDocumentoIdentidad();

@@ -49,7 +49,7 @@ class Checkidentity extends CI_Controller {
     {
         // set validation rules
         $this->form_validation->set_rules('nacionalidad', 'nacionalidad', 'required', array('required' => 'El Campo Nacionalidad es requerido'));
-        $this->form_validation->set_rules('cedula', 'cedula', 'required|numeric|min_length[5]|max_length[8]',array('required' => 'El Campo Cedula es requerido','numeric' => 'El Campo Cedula solo permite numeros','min_length' => 'El Campo Cedula debe indicar al menos 5 digitos','max_length' => 'El Campo Cedula debe indicar m�ximo 8 digitos'));
+        $this->form_validation->set_rules('cedula', 'cedula', 'required|numeric|min_length[5]|max_length[9]',array('required' => 'El Campo Cedula es requerido','numeric' => 'El Campo Cedula solo permite numeros','min_length' => 'El Campo Cedula debe indicar al menos 5 digitos','max_length' => 'El Campo Cedula debe indicar m&aacute;ximo 9 digitos'));
         
         //validaci�n del captcha
          $this->form_validation->set_rules('g-recaptcha-response', '', 'required',array('required' => 'El Campo capcha es requerido'));
