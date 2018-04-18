@@ -69,7 +69,7 @@ class User extends CI_Controller {
         $this->form_validation->set_rules('password', 'Clave', 'required',array('required' => 'El Campo Clave es requerido'));
 
         //validaci�n del captcha
-        $this->form_validation->set_rules('g-recaptcha-response', '', 'required',array('required' => 'El Campo capcha es requerido'));
+        //$this->form_validation->set_rules('g-recaptcha-response', '', 'required',array('required' => 'El Campo capcha es requerido'));
         
         // Eliminamos la session en caso que se encuentre activa
         if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
@@ -82,7 +82,7 @@ class User extends CI_Controller {
             
             // validation not ok, send validation errors to the view
             $this->load->view('templates/header');
-            $this->load->view('templates/Navigation',$data);
+            $this->load->view('templates/navigation',$data);
             $this->load->view('user/login/login');
             $this->load->view('templates/footer');
             
@@ -127,7 +127,7 @@ class User extends CI_Controller {
                 $data->error = 'Error de autenticaci&oacuten.';
                 // send error to the view
                 $this->load->view('templates/header');
-                $this->load->view('templates/Navigation', $data);
+                $this->load->view('templates/navigation', $data);
                 $this->load->view('user/login/login', $data);
                 $this->load->view('templates/footer');
             }
@@ -145,7 +145,7 @@ class User extends CI_Controller {
                                                                                                                 'matches'=>'El campo Confirmar Clave debe ser igual al campo Clave'));
         if ($this->form_validation->run() == false) {
             $this->load->view('templates/header');
-            $this->load->view('templates/Navigation', $data);
+            $this->load->view('templates/navigation', $data);
             $this->load->view('user/login/resetpassword', $data);
             $this->load->view('templates/footer');
         }else{
@@ -158,7 +158,7 @@ class User extends CI_Controller {
                 $data->error = "ocurrio un error con el cambio de clave.";
             }
             
-            redirect(base_url()."user/login/".$data);
+            redirect(base_url()."index.php/user/login/".$data);
             
             
         }
@@ -193,7 +193,7 @@ class User extends CI_Controller {
         if ($this->form_validation->run() == false) {
             // validation not ok, send validation errors to the view
             $this->load->view('templates/header');
-            $this->load->view('templates/Navigation');
+            $this->load->view('templates/navigation');
             $this->load->view('user/admin/create');
             $this->load->view('templates/footer');
             

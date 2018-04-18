@@ -56,7 +56,7 @@ class Paymentsrejected extends CI_Controller {
         
         if ($this->form_validation->run() == false){
             $this->load->view('templates/header');
-            $this->load->view('templates/Navigation');
+            $this->load->view('templates/navigation');
             $resultPayments=$this->payments_model->getPaymentsProcessed();
             $data->paymentsProcessed = $resultPayments;
             $this->load->view('payments/paymentsrejected/loadgrid',$data);
@@ -106,7 +106,7 @@ class Paymentsrejected extends CI_Controller {
                 $params["nodatarecords"] = $noDataRecords;
                 //hay reachazos que no se encontraron en la BD
                 $this->load->view('templates/header');
-                $this->load->view('templates/Navigation',$data);
+                $this->load->view('templates/navigation',$data);
                 $this->load->view('payments/paymentsrejected/loadgridresult',$params);
                 $this->load->view('templates/footer');
             }else{
@@ -115,7 +115,7 @@ class Paymentsrejected extends CI_Controller {
                 $resultPayments=$this->payments_model->getPaymentsProcessed();
                 $data->paymentsProcessed = $resultPayments;
                 $this->load->view('templates/header');
-                $this->load->view('templates/Navigation',$data);
+                $this->load->view('templates/navigation',$data);
                 $this->load->view('payments/paymentsrejected/loadgrid');
                 $this->load->view('templates/footer');
 
@@ -142,7 +142,7 @@ class Paymentsrejected extends CI_Controller {
         if (!$this->upload->do_upload('userfile')){
             $data->error = $this->upload->display_errors();
             $this->load->view('templates/header');
-            $this->load->view('templates/Navigation',$data);
+            $this->load->view('templates/navigation',$data);
             $resultPayments=$this->payments_model->getPaymentsProcessed();
             $data=array('paymentsProcessed'=>$resultPayments);
             $this->load->view('payments/paymentsrejected/loadgrid',$data);

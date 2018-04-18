@@ -63,7 +63,8 @@ $route['default_controller'] = 'pages';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
+/*
 $route['success-flash'] = 'MyFlashController/success';
 $route['error-flash'] = 'MyFlashController/error';
 $route['warning-flash'] = 'MyFlashController/warning';
-$route['info-flash'] = 'MyFlashController/info';
+$route['info-flash'] = 'MyFlashController/info';*/

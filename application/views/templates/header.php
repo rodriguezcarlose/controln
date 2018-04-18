@@ -10,9 +10,14 @@
                     <link href="<?= base_url()?>Content/excle/excle.autocomplete.css" rel="stylesheet" />
                     <link href="<?= base_url()?>Content/excle/excle.autocomplete.multiple.css" rel="stylesheet" />
                     <link href="<?= base_url()?>Content/Site.css" rel="stylesheet"/>
+                     <!-- 
                     <script src='https://www.google.com/recaptcha/api.js'></script>
+                     -->
+                     <script src='https://www.google.com/recaptcha/api.js'></script>
                		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 					<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet" />
+					
+					
 
         </head>
         <body>

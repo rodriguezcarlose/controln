@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * tipoerror_model class.
+ * Tipoerror_model class.
  *
  * @extends CI_Model
  */

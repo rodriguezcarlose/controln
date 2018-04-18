@@ -138,20 +138,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
              
              
              
-             	<?php if (!isset($soportereclamos)){?>
+             	<?php if (isset($soportereclamos) && $soportereclamos !== ""){?>
              
-    				<div class="field small-12 columns">	
-                               	<label for="Enum:">Imagen:</label>
-       							<input type="file" name="file_name" size="20"/>
-                       			<input type="submit" value="Cargar" name = "file_name" id="btnCargar" class="button small"  onclick = "this.form.action = 'do_upload'"/>
-    				</div>
-				
-				<?php } else{?>
     				<div class="field small-12 columns">	
     					<label for="Enum:">Soporte Cargado: <?= $soportereclamos?><input type="submit" value="eliminar" name = "btnCargar" id="btnCargar" class="button small"  onclick = "this.form.action = 'eliminar'"/></label>
     					<input id="soportereclamos" name="soportereclamos" type="hidden" value="<?= $soportereclamos?>">
     				
     				</div>
+				
+				<?php } else{?>
+				
+					<div class="field small-12 columns">	
+                               	<label for="Enum:">Imagen:</label>
+       							<input type="file" name="file_name" size="20"/>
+                       			<input type="submit" value="Cargar" name = "file_name" id="btnCargar" class="button small"  onclick = "this.form.action = 'do_upload'"/>
+    				</div>
+    				
 				
 				<?php }?>
 				
@@ -265,15 +267,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
                   </div>
                  
                   <div class="field small-3 columns">
-            <label for="cantidad_dias">Dias Trabajados:</label>
-            		   <input id="numeric" name="cantidad_dias" type="text" value="<?php if(isset($cantidad_dias)) echo $cantidad_dias; ?>" maxlength = "3/>
+            			<label for="cantidad_dias">Dias Trabajados:</label>
+            		   <input id="numeric" name="cantidad_dias" type="text" value="<?php if(isset($cantidad_dias)) echo $cantidad_dias; ?>" maxlength = "3"/>
         		  </div>  
-          	<left>
-          		<div class="field small-12 columns">
-				<div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC">
-				</div>
-				</div>
-				</center>
+              	 <!-- 
+              	 <left>
+         			<div class="field small-12 columns">
+    					<div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC">
+                        </div>
+                    </div>
+				</left>
+				 -->
            		 <div class=" right buttonPanel">
 					<input type="submit" id="btnEnviar" name = "btnEnviar" class="button small right" value="Enviar Reclamo"  onclick = "this.form.action = 'addclaims'"/>
 					

@@ -47,11 +47,11 @@ class Generatebankfile extends CI_Controller {
         $resultPayments=$this->payments_model->getPaymentsGenerateBankFile();
         
 
-        $this->load->model('tiposcuentas_model');
-        $resultTipoCuenta=$this->tiposcuentas_model->getTiposCuentas();
+        $this->load->model('TiposCuentas_model');
+        $resultTipoCuenta=$this->TiposCuentas_model->getTiposCuentas();
         
-        $this->load->model('empresaordenante_model');
-        $resultEmpresa=$this->empresaordenante_model->getEmpresaOrdenante();
+        $this->load->model('EmpresaOrdenante_model');
+        $resultEmpresa=$this->EmpresaOrdenante_model->getEmpresaOrdenante();
         $data=array('paymentsGenerateBankFile'=>$resultPayments, 'empresaOrdenante'=>$resultEmpresa, 'tipoCuenta'=>$resultTipoCuenta);
         
             if ($resultPayments!=null){

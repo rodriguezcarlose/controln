@@ -88,7 +88,7 @@ class Usermanagement extends CI_Controller {
         
         if ($this->form_validation->run() == false){
             $this->load->view('templates/header');
-            $this->load->view('templates/Navigation',$data);
+            $this->load->view('templates/navigation',$data);
             $this->load->view('user/crud/addUser',$data);
             $this->load->view('templates/footer');
             
@@ -135,7 +135,7 @@ class Usermanagement extends CI_Controller {
             
             //insertPaymentIndividual
             $this->load->view('templates/header');
-            $this->load->view('templates/Navigation',$data);
+            $this->load->view('templates/navigation',$data);
             $this->load->view('user/crud/addUser',$data);
             $this->load->view('templates/footer');
         }
@@ -160,7 +160,7 @@ class Usermanagement extends CI_Controller {
             
             if ($this->form_validation->run() == false){
                 $this->load->view('templates/header');
-                $this->load->view('templates/Navigation',$data);
+                $this->load->view('templates/navigation',$data);
                 $this->load->view('user/crud/editUser');
                 $this->load->view('templates/footer');
             }else{
@@ -186,7 +186,7 @@ class Usermanagement extends CI_Controller {
 
                 
                 $this->load->view('templates/header');
-                $this->load->view('templates/Navigation',$data);
+                $this->load->view('templates/navigation',$data);
                 $this->load->view('user/crud/editUser',$data);
                 $this->load->view('templates/footer');
             }
@@ -221,7 +221,7 @@ class Usermanagement extends CI_Controller {
             
             if ($this->form_validation->run() == false){
                 $this->load->view('templates/header');
-                $this->load->view('templates/Navigation',$data);
+                $this->load->view('templates/navigation',$data);
                 $this->load->view('user/crud/editUser',$data);
                 $this->load->view('templates/footer');
                            
@@ -267,13 +267,13 @@ class Usermanagement extends CI_Controller {
                     $data->rollist =  $this->rol;
                     
                     $this->load->view('templates/header');
-                    $this->load->view('templates/Navigation',$data);
+                    $this->load->view('templates/navigation',$data);
                     $this->load->view('user/crud/editUser',$data);
                     $this->load->view('templates/footer');
                 }else{
                     $data->error = "Ocurrio un error inesperado, intente de nuevo.";
                     $this->load->view('templates/header');
-                    $this->load->view('templates/Navigation',$data);
+                    $this->load->view('templates/navigation',$data);
                     $this->load->view('user/crud/editUser',$data);
                     $this->load->view('templates/footer');
                 }
@@ -286,14 +286,14 @@ class Usermanagement extends CI_Controller {
     
     public function deleteUser(){
         $this->load->view('templates/header');
-        $this->load->view('templates/Navigation');
+        $this->load->view('templates/navigation');
         //$this->load->view('user/login/login');
         $this->load->view('templates/footer');
     }
     
     public function resetPassword(){
         $this->load->view('templates/header');
-        $this->load->view('templates/Navigation');
+        $this->load->view('templates/navigation');
         //$this->load->view('user/login/login');
         $this->load->view('templates/footer');
     }

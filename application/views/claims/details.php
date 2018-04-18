@@ -58,7 +58,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');?>
             	
             <td>
             	<label for="Enum:">Imagen:</label>
-            	<a href= "<?php echo base_url();?>claim/download/<?= $query[0]->soportereclamos;?>">Descargar </a>
+            	<a href= "<?php echo base_url();?>index.php/claim/download/<?= $query[0]->soportereclamos;?>">Descargar </a>
             </td>
 </table>
                	

@@ -158,7 +158,7 @@ class Payments extends CI_Controller {
         // fin validaciones
         if ($this->form_validation->run() == false || $validate == false){
             $this->load->view('templates/header');
-            $this->load->view('templates/Navigation',$data);
+            $this->load->view('templates/navigation',$data);
             $this->load->view('payments/paymentsload/loadindividual',$data);
             $this->load->view('templates/footer');
         }else{
@@ -207,7 +207,7 @@ class Payments extends CI_Controller {
             
            // $data->addrecords = $datarow;
             $this->load->view('templates/header');
-            $this->load->view('templates/Navigation',$data);
+            $this->load->view('templates/navigation',$data);
             $this->load->view('payments/paymentsload/loadindividual',$data);
             $this->load->view('templates/footer');
         }
@@ -235,7 +235,7 @@ class Payments extends CI_Controller {
         
         if ($this->form_validation->run() == false ){
             $this->load->view('templates/header');
-            $this->load->view('templates/Navigation',$data);
+            $this->load->view('templates/navigation',$data);
             $this->load->view('payments/paymentsload/loadindividual',$data);
             $this->load->view('templates/footer');
         }else{
@@ -262,7 +262,7 @@ class Payments extends CI_Controller {
             
             
             $this->load->view('templates/header');
-            $this->load->view('templates/Navigation',$data);
+            $this->load->view('templates/navigation',$data);
             $this->load->view('payments/paymentsload/loadindividual',$data);
             $this->load->view('templates/footer');
             
@@ -391,12 +391,12 @@ class Payments extends CI_Controller {
                 
                 log_message('info', 'Payment|loadgrid|validación falsa, cargao de nuevo las vistas');
                 $this->load->view('templates/header');
-                $this->load->view('templates/Navigation',$data);
+                $this->load->view('templates/navigation',$data);
                 $this->load->view('payments/paymentsload/loadgrid',$params);
                 $this->load->view('templates/footer');
             }else{
                 log_message('info', 'Payment|loadgrid|redirigiendo de nuevo al controler');
-                redirect(base_url().'payments/loadgrid');
+                redirect(base_url().'index.php/payments/loadgrid');
                 
             }
             
@@ -414,7 +414,7 @@ class Payments extends CI_Controller {
                 
                 $settings = $this->config->item('pagination');
                 $settings['total_rows'] = $total_records;
-                $settings['base_url'] = base_url().'payments/loadgrid';
+                $settings['base_url'] = base_url().'index.php/payments/loadgrid';
                 
                 // use the settings to initialize the library
                 $this->pagination->initialize($settings);
@@ -425,7 +425,7 @@ class Payments extends CI_Controller {
             
             if ($this->form_validation->run() == false){
                 $this->load->view('templates/header');
-                $this->load->view('templates/Navigation',$data);
+                $this->load->view('templates/navigation',$data);
                 $this->load->view('payments/paymentsload/loadgrid',$params);
                 $this->load->view('templates/footer');
             }else{
@@ -463,7 +463,7 @@ class Payments extends CI_Controller {
         }
         
         $this->load->view('templates/header');
-        $this->load->view('templates/Navigation',$data);
+        $this->load->view('templates/navigation',$data);
         $this->load->view('payments/paymentsload/loadgrid');
         $this->load->view('templates/footer');
         
@@ -500,7 +500,7 @@ class Payments extends CI_Controller {
             $data->error = $this->upload->display_errors();
             log_message('error', 'Payment|do_upload|'.$data->error);
             $this->load->view('templates/header');
-            $this->load->view('templates/Navigation',$data);
+            $this->load->view('templates/navigation',$data);
             $this->load->view('payments/paymentsload/loadgrid',$data);
             $this->load->view('templates/footer');
         }
@@ -606,7 +606,7 @@ class Payments extends CI_Controller {
             log_message('info', 'Payment|fin valiadcion registros');
             
             log_message('info', 'Payment|fin do_upload');
-            redirect(base_url().'payments/loadgrid');
+            redirect(base_url().'index.php/payments/loadgrid');
         }
         log_message('info', 'Payment|fin do_upload');
     }

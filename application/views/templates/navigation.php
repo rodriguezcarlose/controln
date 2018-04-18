@@ -43,7 +43,7 @@
                                 echo '<ul class="dropdown">';
                                 $finMenu = true;
                             }else{
-                                echo '<li><a href="'.base_url().$valor->url.'">'.$valor->nombre.'</a></li>';
+                                echo '<li><a href="'.base_url()."index.php/".$valor->url.'">'.$valor->nombre.'</a></li>';
                             }
                             
                             
@@ -59,7 +59,7 @@
 			
     			<?php 
 
-                        echo '<a href="'. base_url().'checkidentity/consultar">[CONSULTA ESTATUS PAGOS]</a>';
+                        echo '<a href="'. base_url().'index.php/checkidentity/consultar">[CONSULTA ESTATUS PAGOS]</a>';
 
 
                 ?>
@@ -68,7 +68,7 @@
 			
     			<?php 
 
-                        echo '<a href="'. base_url().'claim/addclaims">[RECLAMOS]</a>';
+                        echo '<a href="'. base_url().'index.php/claim/addclaims">[RECLAMOS]</a>';
 
 
                 ?>
@@ -78,9 +78,9 @@
 			
     			<?php 
                     if (isset($_SESSION['logged_in'])  === true)
-                        echo '<a href="'. base_url().'user/logout">[SALIR]</a>';
+                        echo '<a href="'. base_url().'index.php/user/logout">[SALIR]</a>';
                     else 
-                        echo '<a href="'. base_url().'user/login">[INGRESAR]</a>';
+                        echo '<a href="'. base_url().'index.php/user/login">[INGRESAR]</a>';
                 ?>
 			</li>
 			

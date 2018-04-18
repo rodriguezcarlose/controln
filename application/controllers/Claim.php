@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class claim extends CI_Controller {
+class Claim extends CI_Controller {
     
     public function success()
     {
@@ -57,7 +57,7 @@ class claim extends CI_Controller {
         $this->load->model('Proyecto_model');
         $this->load->model('Gerencia_model');
         $this->load->model('Cargo_model');
-        $this->load->model('tipoerror_model');
+        $this->load->model('Tipoerror_model');
         $this->load->model('TiposCuentas_model');
         
     }
@@ -78,7 +78,7 @@ class claim extends CI_Controller {
         $data->proyecto =  $this->Proyecto_model->getProyecto();
         $data->gerencia =  $this->Gerencia_model->getGerencia();
         $data->cargo =  $this->Cargo_model->getCargos();
-        $data->tipoerror =  $this->tipoerror_model->gettipoerror();
+        $data->tipoerror =  $this->Tipoerror_model->gettipoerror();
         $data->tiposcuentas =  $this->TiposCuentas_model->gettiposcuentas();
         
         $data->id_tipo_documento_identidad = $this->input->post("id_tipo_documento_identidad");
@@ -127,7 +127,7 @@ class claim extends CI_Controller {
         $data->proyecto =  $this->Proyecto_model->getProyecto();
         $data->gerencia =  $this->Gerencia_model->getGerencia();
         $data->cargo =  $this->Cargo_model->getCargos();
-        $data->tipoerror =  $this->tipoerror_model->gettipoerror();
+        $data->tipoerror =  $this->Tipoerror_model->gettipoerror();
         $data->tiposcuentas =  $this->TiposCuentas_model->gettiposcuentas();
         
         $data->id_tipo_documento_identidad = $this->input->post("id_tipo_documento_identidad");
@@ -162,7 +162,7 @@ class claim extends CI_Controller {
         $data->proyecto =  $this->Proyecto_model->getProyecto();
         $data->gerencia =  $this->Gerencia_model->getGerencia();
         $data->cargo =  $this->Cargo_model->getCargos();
-        $data->tipoerror =  $this->tipoerror_model->gettipoerror();
+        $data->tipoerror =  $this->Tipoerror_model->gettipoerror();
         $data->tiposcuentas =  $this->TiposCuentas_model->gettiposcuentas();
         
         ///
@@ -185,7 +185,7 @@ class claim extends CI_Controller {
         $data->id_cargo = $this->input->post("id_cargo");
         $data->id_tipo_error = $this->input->post("id_tipo_error");
         $data->cantidad_dias = $this->input->post("cantidad_dias");
-        $data->soportereclamos = $this->input->post("file_name");
+        $data->soportereclamos = $this->input->post("soportereclamos");
        
         
         // set validation rules
@@ -206,6 +206,8 @@ class claim extends CI_Controller {
         $this->form_validation->set_rules('id_tipo_error', 'id_tipo_error', 'required', array('required' => 'El Campo Tipo Error es requerido'));
         $this->form_validation->set_rules('cantidad_dias', 'cantidad_dias', 'trim|required|numeric',array('required' => 'El Campo Dias trabajados es requerido','numeric' => 'El Campo Dias Trabajados solo permite numeros'));
        
+        //validaci�n del captcha
+        //$this->form_validation->set_rules('g-recaptcha-response', '', 'required',array('required' => 'El Campo capcha es requerido'));
         $codbanco = $this->Banco_model->getBancosbyId($this->input->post("id_banco"));
         $validate = true;
         
@@ -234,9 +236,10 @@ class claim extends CI_Controller {
             
             $this->Claims_model->addclaims($this->input->post);
        
-            copy("./soportereclamostemp/".$this->input->post('soportereclamos'),"./soportereclamos/".$this->input->post('soportereclamos'));
-            unlink("./soportereclamostemp/".$this->input->post('soportereclamos'));
-            
+            if ($this->input->post('soportereclamos')){
+                copy("./soportereclamostemp/".$this->input->post('soportereclamos'),"./soportereclamos/".$this->input->post('soportereclamos'));
+                unlink("./soportereclamostemp/".$this->input->post('soportereclamos'));
+            }
          
             $nacionalidad = $this->input->post('id_tipo_documento_identidad');
             $cedula = $this->input->post('documento_identidad');
@@ -269,15 +272,24 @@ class claim extends CI_Controller {
             $data->id_tipo_error = "";
             $data->cantidad_dias ="";
             $data->file_name="";
-           
+            $data->soportereclamos ="";
             
-            
+            unset($data->soportereclamos);
             
             $data->success = "Reclamo Enviado con Exito";
             $this->load->view('templates/header');
             $this->load->view('templates/navigation',$data);
             $this->load->view('claims/addclaim',$data);
             $this->load->view('templates/footer');
+            
+            redirect(base_url()."index.php/claim/addclaims");
+            
+            /*
+            $data->success = "Reclamo Enviado con Exito";
+            $this->load->view('templates/header');
+            $this->load->view('templates/navigation',$data);
+            $this->load->view('claims/addclaim',$data);
+            $this->load->view('templates/footer');*/
         
         }
   
@@ -292,7 +304,7 @@ class claim extends CI_Controller {
             $this->load->view('claims/checkclaims',$data);
       
             $this->load->view('templates/footer');
-                                    }
+    }
           
         
         public function details($idreclamo){

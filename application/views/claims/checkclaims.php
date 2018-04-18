@@ -32,7 +32,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <td><?= $row->nombre_error ?></td>
                             <td><?= $row->fecha_reclamo ?></td>
                             <td><?= $row->nombre_reclamo ?></td>
-                            <td><a href=<?= base_url() . 'claim/details/'.$row->id;?> >Detalle</a></td>
+                            <td><a href=<?= base_url() . 'index.php/claim/details/'.$row->id;?> >Detalle</a></td>
                    
                			</tr> <?php }?>
             </thead>
