@@ -232,12 +232,12 @@ class claim extends CI_Controller {
             
         } else {
             
-            
-            
-            
-            
             $this->Claims_model->addclaims($this->input->post);
+       
+            copy("./soportereclamostemp/".$this->input->post('soportereclamos'),"./soportereclamos/".$this->input->post('soportereclamos'));
+            unlink("./soportereclamostemp/".$this->input->post('soportereclamos'));
             
+         
             $nacionalidad = $this->input->post('id_tipo_documento_identidad');
             $cedula = $this->input->post('documento_identidad');
             $nombre = $this->input->post('nombre');
@@ -269,6 +269,7 @@ class claim extends CI_Controller {
             $data->id_tipo_error = "";
             $data->cantidad_dias ="";
             $data->file_name="";
+           
             
             
             
