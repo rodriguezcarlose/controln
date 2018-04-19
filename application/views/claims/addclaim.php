@@ -321,14 +321,12 @@ foreach ($tipoerror->result() as $data) {
 					value="<?php if(isset($cantidad_dias)) echo $cantidad_dias; ?>"
 					maxlength="3" onkeypress="return validar_texto(event)"/ >
 			</div>
-			<!-- 
               	 <left>
          			<div class="field small-12 columns">
     					<div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC">
                         </div>
                     </div>
 				</left>
-				 -->
 			<div class="small-12 column text-right buttonPanel">
 				<input type="submit" id="btnEnviar" name="btnEnviar"
 					class="button small right" value="Enviar Reclamo"

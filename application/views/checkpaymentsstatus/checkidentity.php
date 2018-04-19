@@ -20,10 +20,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         		<label for="String:">Cedula/pasaporte</label>
         		<input id="cedula" name="cedula" placeholder="" type="text" value="" maxlength = "9" onkeypress="return validar_texto(event)"  />
         	</div>
-        	<!-- 
             <center><div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC"></div></center>
-             -->
-
             <div class="small-12 column text-right buttonPanel">
                 <input id="btnCloseModalEditor" class="button small right alert" value="Cancelar" type="button">
                 <input id="btnEnviar" class="button small right" value="Consultar" type="submit">
