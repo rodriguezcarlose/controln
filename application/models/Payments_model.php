@@ -277,7 +277,7 @@ class Payments_model extends CI_Model
     public function getPaymentsGenerateCSVFile($nomina = ''){
 
         
-        $result=$this->db->query("SELECT 	@rownum := @rownum + 1 AS numero_referencia,
+       /* $result=$this->db->query("SELECT 	@rownum := @rownum + 1 AS numero_referencia,
                                             dn.beneficiario nombre_beneficiario,
                                             dn.referencia_credito numero_referencia_credito,
                                             dn.id_tipo_documento_identidad letra,
@@ -293,6 +293,29 @@ class Payments_model extends CI_Model
                                             c.id id_cargo,
                                             c.nombre cargo
                                    FROM 	(SELECT @rownum := 0) r, nomina_detalle dn 
+                                            LEFT JOIN tipo_documento_identidad tdi ON  dn.id_tipo_documento_identidad=tdi.nombre
+                                            LEFT JOIN tipos_cuentas tc ON  dn.id_tipo_cuenta=tc.tipo
+                                            LEFT JOIN tipo_pago tp ON dn.id_tipo_pago=tp.id
+                                            LEFT JOIN duracion_cheque dc ON dn.id_duracion_cheque=dc.duracion
+                                            LEFT JOIN cargo c ON dn.id_cargo=c.id
+                                   WHERE    dn.id_nomina=" . $nomina);*/
+        
+        
+        $result=$this->db->query("SELECT 	@rownum := @rownum + 1 AS ID,
+                                            dn.beneficiario NOMBRE_DEL_BENEFICIARIO,
+                                            dn.referencia_credito REFERENCIA_DEL_CREDITO,
+                                            c.id CARGO,
+                                            dn.id_tipo_documento_identidad LETRA_RIF_CI,
+                                            dn.documento_identidad NUMERO_RIF_CI,
+                                            tc.tipo TIPO_DE_CUENTA,
+                                            dn.numero_cuenta CUENTA_DEL_BENEFICIARIO,
+                                            dn.credito MONTO_DEL_CREDITO,
+                                            tp.descripcion TIPO_DE_PAGO,
+                                            dn.id_banco BANCO,
+                                            dc.duracion DURACION_DEL_CHEQUE,
+                                            dn.correo_beneficiario EMAIL_DEL_BENEFICIARIO,
+                                            dn.fecha FECHA_VALOR_DEL_DEBITO
+                                   FROM 	(SELECT @rownum := 0) r, nomina_detalle dn
                                             LEFT JOIN tipo_documento_identidad tdi ON  dn.id_tipo_documento_identidad=tdi.nombre
                                             LEFT JOIN tipos_cuentas tc ON  dn.id_tipo_cuenta=tc.tipo
                                             LEFT JOIN tipo_pago tp ON dn.id_tipo_pago=tp.id
@@ -461,6 +484,13 @@ class Payments_model extends CI_Model
             $this->db->where('id', $value["id"]);
             $this->db->update('nomina');
     }
+    
+    public function countNumerLote($lote){
+        $this->db->where('numero_lote', $lote);
+        return $this->db->count_all_results('nomina');
+        
+    }
+    
     public function updateFechaValor($value){
 
             $this->db->set('fecha', $value["fecha"]);

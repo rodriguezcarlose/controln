@@ -1,94 +1,196 @@
-<?php
-defined('BASEPATH') OR exit('No direct script access allowed');?>
-<h3 class="show-for-small-only"></h3>     </br>
-	
-<h3>Detalle del Reclamo </h3>
-	
-<table id="dataTable">
-	<thead>		
-		<div class"row">
+<?php defined('BASEPATH') or exit('No direct script access allowed');?>
+<br>
+<div class="container">
+	<div class="col-md-20">
+		<div class="row">
+			<div class="page-header">
+				<h3>Detalle del Reclamo</h3>
+			</div>
+			<table id="dataTable">
+				<thead>
+					<tr>
+						<td>
+							<label for="num:">id:</label>
+						</td>
+						<td>
+							<label for="num:">Nacionalidad:</label>
+						</td>
+    					<td>
+    						<label for="Cedula:">Cedula:</label>
+    	               	</td>
+    
+    					<td>
+    						<label for="Nombre:">Nombre:</label>
+            			</td>
+    
+    					<td>
+    						<label for="Apellido:">Apellido:</label>
+    		            </td>
+
+						<td>
+							<label for="Telefono">Telefono:</label>
+			            </td>
+
+						<td>
+							<label for="Correo">Correo Electronico:</label>
+			            </td>
+            		</tr>
+				<thead>
+				<tbody> 
+					<tr>
+						<td>
+    						<?= $query[0]->id ?>
+    					</td>
+    					<td>
+    						<?= $query[0]->nacionalidad ?>
+    					</td>
+    					<td>
+    						<?= $query[0]->cedula ?>
+    					</td>
+    					<td>
+    						<?= $query[0]->npersona ?>
+    					</td>
+    					<td>
+    						<?= $query[0]->apellido ?>
+    					</td>
+    					<td>
+    						<?= $query[0]->telefono ?>
+    					</td>
+    					<td>
+    						<?= $query[0]->correo ?>
+    					</td>
+					</tr>
+					
+				</tbody>
+			</table>
 			
-			<td>
-			<label for="num:">Nacionalidad:</label>
-				<?= $query[0]->nacionalidad ?>                      	
-			</td>
-        
-        	<td>
-       			<label for="Cedula:">Cedula:</label>
-       			 <?= $query[0]->cedula; ?>                      	
-               </td>
-                
-			<td>
-       			 <label for="Nombre:">Nombre:</label>
-        		 <?= $query[0]->npersona ?>                      	
-        	</td>
-        
-            <td>
-                <label for="Apellido:">Apellido:</label>
-                <?= $query[0]->apellido ?>                      	
-            </td>
-        
-            <td>
-                <label for="Telefono">Telefono:</label>
-                <?= $query[0]->telefono ?>                      	
-            </td>
-        
-            <td>
-                <label for="Correo">Correo Electronico:</label>
-                <?= $query[0]->correo ?>                      	
-            </td>
-</table>
-  
-<table id="dataTable">
-        
-            <td>
-            <label for="Enum:">Banco:</label>
-                <?= $query[0]->banco ?>                      	
-                </td>
-            
-            <td>
-                <label for="numerocuenta">Numero de Cuenta:</label>
-                <?= $query[0]->numero_cuenta ?>                      	
-            </td>
-            
-            <td>
-                <label for="Enum:">Tipo de Cuenta:</label>
-                <?= $query[0]->tipo ?>                      	
-            </td>
-            	
-            <td>
-            	<label for="Enum:">Imagen:</label>
-            	<a href= "<?php echo base_url();?>index.php/claim/download/<?= $query[0]->soportereclamos;?>">Descargar </a>
-            </td>
-</table>
-               	
-<table id="dataTable">
-	<thead>
-            <td>
-            <label for="num:">Proyecto:</label>
-              
-             <?= $query[0]->proyecto ?>                      	
-            </td>
-            
-            <td>
-                <label for="num:">Gerencia:</label>
-                <?= $query[0]->gerencia ?>                      	
-            </td>
-            
-             
-             <td>
-                <label for="num:">Cargo:</label>
-                <?= $query[0]->cargo ?>                      	
-            </td>
-            
-            <td>
-                <label for="Enum:">Tipo Error:</label>
-                <?= $query[0]->nombre_error ?>                      	
-            </td>
-            
-            <td>
-                <label for="cantidad_dias">Dias Trabajados:</label>
-                <?= $query[0]->cantidad_dias ?>                      	
-            </td>
-	</thead>
-</table>
+			
+			<table id="dataTable">
+				<thead>
+					<tr>
+						<td>
+							<label for="num:">Banco:</label>
+						</td>
+    					<td>
+    						<label for="Cedula:">Numero de Cuenta:</label>
+    	               	</td>
+    
+    					<td>
+    						<label for="Nombre:">Tipo de Cuenta:</label>
+            			</td>
+    
+    					<td>
+    						<label for="Apellido:">Imagen Soporte:</label>
+    		            </td>
+            		</tr>
+				<thead>
+				<tbody> 
+					<tr>
+    					<td>
+    						<?= $query[0]->banco ?>
+    					</td>
+    					<td>
+    						<?= $query[0]->numero_cuenta ?>
+    					</td>
+    					<td>
+    						<?= $query[0]->descripcion ?>
+    					</td>
+    					<td>
+    						<a href="<?php echo base_url();?>index.php/claim/download/<?= $query[0]->soportereclamos;?>">Descargar</a>
+    					</td>
+					</tr>
+					
+				</tbody>
+			</table>
+			
+
+			<table id="dataTable">
+				<thead>
+					<tr>
+						<td>
+							<label for="num:">Proyecto:</label>
+						</td>
+    					<td>
+    						<label for="Cedula:">Gerencia:</label>
+    	               	</td>
+    
+    					<td>
+    						<label for="Nombre:">Cargo:</label>
+            			</td>
+    
+    					<td>
+    						<label for="Apellido:">Tipo Error:</label>
+    		            </td>
+
+						<td>
+							<label for="Telefono">Dias Trabajados:</label>
+			            </td>
+            		</tr>
+				<thead>
+				<tbody> 
+					<tr>
+    					<td>
+    						<?= $query[0]->proyecto ?>
+    					</td>
+    					<td>
+    						<?= $query[0]->gerencia ?>
+    					</td>
+    					<td>
+    						<?= $query[0]->cargo ?>
+    					</td>
+    					<td>
+    						<?= $query[0]->nombre_error ?>
+    					</td>
+    					<td>
+    						<?= $query[0]->cantidad_dias ?>
+    					</td>
+					</tr>
+					
+				</tbody>
+			</table>
+			<?= form_open("Claim/updateClaim")?>
+				<input type="hidden" name = "idreclamo" id = "idreclamo" value="<?= $query[0]->id?>"/>
+    			<table id="dataTable">
+    				<thead>
+    					<tr>
+    						<td>Estatus:</td>
+    						<td>Comentario</td>
+    					</tr>
+    				</thead>
+    				
+    				<tbody>
+    					<tr>
+    					<td>
+    						<select id="estatus_reclamo" name="estatus_reclamo">
+            					<?php
+                                if (isset($estatusReclamo)) {
+                                    foreach ($estatusReclamo->result() as $data) {
+                                        if ($query[0]->id_reclamo == $data->id){
+                                ?>
+            								<option selected="selected" value="<?= $data->id ?>"><?= $data->nombre_reclamo ?></option>
+            					<?php
+                                        }else{
+                                ?>
+                                			<option value="<?= $data->id ?>"><?= $data->nombre_reclamo ?></option>
+                                <?php 
+                                            
+                                        }
+                                    }
+                                }
+                                ?>
+    						</select>	
+    					</td>
+    					<td>
+    						<textarea rows="5" cols="50" name="comentario" id="comentario" maxlength = "255"><?= $query[0]->comentario?></textarea>
+    					</td>
+    					</tr>
+    				</tbody>
+    			</table>
+    			<div class="small-12 column text-right buttonPanel">
+    				<input type="submit" id="btnEnviar" class="button small right" value="Actualizar" />
+    			</div>
+			<?= form_close()?>
+		</div>
+	</div>
+</div>
+			

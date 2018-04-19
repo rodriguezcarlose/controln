@@ -137,23 +137,21 @@ class Payments extends CI_Controller {
                     $validate = false;
                 }
             }
-            
-            // validamos que el banco seleccionado coincida con el número de cuenta
-        
-            
-            foreach ($codbanco->result() as $records){
-                if ($records->codigo != substr($this->input->post("cuenta"),0,4)) {
-                    $errorValidacion = $errorValidacion."El Nro. de Cuenta  no coincide con el Banco seleccionado.<br>";
-                    $validate = false;
-                }
-            }
-            
-            if ($validate == false)
-                $data->error = $errorValidacion;
-            
         }
         
-
+        // validamos que el banco seleccionado coincida con el número de cuenta
+        
+        echo "Banco Seleccionado->".$this->input->post("banco")."<br>";
+        // echo "Resultado busqueda->".$codbanco."<br>";
+        foreach ($codbanco->result() as $records){
+            if ($records->codigo != substr($this->input->post("cuenta"),0,4)) {
+                $errorValidacion = $errorValidacion."El Nro. de Cuenta  no coincide con el Banco seleccionado.<br>";
+                $validate = false;
+            }
+        }
+        
+        if ($validate == false)
+            $data->error = $errorValidacion;
         
         // fin validaciones
         if ($this->form_validation->run() == false || $validate == false){

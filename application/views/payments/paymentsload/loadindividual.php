@@ -151,7 +151,7 @@
                  	</div>
                   	<div class="field small-3 column">
                             <label for="Number:">Nro. RIF/CI:</label>
-                            <input id="rifci" name="rifci" type="text" value="<?= isset($rifci)?$rifci:"";?>" maxlength = "9"/>
+                            <input id="rifci" name="rifci" type="text" value="<?= isset($rifci)?$rifci:"";?>" maxlength = "9" onkeypress="return validar_texto(event)"/>
                    	</div>
             
                    	<div class="field small-3 column">
@@ -202,11 +202,11 @@
                         
                   	<div class="field small-3 column">
                             <label for="Number:">Nro. Cuenta:</label>
-                            <input id="cuenta" name="cuenta" type="text" value="<?= isset($cuenta)?$cuenta:"";?>" maxlength = "20"/>
+                            <input id="cuenta" name="cuenta" type="text" value="<?= isset($cuenta)?$cuenta:"";?>" maxlength = "20" onkeypress="return validar_texto(event)"/>
                   	</div>
                   	<div class="field small-3 column">
                             <label for="Number:">Monto:</label>
-                            <input id="monto" name="monto" type="text" value="<?= isset($monto)?$monto:"";?>" />
+                            <input id="monto" name="monto" type="number" value="<?= isset($monto)?$monto:"";?>" />
                     </div>
     
 					<div class="small-12 column text-right buttonPanel">

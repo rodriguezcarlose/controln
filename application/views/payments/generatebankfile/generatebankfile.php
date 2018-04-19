@@ -54,12 +54,12 @@
                     	
                     	<div class="large-4 medium-4 columns">
                     		<label for="String:">N&uacute;mero de Referencia de Lote</label>
-                    		<input id="lote" name="lote" placeholder="<?= $fila[0]->numero_ref_lote; ?>" type="text" value="" />
+                    		<input id="lote" name="lote" placeholder="<?= $fila[0]->numero_ref_lote; ?>" type="text" value="" onkeypress="return validar_texto(event)"/>
                     	</div>        	
             
                     	<div class="large-4 medium-4 columns">
                     		<label for="String:">N&uacute;mero de Negociaci&oacute;n</label>
-                    		<input id="negociacion" name="negociacion" placeholder="" type="text" value="<?= $fila[0]->numero_negociacion; ?>" />
+                    		<input id="negociacion" name="negociacion" placeholder="" type="text" value="<?= $fila[0]->numero_negociacion; ?>" onkeypress="return validar_texto(event)"/>
                     	</div>        	
         			</div>
         			<div class="row">
@@ -67,22 +67,31 @@
                     		<label for="String:">Fecha de Env&iacute;o</label>
             				<div class="ec-dp-container">
             					<input data-datetimepicker="" class="ec-dp-input" style="width: 0px; height: 0px; margin: 0px; padding: 0px; position: absolute; visibility: hidden;">
-            					<input id="fecha" name="fecha" class="ec-dp-show-input tip-top" placeholder="dd/mm/YYYY" data-iso-datetime="">
+            					<input id="fecha" name="fecha" type= "date" >
             				</div>
                     	</div>        	
             
                         <div class="large-4 medium-4 columns">
                             <label for="Enum:">Tipo de Cuenta</label>
                         	    <select data-val="true" data-val-required="The Enum field is required." id="tipocuenta" name="tipocuenta" >
-                                   		<option value="<?= $fila[0]->id_tipo_cuenta; ?>"><?= $fila[0]->descripcion; ?></option>
-                                   	<?php foreach ($tipoCuenta->result() as $fila2){ ?>
-                                   		<option value="<?= $fila2->id; ?>"><?= $fila2->descripcion; ?></option>
-            						<?php } ?>
+                                       	<?php 
+                                       	foreach ($tipoCuenta->result() as $fila2){
+                                       	    if ($fila2->id == $fila[0]->id_tipo_cuenta){  ?>  
+                                       	       	<option selected="selected" value="<?= $fila2->id; ?>"><?= $fila2->descripcion; ?></option>
+                                       	<?php 
+                                       	    }else{
+                                        ?>
+                                   				<option value="<?= $fila2->id; ?>"><?= $fila2->descripcion; ?></option>
+                                   		
+                						<?php 
+                                       	    }
+                                       	}
+                						?>
                         		</select>
                         </div>	
         	           	<div class="large-4 medium-4 columns">
                     		<label for="String:">N&uacute;mero de Cuenta</label>
-                    		<input id="numerocuenta" name="numerocuenta" placeholder="" type="text" value="<?= $fila[0]->numero_cuenta; ?>" />
+                    		<input id="numerocuenta" name="numerocuenta" placeholder="" type="text" value="<?= $fila[0]->numero_cuenta; ?>" onkeypress="return validar_texto(event)" maxlength = "20" />
                     	</div>        	        	
                 	</div>
                 	<div class="row">

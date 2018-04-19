@@ -53,7 +53,7 @@ class Checkidentity extends CI_Controller {
         
         //validaci�n del captcha
         // $this->form_validation->set_rules('g-recaptcha-response', '', 'required',array('required' => 'El Campo capcha es requerido'));
-        
+        $data = new stdClass();
         
         if ($this->form_validation->run() == false) {
             
@@ -69,14 +69,21 @@ class Checkidentity extends CI_Controller {
             $cedula = $this->input->post('cedula');
             
             $this->load->view('templates/header');
-            $this->load->view('templates/navigation');
+            //$this->load->view('templates/navigation');
             
             $this->load->model('payments_model');
             $result=$this->payments_model->getPaymentsByIdentity($nacionalidad,$cedula);
             $dataPayments=array('consulta'=>$result);
             
             if($result != null){
+                $this->load->view('templates/header');
+                $this->load->view('templates/navigation');
                 $this->load->view('checkpaymentsstatus/payments',$dataPayments);
+            }else{
+                $data->error = "No se encontr&oacute; el n&uacute;mero consultado.";
+                $this->load->view('templates/header');
+                $this->load->view('templates/navigation',$data);
+                $this->load->view('checkpaymentsstatus/checkidentity');
             }
 
             $this->load->model('claims_model');

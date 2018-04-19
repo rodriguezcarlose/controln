@@ -34,7 +34,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <td><?= $fila->numero_cuenta; ?></td>
                         <td><?= $fila->fecha; ?></td>
                        	<td><?= $fila->estatus;?></td>
-                       	<td><a href=<?= base_url() . 'claim/addclaims';?> >reclamo</a></td>
+                       	<td><a href=<?= base_url() . 'index.php/claim/addclaims';?> >reclamo</a></td>
                 </tr>
          
                 <?php }?>
@@ -146,7 +146,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         reveal: '.myConfirm',
                         className: "tiny warning",
                         title: "Advertencia",
-                        message: "¿Está seguro que desea Eliminar?",
+                        message: "ï¿½Estï¿½ seguro que desea Eliminar?",
                         Confirm: function () {
                             console.log('Eliminado');
                         }

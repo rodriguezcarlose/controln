@@ -18,7 +18,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         	<div class="form-group">
         		<label for="String:">Cedula/pasaporte</label>
-        		<input id="cedula" name="cedula" placeholder="" type="number" value="" />
+        		<input id="cedula" name="cedula" placeholder="" type="text" value="" maxlength = "9" onkeypress="return validar_texto(event)"  />
         	</div>
         	<!-- 
             <center><div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC"></div></center>

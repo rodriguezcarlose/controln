@@ -12,7 +12,7 @@
 				<?= form_open() ?>
     				<div class="field small-3 columns">
                 		<label for="String:">Documento Identidad:</label>
-                		<input id="documentob" name="documentob" type="text" value=""/>
+                		<input id="documentob" name="documentob" type="text" value="" onkeypress="return validar_texto(event)"/>
             		</div>
             		<input id="buscar" name="buscar" type="hidden" value="b"/>
             		<input type="submit" id="btnEnviar" class="button small" value="Buscar"/>
@@ -73,7 +73,7 @@
                 	
                 	<div class="field small-3 columns">
                 		<label for="String:">Documento Identidad:</label>
-                		<input id="documento" name="documento" type="text" value="<?= isset($documento)?$documento:""; ?>" maxlength = "9"/>
+                		<input id="documento" name="documento" type="text" value="<?= isset($documento)?$documento:""; ?>" maxlength = "9" onkeypress="return validar_texto(event)"/>
             		</div>
             		
             		 <div class="field small-3 columns">

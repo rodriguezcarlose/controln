@@ -52,7 +52,7 @@
             	
             	<div class="field small-3 columns">
             		<label for="String:">Documento Identidad:</label>
-            		<input id="documento" name="documento" type="text" value="<?= isset($documento)?$documento:""; ?>" maxlength = "9"/>
+            		<input id="documento" name="documento" type="text" value="<?= isset($documento)?$documento:""; ?>" maxlength = "9" onkeypress="return validar_texto(event)"/>
         		</div>
         		
         		 <div class="field small-3 columns">
