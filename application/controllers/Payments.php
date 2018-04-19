@@ -141,7 +141,7 @@ class Payments extends CI_Controller {
         
         // validamos que el banco seleccionado coincida con el número de cuenta
         
-        echo "Banco Seleccionado->".$this->input->post("banco")."<br>";
+       // echo "Banco Seleccionado->".$this->input->post("banco")."<br>";
         // echo "Resultado busqueda->".$codbanco."<br>";
         foreach ($codbanco->result() as $records){
             if ($records->codigo != substr($this->input->post("cuenta"),0,4)) {

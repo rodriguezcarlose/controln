@@ -20,7 +20,10 @@
     				</div>
     				
     				<center>
+    				<!-- captcha para el ambiente local -->
     				<div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC"></div>
+    				<!-- captcha para el ambiente produccion -->
+    				<!-- div class="g-recaptcha" data-sitekey="6LcREFQUAAAAAO58EooEWhWqm2Zk-M0II-sQlSD2"></div-->
     				</center>
     
     				<div class="small-12 column text-right buttonPanel">
