@@ -68,7 +68,7 @@
 			
     			<?php 
 
-                        echo '<a href="'. base_url().'index.php/claim/addclaims">[RECLAMOS]</a>';
+                        echo '<a href="'. base_url().'index.php/claim">[RECLAMOS]</a>';
 
 
                 ?>

@@ -128,7 +128,6 @@ class Claims_model extends CI_Model
         $this->db->set("comentario",$comentario);
         $this->db->where("id",$id);
         $this->db->update("reclamo");
-        echo $this->db->last_query();
         if ($this->db->trans_status() === FALSE){
             return false;
         }else{

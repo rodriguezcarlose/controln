@@ -11,6 +11,7 @@ class Claim extends CI_Controller
     }
 
     private $validation = true;
+    private $data;
 
     /**
      * __construct function.
@@ -58,7 +59,26 @@ class Claim extends CI_Controller
     }
 
     public function index()
-    {}
+    {
+        if ($this->data === null){
+            $data = new stdClass();
+        }else{
+            $data = $this->data;
+        }
+        
+        $data->bancos = $this->Banco_model->getBancos();
+        $data->tipodocumentoidentidad = $this->TipoDocumentoIdentidad_model->getTipoDocumentoIdentidad();
+        $data->proyecto = $this->Proyecto_model->getProyecto();
+        $data->gerencia = $this->Gerencia_model->getGerencia();
+        $data->cargo = $this->Cargo_model->getCargos();
+        $data->tipoerror = $this->Tipoerror_model->gettipoerror();
+        $data->tiposcuentas = $this->TiposCuentas_model->gettiposcuentas();
+        
+        $this->load->view('templates/header');
+        $this->load->view('templates/navigation', $data);
+        $this->load->view('claims/addclaim');
+        $this->load->view('templates/footer');
+    }
 
     public function do_upload()
     {
@@ -305,13 +325,17 @@ class Claim extends CI_Controller
             
             unset($data->soportereclamos);
             
-            $data->success = "Reclamo Enviado con Exito";
+            
+            $this->data = new stdClass();
+            
+            $this->data->success = "Reclamo Enviado con Exito";
             $this->load->view('templates/header');
             $this->load->view('templates/navigation', $data);
             $this->load->view('claims/addclaim', $data);
             $this->load->view('templates/footer');
             
-            redirect(base_url() . "index.php/claim/addclaims");
+            $this->index();
+            //redirect(base_url() . "index.php/claim/addclaims");
             
             /*
              * $data->success = "Reclamo Enviado con Exito";

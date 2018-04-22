@@ -246,7 +246,7 @@ class Payments extends CI_Controller {
                                                                     $_SESSION['id'],
                                                                     $_SESSION['addrecords']);
                 if ($resultado){
-                    $data->success = 'Se ha crado con &Eacutexito la nomina.';
+                    $data->success = 'Se ha creado con &Eacutexito la n&oacute;mina.';
                     unset( $_SESSION['addrecords']);
                     $data->descripcionnomina = "";
                     $data->id_proyecto = "";

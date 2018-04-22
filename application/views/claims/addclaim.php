@@ -168,7 +168,7 @@ foreach ($tiposcuentas->result() as $data) {
     				<div class="field small-12 columns">
 				<label for="Enum:">Soporte Cargado: <?= $soportereclamos?><input
 					type="submit" value="eliminar" name="btnCargar" id="btnCargar"
-					class="button small" onclick="this.form.action = 'eliminar'" /></label>
+					class="button small" onclick="this.form.action = '<?=base_url()?>index.php/claim/eliminar'" /></label>
 				<input id="soportereclamos" name="soportereclamos" type="hidden"
 					value="<?= $soportereclamos?>">
 
@@ -180,7 +180,7 @@ foreach ($tiposcuentas->result() as $data) {
 				<label for="Enum:">Imagen:</label> <input type="file"
 					name="file_name" size="20" /> <input type="submit" value="Cargar"
 					name="file_name" id="btnCargar" class="button small"
-					onclick="this.form.action = 'do_upload'" />
+					onclick="this.form.action = '<?=base_url()?>index.php/claim/do_upload'" />
 			</div>
     				
 				
@@ -333,7 +333,7 @@ foreach ($tipoerror->result() as $data) {
 			<div class="small-12 column text-right buttonPanel">
 				<input type="submit" id="btnEnviar" name="btnEnviar"
 					class="button small right" value="Enviar Reclamo"
-					onclick="this.form.action = 'addclaims'" />
+					onclick="this.form.action = '<?=base_url()?>index.php/claim/addclaims'" />
 
 			</div>
 		</div>
