@@ -51,8 +51,8 @@ class Generatebankfile extends CI_Controller {
         $this->load->view('templates/navigation',$data);
         
         
-        $this->load->model('payments_model');
-        $resultPayments=$this->payments_model->getPaymentsGenerateBankFile();
+        $this->load->model('Payments_model');
+        $resultPayments=$this->Payments_model->getPaymentsGenerateBankFile();
         
 
         $this->load->model('TiposCuentas_model');
@@ -90,8 +90,8 @@ class Generatebankfile extends CI_Controller {
             
             $nomina = $this->input->post('nomina');
             
-            $this->load->model('payments_model');
-            $resultPayments=$this->payments_model->getPaymentsGenerateCSVFile($nomina);
+            $this->load->model('Payments_model');
+            $resultPayments=$this->Payments_model->getPaymentsGenerateCSVFile($nomina);
             
             $this->load->dbutil();
             $delimiter = "\t";
@@ -132,11 +132,11 @@ class Generatebankfile extends CI_Controller {
             
             
         } else {
-            $this->load->model('empresaordenante_model');
-            $this->load->model('tipodocumentoidentidad_model');
-            $this->load->model('payments_model');
+            $this->load->model('EmpresaOrdenante_model');
+            $this->load->model('TipoDocumentoIdentidad_model');
+            $this->load->model('Payments_model');
             
-            if ($this->payments_model->countNumerLote($this->input->post('lote')) == 0){
+            if ($this->Payments_model->countNumerLote($this->input->post('lote')) == 0){
                 $empresa = $this->input->post('empresa');
                 $rif = $this->input->post('rif');
                 $lote = $this->input->post('lote');
@@ -151,7 +151,7 @@ class Generatebankfile extends CI_Controller {
                 $estatus_nominadetalle_procesada=2;
                 
                 //Guardo datos en el BD tabla empresa_ordenante
-                $resultTipoDocumento=$this->tipodocumentoidentidad_model->getTipoDocumentoIdentidadbyTipo(substr($rif,0,1));
+                $resultTipoDocumento=$this->TipoDocumentoIdentidad_model->getTipoDocumentoIdentidadbyTipo(substr($rif,0,1));
                 $tdi=$resultTipoDocumento->result();
                 
                 $value = array ('id_tipo_documento_identidad'=>$tdi[0]->id, 
@@ -168,27 +168,27 @@ class Generatebankfile extends CI_Controller {
                 }
                 
                 
-                $resultEmpresaOrdenante=$this->empresaordenante_model->updateEmpresaOrdenante($value);
+                $resultEmpresaOrdenante=$this->EmpresaOrdenante_model->updateEmpresaOrdenante($value);
                 
                 //Asocio el numero de lote a la nomina y modifico la nomina detalle con la fecha de envio
                 $value = array ('numero_lote'=>$lote,
                                 'id'=>$nomina
                                 );
-                $resultPayments=$this->payments_model->updateNumeroLote($value);
+                $resultPayments=$this->Payments_model->updateNumeroLote($value);
     
                 $value = array ('fecha'=>$fecha,
                     'id_nomina'=>$nomina
                 );
-                $resultPayments=$this->payments_model->updateFechaValor($value);
+                $resultPayments=$this->Payments_model->updateFechaValor($value);
     
                 
-                $resultPayments=$this->payments_model->updateEstatusNominabyId($nomina,$estatus_nomina_procesada);
-                $resultPayments=$this->payments_model->updateEstatusNominaDetallebyId($nomina,$estatus_nominadetalle_procesada);
+                $resultPayments=$this->Payments_model->updateEstatusNominabyId($nomina,$estatus_nomina_procesada);
+                $resultPayments=$this->Payments_model->updateEstatusNominaDetallebyId($nomina,$estatus_nominadetalle_procesada);
                 
                 
                 
                 //Genero el TXT del banco
-                $resultPayments=$this->payments_model->getPaymentsGenerateTXTFile($nomina);
+                $resultPayments=$this->Payments_model->getPaymentsGenerateTXTFile($nomina);
                 $this->load->helper('file');
                 $salt="\r\n";
                 
