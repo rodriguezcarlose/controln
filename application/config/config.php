@@ -23,9 +23,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-//$config['base_url'] = 'http://localhost/loginmenu/';
+//configuracion IP privada
+//$config['base_url'] = 'https://10.31.193.147/ctrln/';
 
-$config['base_url'] = 'http://controlnomina.com/controln/';
+//configuracion IP publica
+//$config['base_url'] = 'https://201.249.171.30/ctrln/';
+
+//configuracion universal
+$config['base_url'] = 'http' . ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 's' : '').'://'.$_SERVER['HTTP_HOST'].str_replace('//','/',dirname($_SERVER['SCRIPT_NAME']).'/');
 
 /*
 |--------------------------------------------------------------------------

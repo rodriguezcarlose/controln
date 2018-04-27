@@ -19,11 +19,29 @@
     				</div>
     				
     				<center>
-    				<!-- captcha para el ambiente local -->
-    				<div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC"></div>
-    				<!-- captcha para el ambiente produccion -->
-    				<!-- div class="g-recaptcha" data-sitekey="6LcREFQUAAAAAO58EooEWhWqm2Zk-M0II-sQlSD2"></div-->
+    				<?php 
+        				switch ($_SERVER['HTTP_HOST']) {
+        				    case "controlnomina.com":
+        				        echo '<div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC"></div>';
+        				        break;
+        				    case "10.31.193.147":
+        				        echo '<div class="g-recaptcha" data-sitekey="6LcREFQUAAAAAO58EooEWhWqm2Zk-M0II-sQlSD2"></div>';
+        				        break;
+        				        break;
+        				    case "190.202.115.30":
+        				        echo '<div class="g-recaptcha" data-sitekey="6LeWyVUUAAAAAKimO7-YmOwsFmuM2XfSr64Ikfuy"></div>';
+        				        break;
+        				        $fase = 3;
+        				        break;
+        				    case "201.249.171.30":
+        				        echo '<div class="g-recaptcha" data-sitekey="6LenTVUUAAAAADHplTqw3eykF-AuuxdnM3sK_keY"></div>';
+        				        break;
+        				        break;
+        				}
+    				?>
     				</center>
+
+    				
 
     				<div class="small-12 column text-right buttonPanel">
                         <input type="submit" id="btnEnviar" class="button small right" value="Aceptar"/>
