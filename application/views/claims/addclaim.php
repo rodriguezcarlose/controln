@@ -144,7 +144,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
              	 }else{
 			?>
 					<div class="field small-12 columns">
-						<label for="Enum:">Imagen:</label> <input type="file" name="file_name" size="20" /> 
+						<label for="Enum:">Archivo Soporte:</label> <input type="file" name="file_name" size="20" /> 
 						<input type="submit" value="Cargar"name="file_name" id="btnCargar" class="button small" onclick="this.form.action = '<?=base_url()?>index.php/claim/do_upload'" />
 					</div>
 			<?php 
@@ -267,6 +267,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
 				<label for="cantidad_dias">Dias Trabajados:</label> 
 				<input id="numeric" name="cantidad_dias" type="text" value="<?php if(isset($cantidad_dias)) echo $cantidad_dias; ?>" maxlength="3" onkeypress="return validar_texto(event)"/>
 			</div>
+			
+			<div class="field small-12 columns">
+      					<label for="comentario">Nota Explicativa:</label>
+      					<textarea rows= "5" cols="50" name="comentario" id="comentario" type="text"  maxlength = "255"></textarea>
+      					<?php if(isset($comentario)) echo $comentario; ?>
+				
+		</div> 	
+		
+		
 			<div class="small-12 column">
         		<?php
                     switch ($_SERVER['HTTP_HOST']) {

@@ -110,10 +110,10 @@ class Claim extends CI_Controller
         $data->soportereclamos = $this->input->post("file_name");
         
         $config['upload_path'] = './soportereclamostemp/';
-        $config['allowed_types'] = 'png|jpg';
+        $config['allowed_types'] = '*';
         $config['max_size'] = 3000;
-        $config['max_width'] = 1024;
-        $config['max_height'] = 768;
+        $config['max_width'] = 1400;
+        $config['max_height'] = 1000;
         $config['file_name'] = "SOPORTE" . now();
         $this->load->library('upload', $config);
         
@@ -192,6 +192,7 @@ class Claim extends CI_Controller
         $data->id_tipo_error = $this->input->post("id_tipo_error");
         $data->cantidad_dias = $this->input->post("cantidad_dias");
         $data->soportereclamos = $this->input->post("soportereclamos");
+        $data->comentario = $this->input->post("comentario");
         
         // set validation rules
         
@@ -304,6 +305,7 @@ class Claim extends CI_Controller
             $tipoerror = $this->input->post('id_tipo_error');
             $cantidaddias = $this->input->post('cantidad_dias');
             $soportereclamos = $this->input->post('soportereclamos');
+            $comentario = $this->input->post('comentario');
             
             $this->input->post = "";
             $data->id_tipo_documento_identidad = "";
@@ -322,17 +324,16 @@ class Claim extends CI_Controller
             $data->cantidad_dias = "";
             $data->file_name = "";
             $data->soportereclamos = "";
-            
-            unset($data->soportereclamos);
-            
-            
+            $data->comentario=""; 
+    
             $this->data = new stdClass();
-            
+      
             $this->data->success = "Reclamo Enviado con Exito";
-            $this->load->view('templates/header');
-            $this->load->view('templates/navigation', $data);
-            $this->load->view('claims/addclaim', $data);
-            $this->load->view('templates/footer');
+    
+            //redirect ("claim/addclaims") ;
+           //$this->load->view('templates/navigation', $data);
+           //$this->load->view('claims/addclaim', $data);
+           //$this->load->view('templates/footer');
             
             $this->index();
             //redirect(base_url() . "index.php/claim/addclaims");
@@ -373,14 +374,16 @@ class Claim extends CI_Controller
         $this->load->view('templates/footer');
     }
 
-    public function download($archivosoporte)
+    public function download($archivosoporte = null)
     {
-        force_download('soportereclamos/' . $archivosoporte, NULL);
-    }
+     
+            force_download('soportereclamos/' . $archivosoporte, NULL);
     
+    
+    }
     public function updateClaim(){
         $this->load->model('claims_model');
-        $result = $this->claims_model->updateClaim($this->input->post("idreclamo"), $this->input->post("estatus_reclamo"),  $this->input->post("comentario"));
+        $result = $this->claims_model->updateClaim($this->input->post("idreclamo"), $this->input->post("estatus_reclamo"),  $this->input->post("comentario_gerencia"));
         if($result)
         {
             //exito
@@ -391,6 +394,7 @@ class Claim extends CI_Controller
         }
         
     }
+  
     
 }
 

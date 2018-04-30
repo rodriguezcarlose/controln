@@ -65,8 +65,9 @@ class Claims_model extends CI_Model
             'cantidad_dias' => $this->input->post('cantidad_dias'),
             'fecha_reclamo' => $this->input->post('fecha_reclamo'),
             'id_estatus_reclamo' => 1,
-            'soportereclamos' => $this->input->post('soportereclamos')
-        
+            'soportereclamos' => $this->input->post('soportereclamos'),
+            'comentario' => $this->input->post('comentario')
+            
         );
         $this->db->insert('reclamo', $data);
     }
@@ -97,7 +98,7 @@ class Claims_model extends CI_Model
         // query que obtiene todos los detalles
         $this->db->select('r.id,tdi.descripcion as nacionalidad,r.documento_identidad as cedula,r.nombre as npersona,r.apellido,r.telefono,r.correo ,
         b.nombre as banco ,r.numero_cuenta,tc.descripcion,p.nombre as proyecto ,g.nombre as gerencia ,c.nombre as cargo,
-        te.nombre_error,er.id as id_reclamo,er.nombre_reclamo,r.fecha_reclamo,r.soportereclamos,r.cantidad_dias,r.comentario');
+        te.nombre_error,er.id as id_reclamo,er.nombre_reclamo,r.fecha_reclamo,r.soportereclamos,r.cantidad_dias,r.comentario,r.comentario_gerencia');
         $this->db->from('reclamo r');
         $this->db->join('tipo_documento_identidad tdi', 'r.id_tipo_documento_identidad=tdi.nombre', 'inner');
         $this->db->join('tipos_cuentas tc', 'r.id_tipos_cuentas=tc.id', 'inner');
@@ -108,6 +109,7 @@ class Claims_model extends CI_Model
         $this->db->join('tipo_error te', 'r.id_tipo_error=te.id', 'inner');
         $this->db->join('estatus_reclamo er', 'r.id_estatus_reclamo=er.id', 'inner');
         $this->db->where('r.id', $idreclamo);
+        
         $this->db->order_by('id');
         $query = $this->db->get();
         
@@ -122,10 +124,10 @@ class Claims_model extends CI_Model
         return $data->result();
     }
     
-    public function updateClaim($id, $estatus, $comentario)
+    public function updateClaim($id, $estatus, $comentario_gerencia)
     {
         $this->db->set("id_estatus_reclamo",$estatus);
-        $this->db->set("comentario",$comentario);
+        $this->db->set("comentario_gerencia",$comentario_gerencia);
         $this->db->where("id",$id);
         $this->db->update("reclamo");
         if ($this->db->trans_status() === FALSE){

@@ -96,7 +96,9 @@
     						<?= $query[0]->descripcion ?>
     					</td>
     					<td>
+    					<?php if ($query[0]->soportereclamos !== null){?>
     						<a href="<?php echo base_url();?>index.php/claim/download/<?= $query[0]->soportereclamos;?>">Descargar</a>
+    					<?php }?>
     					</td>
 					</tr>
 					
@@ -148,6 +150,25 @@
 					
 				</tbody>
 			</table>
+			<table id="dataTable">
+				<thead>
+					<tr>
+						<td>
+							<label for="comentario">Nota Explicativa:</label>
+						</td>
+    				
+    
+            		</tr>
+				<thead>
+				<tbody> 
+					<tr>
+    					<td>
+    						<?= $query[0]->comentario ?>
+    					</td>
+					</tr>
+				</tbody>
+			</table>
+			
 			<?= form_open("Claim/updateClaim")?>
 				<input type="hidden" name = "idreclamo" id = "idreclamo" value="<?= $query[0]->id?>"/>
     			<table id="dataTable">
@@ -181,7 +202,7 @@
     						</select>	
     					</td>
     					<td>
-    						<textarea rows="5" cols="50" name="comentario" id="comentario" maxlength = "255"><?= $query[0]->comentario?></textarea>
+    						<textarea rows="5" cols="50" name="comentario_gerencia" id="comentario_gerencia" maxlength = "255"><?= $query[0]->comentario_gerencia?></textarea>
     					</td>
     					</tr>
     				</tbody>
