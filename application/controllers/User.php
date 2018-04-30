@@ -113,6 +113,7 @@ class User extends CI_Controller {
                     $_SESSION['estatus']     = (string)$user->estatus;
                     $_SESSION['nombre']     = (string)$user->nombre;
                     $_SESSION['apellido']     = (string)$user->apellido;
+                    $_SESSION['gerencia']     = (string)$user->id_gerencia;
                     $_SESSION['logged_in']    = (bool)true;
                     $_SESSION['menu']    = (array)$menu;
                     // user login ok

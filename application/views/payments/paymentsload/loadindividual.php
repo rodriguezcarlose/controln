@@ -1,4 +1,8 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+if (!isset($this->session->userdata['logged_in'])) {
+    redirect(base_url()."index.php/user/login");
+}?>
 </br>
 <div class="container">
 	<div class="col-md-20">
@@ -57,7 +61,7 @@
                                             $selected = false;
                                         ?>
                             				<?php foreach ($gerencia->result() as $data) { 
-                            				        if ($id_gerencia == $data->id){
+                            				    if ($id_gerencia == $data->id || $data->id == $_SESSION['gerencia']){
                             			                 $selected = true;
                             			    ?>
                             						<option selected="selected" value="<?= $data->id ?>"><?= $data->nombre ?></option>

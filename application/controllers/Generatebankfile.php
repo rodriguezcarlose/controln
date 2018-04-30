@@ -110,6 +110,112 @@ class Generatebankfile extends CI_Controller {
         }
         
     }
+    
+    
+    public function generateXLS()
+    {
+        
+        
+        /*Para la generaci�n del CSV solo se requiere la nomina*/
+        $this->form_validation->set_rules('nomina', 'nomina', 'required',array('required' => 'La N&oacute;mina a generar es requerida'));
+        
+        if ($this->form_validation->run() == false) {
+            
+            // validation not ok, send validation errors to the view
+            $this->index();
+            
+        } else {
+            
+            $nomina = $this->input->post('nomina');
+            
+            $this->load->model('Payments_model');
+            $resultPayments=$this->Payments_model->getPaymentsGenerateCSVFile($nomina);
+            
+            $this->load->library('PHPExcel/Classes/PHPExcel');
+            $objPHPExcel = new PHPExcel();// Establecer propiedades
+            $objPHPExcel->getProperties()
+            ->setCreator("Cattivo")
+            ->setLastModifiedBy("Cattivo")
+            ->setTitle("Documento Excel de Prueba")
+            ->setSubject("Documento Excel de Prueba")
+            ->setDescription("Demostracion sobre como crear archivos de Excel desde PHP.")
+            ->setKeywords("Excel Office 2007 openxml php")
+            ->setCategory("Pruebas de Excel");
+            // Agregar Informacion
+            $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1', 'NOMBRE_DEL_BENEFICIARIO')
+            ->setCellValue('B1', 'REFERENCIA_DEL_CREDITO')
+            ->setCellValue('C1', 'CARGO')
+            ->setCellValue('D1', 'LETRA_RIF_CI')
+            ->setCellValue('E1', 'NUMERO_RIF_CI')
+            ->setCellValue('F1', 'TIPO_DE_CUENTA')
+            ->setCellValue('G1', 'CUENTA_DEL_BENEFICIARIO')
+            ->setCellValue('H1', 'MONTO_DEL_CREDITO')
+            ->setCellValue('I1', 'TIPO_DE_PAGO')
+            ->setCellValue('J1', 'BANCO')
+            ->setCellValue('K1', 'DURACION_DEL_CHEQUE')
+            ->setCellValue('L1', 'EMAIL_DEL_BENEFICIARIO')
+            ->setCellValue('M1', 'FECHA_VALOR_DEL_DEBITO');
+            
+            
+            $i= 2;
+            foreach ($resultPayments->result() as $rows){
+                
+                $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue('A'.$i, $rows->NOMBRE_DEL_BENEFICIARIO)
+                ->setCellValue('B'.$i, $rows->REFERENCIA_DEL_CREDITO)
+                ->setCellValue('C'.$i, $rows->CARGO)
+                ->setCellValue('D'.$i, $rows->LETRA_RIF_CI)
+                ->setCellValue('E'.$i, $rows->NUMERO_RIF_CI)
+                ->setCellValue('F'.$i, $rows->TIPO_DE_CUENTA)
+                ->setCellValue('G'.$i, $rows->CUENTA_DEL_BENEFICIARIO)
+                ->setCellValue('H'.$i, $rows->MONTO_DEL_CREDITO)
+                ->setCellValue('I'.$i, $rows->TIPO_DE_PAGO)
+                ->setCellValue('J'.$i, $rows->BANCO)
+                ->setCellValue('K'.$i, $rows->DURACION_DEL_CHEQUE)
+                ->setCellValue('L'.$i, $rows->EMAIL_DEL_BENEFICIARIO)
+                ->setCellValue('M'.$i, $rows->FECHA_VALOR_DEL_DEBITO);
+                $i ++;
+            }
+            
+            
+            
+            // Renombrar Hoja
+            $objPHPExcel->getActiveSheet()->setTitle('Credito');
+            // Establecer la hoja activa, para que cuando se abra el documento se muestre primero.
+            $objPHPExcel->setActiveSheetIndex(0);
+            $filename = 'archivo' . date('Y-m-d H:i:s') .'.xlsx';
+            
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="'.$filename.'"');
+            header('Cache-Control: max-age=0');
+            
+            $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+            $objWriter->save('php://output');
+            
+            
+            
+            
+            
+            
+            
+            $this->load->dbutil();
+            $delimiter = "\t";
+            $newline = "\n";
+            $enclosure = '"';
+            $archivo= $this->dbutil->csv_from_result($resultPayments, $delimiter, $newline, $enclosure);
+            
+            /*
+             $this->load->helper('file');
+             
+             **/
+            
+            $this->load->helper('download');
+         // force_download('archivo' . date('Y-m-d H:i:s') .'.xls', $archivo);
+            
+        }
+        
+    }
 
     public function generateTXT()
     {

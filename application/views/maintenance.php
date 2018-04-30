@@ -10,7 +10,7 @@
     <h1 class="head text-center">Servidor en Mantenimiento</h1>
     <div class="container">
         <div class="content1"> 
-            <img src="http://localhost/codeigniter/assets/imagen/imagen.png" alt="under-construction">
+            <img src= "/Content/mages/mentenimiento.png" alt="En mantenimiento">
 
         
         <h3>   <p class="text-center">Disculpe los Inconvenientes. Volveremos en unos Momentos.</p></h3> 

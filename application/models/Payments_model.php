@@ -537,6 +537,11 @@ class Payments_model extends CI_Model
         $this->db->where("id_nomina", $idnomina);
         return $this->db->count_all_results('nomina_detalle');
     }
+    
+    public function getEstausNominaDetalle(){
+        return $this->db->get("estatus_nomina_detalle");
+        
+    }
 
 
 }

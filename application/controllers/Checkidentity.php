@@ -73,12 +73,16 @@ class Checkidentity extends CI_Controller {
             
             $this->load->model('payments_model');
             $result=$this->payments_model->getPaymentsByIdentity($nacionalidad,$cedula);
-            $dataPayments=array('consulta'=>$result);
+            $resultEstatus=$this->payments_model->getEstausNominaDetalle();
+            $data->consulta= $result;
+            $data->estatusNom= $resultEstatus;
+            
+           // $dataPayments=array('consulta'=>$result);
             
             if($result != null){
                 $this->load->view('templates/header');
                 $this->load->view('templates/navigation');
-                $this->load->view('checkpaymentsstatus/payments',$dataPayments);
+                $this->load->view('checkpaymentsstatus/payments',$data);
             }else{
                 $data->error = "No se encontr&oacute; el n&uacute;mero consultado.";
                 $this->load->view('templates/header');

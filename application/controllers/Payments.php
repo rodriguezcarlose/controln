@@ -610,6 +610,140 @@ class Payments extends CI_Controller {
     }
     
     
+    
+    
+    public function do_upload_xls(){
+        
+        log_message('info', 'Payment|inicio do_upload');
+        
+        
+        if (isset($_SESSION['table_temp_nom'])){
+            $this->payments_model->deleteTablepaymentsTem($_SESSION['table_temp_nom']);
+            unset($_SESSION['table_temp_nom']);
+            
+        }
+        if (isset($_SESSION['start_index_load_payment'])){
+            unset($_SESSION['start_index_load_payment']);
+        }
+        
+        $data = new stdClass();
+        $config['upload_path']          = './uploads/';
+        $config['allowed_types']        = 'xls|xlsx';
+        $config['max_size']             = 0;
+        $config['max_width']            = 1024;
+        $config['max_height']           = 768;
+        $this->load->library('upload', $config);
+        
+        if (!$this->upload->do_upload('userfile')){
+            $data->tab ="2";
+            $data->error = $this->upload->display_errors();
+            log_message('error', 'Payment|do_upload|'.$data->error);
+            $this->load->view('templates/header');
+            $this->load->view('templates/navigation',$data);
+            $this->load->view('payments/paymentsload/loadgrid',$data);
+            $this->load->view('templates/footer');
+        }
+        else{
+            //$data->upload = array('upload_data' => $this->upload->data());
+            
+            //cargamos el arcivo
+            $file = $this->upload->data('file_path').$this->upload->data('file_name');
+
+            $this->load->library('PHPExcel/Classes/PHPExcel');
+            $archivo = $file;
+            $inputFileType = PHPExcel_IOFactory::identify($archivo);
+            $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+            $objPHPExcel = $objReader->load($archivo);
+            $sheet = $objPHPExcel->getSheet(0);
+            $highestRow = $sheet->getHighestRow();
+            $highestColumn = $sheet->getHighestColumn();
+            
+            
+            
+            $data->records = array();
+            
+            
+            $tablename = "detalle_nomina_temp".$_SESSION['id'];
+            
+            //Creamos una tabla temporal para cargar los archivos
+            $this->payments_model->createTablepaymentsTem($tablename);
+            
+            log_message('info', 'Payment|do_upload|inicio recorrido archivo cargado');
+            
+            
+            for ($row = 2; $row <= $highestRow; $row++){
+                
+                $tipo_pago;
+                if ($sheet->getCell("A".$row) == "1")
+                    $tipo_pago = "1";
+                else
+                    $tipo_pago = "2";
+                        
+                        
+                    $credito = str_replace('.','',$sheet->getCell("H".$row));
+                    $credito = str_replace(',','.',$sheet->getCell("H".$row));
+                        
+                    $fila = array("beneficiario"=> strtoupper($this->form_validation->stripAccents($sheet->getCell("A".$row)->getValue())),
+                        // "referencia_credito"=> $sheet->getCell("B".$row),
+                        "referencia_credito"=> "",
+                        "id_cargo"=> $sheet->getCell("C".$row),
+                        "id_tipo_documento_identidad"=> $sheet->getCell("D".$row),
+                        "documento_identidad"=> $sheet->getCell("E".$row),
+                        "id_tipo_cuenta"=> $sheet->getCell("F".$row),
+                        "numero_cuenta"=> $sheet->getCell("G".$row),
+                        "credito"=>$credito,
+                        "id_tipo_pago"=> $tipo_pago,
+                        "id_banco"=> $sheet->getCell("J".$row),
+                        //"id_duracion_cheque"=> $sheet->getCell("K".$row),
+                        "id_duracion_cheque"=> "",
+                        // "correo_beneficiario"=> $sheet->getCell("L".$row),
+                        "correo_beneficiario"=> "",
+                        // "fecha"=> $sheet->getCell("M".$row),
+                         "fecha"=> "",
+                        "id_estatus"=>1,);
+                        
+                        //agregamos el registro en el arreglo
+                    array_push($data->records,$fila);
+            }
+          
+            
+            
+            log_message('info', 'Payment|do_upload|fin recorrido archivo cargado');
+            
+            // eliminamos el archivo cargado
+            unlink($this->upload->data('file_path').$this->upload->data('file_name'));
+            
+            //insertamos en la tabla temporal el arreglo con los registros
+            $this->payments_model->insertTablepaymentsTem($tablename,$data->records);
+            //$params = array();
+            
+            
+            $_SESSION['table_temp_nom'] = $tablename;
+
+            
+            $start =0;
+            $limit = 1000;
+            $total_records = $this->payments_model->get_total($tablename, 0);
+            
+            log_message('info', 'Payment|inivicio valiadcion registros');
+            //quitamos el limite de tie,po de ejecución
+            ini_set('max_execution_time', 0);
+            while ($start < $total_records){
+                $detalle =$this->payments_model->getTableTempLimit($tablename,$limit,$start);
+                $this->validateCSV($detalle);
+                $start = $start + $limit;
+                
+            }
+            //colocamos el limite de tie,po de ejecución en su valor inicial
+            ini_set('max_execution_time', 30);
+            log_message('info', 'Payment|fin valiadcion registros');
+            
+            log_message('info', 'Payment|fin do_upload');
+            redirect(base_url().'index.php/payments/loadgrid');
+        }
+        log_message('info', 'Payment|fin do_upload');
+    }
+    
       
     
     /**
@@ -807,6 +941,11 @@ class Payments extends CI_Controller {
     public  function downloads(){
         $this->load->helper('download');
         force_download('./plantilla/plantilla.csv', NULL);
+    }
+    
+    public  function downloadsXLS(){
+        $this->load->helper('download');
+        force_download('./plantilla/plantilla.xlsx', NULL);
     }
     
 }

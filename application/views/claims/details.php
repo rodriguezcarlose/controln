@@ -1,4 +1,8 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed');?>
+<?php defined('BASEPATH') or exit('No direct script access allowed');
+if (!isset($this->session->userdata['logged_in'])) {
+    redirect(base_url()."index.php/user/login");
+}
+?>
 <br>
 <div class="container">
 	<div class="col-md-20">

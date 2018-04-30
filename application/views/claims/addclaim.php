@@ -270,8 +270,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 			
 			<div class="field small-12 columns">
       					<label for="comentario">Nota Explicativa:</label>
-      					<textarea rows= "5" cols="50" name="comentario" id="comentario" type="text"  maxlength = "255"></textarea>
-      					<?php if(isset($comentario)) echo $comentario; ?>
+      					<textarea rows= "5" cols="50" name="comentario" id="comentario" type="text"  maxlength = "255"><?php if(isset($comentario)) echo $comentario; ?></textarea>
+      					
 				
 		</div> 	
 		

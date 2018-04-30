@@ -1,4 +1,8 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); 
+if (!isset($this->session->userdata['logged_in'])) {
+    redirect(base_url()."index.php/user/login");
+}
+?>
 
  
 </br>
@@ -9,7 +13,7 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="page-header">
-						<?= form_open('payments/downloads')?>
+						<?= form_open('payments/downloadsXLS')?>
     						<h3>Descargar Plantilla</h3>
                             <input type="submit" value="Descargar" id="btnCargar" class="button small"  />
                        	<?= form_close()?>
@@ -20,7 +24,7 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="page-header">
-						<?php echo form_open_multipart('payments/do_upload','id="formulario_ajax"');?>
+						<?php echo form_open_multipart('payments/do_upload_xls','id="formulario_ajax"');?>
     						<h3>Cargar Pago Masivo</h3>
     						<div class="field small-3 column">
                             	<label for="Enum:">Archivo:</label>
@@ -90,7 +94,7 @@
                                         $selected = false;
                                     ?>
                         				<?php foreach ($gerencia->result() as $data) { 
-                        				        if ($id_gerencia == $data->id){
+                        				    if ($id_gerencia == $data->id || $data->id == $_SESSION['gerencia']){
                         			                 $selected = true;
                         			    ?>
                         						<option selected="selected" value="<?= $data->id ?>"><?= $data->nombre ?></option>

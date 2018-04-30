@@ -1,6 +1,12 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-?><!DOCTYPE html>
+
+/*if (!isset($this->session->userdata['logged_in'])) {
+    redirect(base_url()."index.php/user/login");
+}*/
+?>
+
+<!DOCTYPE html>
 
 <br><br>
 <div class="row">
@@ -41,119 +47,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </thead>
         <tbody></tbody>
     </table>
+    <label>Leyenda:</label>
+    <?php foreach ($estatusNom->result() as $fila){ ?>
+    	<label><?= $fila->nombre?>: <?= $fila->descripcion?></label>
+    
+    
+    
+    <?php }?>
+    
+    
 </div>
 
-<script type="text/javascript">
-
-        function UpdateGrid() {
-            datagrid.ajax.reload();
-        }
-
-        $(function () {
-
-            $('#CreateElement').click(function (e) {
-                e.preventDefault();
-                modalEditor(this.href);
-            });
-
-            //Boton: limpiar formulario
-            $('#btnClearForm').click(function (e) {
-                $('form').trigger("reset");
-            });
-
-            /////////////////////////////////////
-            //Table//////////////////////////////
-            /////////////////////////////////////
-            var renderButtonActions = function (data, type, full, meta) {
-                var r = '';
-                r = '<a href="/Demo/Details/' + data + '" target="_blank" class="imgDetailsBtn"><img alt="Ver" src="Content/Images/Icons/view_24.png"></a>' +
-                    '<a href="/Demo/Edit/' + data + '" target="_blank" class="imgEditBtn"><img alt="Editar" src="Content/Images/Icons/edit_24.png"></a>' +
-                    '<a href="#" class="imgDeleteBtn"><img alt="Editar" src="Content/Images/Icons/delete_24.png"></a>';
-                return r;
-            }
-
-            function renderCheckBoxes(data, type, full, meta) {
-                if (data)
-                    return '<input type="checkbox" checked disabled value="' + data + '"/>';
-                else
-                    return '<input type="checkbox" disabled value="' + data + '"/>';
-            }
-
-            function renderTest(data, type, full, meta) {
-                console.log(data);
-                return data;
-            }
-
-            $.ajaxSetup({ cache: false });
-            var datagrid = $('#dataTable').DataTable({
-                "autoWidth": false,
-                "pageLength": 5,
-                "processing": false,
-                "serverSide": false,
-                "deferLoading": 0,
-                "dataSrc": "",
-                "ajax": {
-                    "url": "REST/datatable.php",
-                    "type": "POST",
-                    "datatype": "json",
-                    "data": ""
-                },
-                "columns": [
-                    { "data": "String", "width": "120px" },
-                    { "data": "Number", "class": "text-center" },
-                    { "data": "DateTime", "class": "text-center", "render": jsonDateToString },
-                    { "data": "EnumAsString", "class": "text-center" },
-                    { "data": "Bool", "class": "text-center", "render": renderCheckBoxes },
-                    { "data": "RadioAsString", "class": "text-center" },
-                    { "data": "Id", "orderable": false, "render": renderButtonActions, "class": "text-center" }
-                ],
-                "language": {
-                    "url": "/Scripts/DataTables/dataTables.spanish.lang.js"
-                },
-                "bFilter": false,
-                "bLengthChange": false
-            });
-
-
-            datagrid.on("draw.dt", function (event) {
-                setButtonEvents();
-            });
-
-        });
-
-        function setButtonEvents() {
-            $(".imgDetailsBtn").each(function () {
-                $(this).off("click");
-                $(this).click(function (e) {
-                    e.preventDefault();
-                    modalEditor(this.href);
-                });
-            });
-
-            $(".imgEditBtn").each(function () {
-                $(this).off("click");
-                $(this).click(function (e) {
-                    e.preventDefault();
-                    modalEditor(this.href);
-                });
-            });
-
-            $(".imgDeleteBtn").each(function () {
-                $(this).off("click");
-                $(this).click(function (e) {
-                    e.preventDefault();
-                    $.ecconfirm({
-                        reveal: '.myConfirm',
-                        className: "tiny warning",
-                        title: "Advertencia",
-                        message: "�Est� seguro que desea Eliminar?",
-                        Confirm: function () {
-                            console.log('Eliminado');
-                        }
-                    });
-                });
-            });
-
-
-        };
-</script>

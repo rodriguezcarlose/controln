@@ -1,4 +1,8 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); 
+if (!isset($this->session->userdata['logged_in'])) {
+    redirect(base_url()."index.php/user/login");
+}
+?>
 
 <fieldset class="ribbon no-pad no-pad-bottom">
     <div class="HorizontalTabLayout">
