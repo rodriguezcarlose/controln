@@ -543,6 +543,68 @@ class Payments_model extends CI_Model
         
     }
 
+    public function getHistoryPayments($gerencia){
+        
+        
+        
+        
+        $result=$this->db->query("SELECT `p`.`nombre` `proyecto`, `n`.`descripcion`, `n`.`numero_lote`, `n`.`fecha_creacion`, `en`.`nombre` `estatus`, `n`.`id`, 
+                                pendiente.pendiente,procesada.procesada,pagada.pagada,rechazada.rechazada
+                                FROM (`nomina` `n`) 
+                                INNER JOIN `estatus_nomina` `en` ON `en`.`id` = `n`.`id_estatus` 
+                                INNER JOIN `proyecto` `p` ON `p`.`id` = `n`.`id_proyecto`
+                                LEFT JOIN (SELECT COUNT(*) pendiente, nd.id_nomina
+                                		FROM nomina_detalle nd
+                                		WHERE nd.id_estatus = 1) pendiente ON `pendiente`.`id_nomina` = `n`.`id`
+                                LEFT JOIN (SELECT COUNT(*) procesada, nd.id_nomina
+                                		FROM nomina_detalle nd
+                                		WHERE nd.id_estatus = 2) procesada ON `procesada`.`id_nomina` = `n`.`id`
+                                LEFT JOIN (SELECT COUNT(*) pagada, nd.id_nomina
+                                		FROM nomina_detalle nd
+                                		WHERE nd.id_estatus = 3) pagada ON `pagada`.`id_nomina` = `n`.`id`
+                                LEFT JOIN (SELECT COUNT(*) rechazada, nd.id_nomina
+                                		FROM nomina_detalle nd
+                                		WHERE nd.id_estatus = 4) rechazada ON `rechazada`.`id_nomina` = `n`.`id`");
+        
+        
+       
+      /* $this->db->select("p.nombre proyecto, n.descripcion, n.numero_lote, n.fecha_creacion, en.nombre estatus, n.id ");
+       $this->db->from('nomina n');
+       $this->db->join('estatus_nomina en', 'en.id = n.id_estatus', 'inner');
+       $this->db->join('proyecto p', 'p.id = n.id_proyecto', 'inner');
+       if ($gerencia != null){
+           $this->db->where("id_gerencia", $gerencia);
+       }
+       
+       $result = $this->db->get("nomina");*/
+      // echo $this->db->last_query();
+       return $result;
+    }
+    
+    public function getPaymentsDetail($id, $limit, $start){
+        
+        $this->db->select("nd.beneficiario, c.nombre cargo,nd.id_tipo_documento_identidad tipo_documento,
+                            nd.documento_identidad,nd.numero_cuenta cuenta, nd.credito,tc.descripcion tipo_cuenta,
+                            tp.descripcion tipo_pago, b.nombre banco, en.nombre estatus, nd.referencia_credito");
+        $this->db->from('nomina_detalle nd');
+        $this->db->join('cargo c', 'c.id = nd.id_cargo', 'inner');
+        $this->db->join('tipos_cuentas tc', 'tc.tipo = nd.id_tipo_cuenta', 'inner');
+        $this->db->join('tipo_pago tp', 'tp.id = nd.id_tipo_pago', 'inner');
+        $this->db->join('banco b', 'b.id = nd.id_banco', 'inner');
+        $this->db->join('estatus_nomina_detalle en', 'en.id = nd.id_estatus', 'inner');
+        $this->db->where("nd.id_nomina", $id);
+        $this->db->limit($limit, $start);
+        return  $this->db->get("nomina_detalle");
+        
+        
+        
+    }
+    
+    
+    public function get_total_detail() {
+            return $this->db->count_all_results("nomina_detalle");
+
+    }
 
 }
 
