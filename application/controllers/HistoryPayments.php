@@ -45,7 +45,7 @@ class HistoryPayments extends CI_Controller
         if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) &&  $_SESSION['id_rol'] === 1 ){
            $history = $this->Payments_model->getHistoryPayments(null);
         }else if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) ){
-            $history = $this->Payments_model->getHistoryPayments($_SESSION['id_rol']);
+            $history = $this->Payments_model->getHistoryPayments($_SESSION['gerencia']);
         }
         
         $data->history = $history;

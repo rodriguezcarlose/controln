@@ -553,18 +553,22 @@ class Payments_model extends CI_Model
                                 FROM (`nomina` `n`) 
                                 INNER JOIN `estatus_nomina` `en` ON `en`.`id` = `n`.`id_estatus` 
                                 INNER JOIN `proyecto` `p` ON `p`.`id` = `n`.`id_proyecto`
-                                LEFT JOIN (SELECT COUNT(*) pendiente, nd.id_nomina
-                                		FROM nomina_detalle nd
-                                		WHERE nd.id_estatus = 1) pendiente ON `pendiente`.`id_nomina` = `n`.`id`
-                                LEFT JOIN (SELECT COUNT(*) procesada, nd.id_nomina
-                                		FROM nomina_detalle nd
-                                		WHERE nd.id_estatus = 2) procesada ON `procesada`.`id_nomina` = `n`.`id`
-                                LEFT JOIN (SELECT COUNT(*) pagada, nd.id_nomina
-                                		FROM nomina_detalle nd
-                                		WHERE nd.id_estatus = 3) pagada ON `pagada`.`id_nomina` = `n`.`id`
-                                LEFT JOIN (SELECT COUNT(*) rechazada, nd.id_nomina
-                                		FROM nomina_detalle nd
-                                		WHERE nd.id_estatus = 4) rechazada ON `rechazada`.`id_nomina` = `n`.`id`");
+                                LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) pendiente
+        						FROM nomina_detalle
+        						WHERE id_estatus = 1
+        						GROUP BY id_nomina,id_estatus) pendiente ON `pendiente`.`id_nomina` = `n`.`id`
+                                        LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) procesada
+        						FROM nomina_detalle
+        						WHERE id_estatus = 2
+        						GROUP BY id_nomina,id_estatus) procesada ON `procesada`.`id_nomina` = `n`.`id`
+                                        LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) pagada
+        						FROM nomina_detalle
+        						WHERE id_estatus = 3
+        						GROUP BY id_nomina,id_estatus) pagada ON `pagada`.`id_nomina` = `n`.`id`
+                                        LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) rechazada
+        						FROM nomina_detalle
+        						WHERE id_estatus = 4
+        						GROUP BY id_nomina,id_estatus) rechazada ON `rechazada`.`id_nomina` = `n`.`id`");
         
         
        
