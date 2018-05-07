@@ -549,7 +549,7 @@ class Payments_model extends CI_Model
         
         
         $result=$this->db->query("SELECT `p`.`nombre` `proyecto`, `n`.`descripcion`, `n`.`numero_lote`, `n`.`fecha_creacion`, `en`.`nombre` `estatus`, `n`.`id`, 
-                                pendiente.pendiente,procesada.procesada,pagada.pagada,rechazada.rechazada
+                                pendiente.pendiente,procesada.procesada,pagada.pagada,rechazada.rechazada,total.total
                                 FROM (`nomina` `n`) 
                                 INNER JOIN `estatus_nomina` `en` ON `en`.`id` = `n`.`id_estatus` 
                                 INNER JOIN `proyecto` `p` ON `p`.`id` = `n`.`id_proyecto`
@@ -572,10 +572,13 @@ class Payments_model extends CI_Model
         						FROM nomina_detalle
         						WHERE id_estatus = 4
         						GROUP BY id_nomina,id_estatus) rechazada ON `rechazada`.`id_nomina` = `n`.`id`
+                                        LEFT JOIN (SELECT DISTINCT id_nomina, COUNT(*) total
+        						FROM nomina_detalle
+        						GROUP BY id_nomina) total ON `total`.`id_nomina` = `n`.`id`
                                 WHERE id_gerencia= $gerencia");
                             
         
-       
+       // echo $this->db->last_query();
       /* $this->db->select("p.nombre proyecto, n.descripcion, n.numero_lote, n.fecha_creacion, en.nombre estatus, n.id ");
        $this->db->from('nomina n');
        $this->db->join('estatus_nomina en', 'en.id = n.id_estatus', 'inner');
@@ -589,28 +592,52 @@ class Payments_model extends CI_Model
        return $result;
     }
     
-    public function getPaymentsDetail($id, $limit, $start){
+    public function getPaymentsDetail($id, $limit, $start,$estatus){
         
-        $this->db->select("nd.beneficiario, c.nombre cargo,nd.id_tipo_documento_identidad tipo_documento,
-                            nd.documento_identidad,nd.numero_cuenta cuenta, nd.credito,tc.descripcion tipo_cuenta,
-                            tp.descripcion tipo_pago, b.nombre banco, en.nombre estatus, nd.referencia_credito");
-        $this->db->from('nomina_detalle nd');
-        $this->db->join('cargo c', 'c.id = nd.id_cargo', 'inner');
-        $this->db->join('tipos_cuentas tc', 'tc.tipo = nd.id_tipo_cuenta', 'inner');
-        $this->db->join('tipo_pago tp', 'tp.id = nd.id_tipo_pago', 'inner');
-        $this->db->join('banco b', 'b.id = nd.id_banco', 'inner');
-        $this->db->join('estatus_nomina_detalle en', 'en.id = nd.id_estatus', 'inner');
-        $this->db->where("nd.id_nomina", $id);
-        $this->db->limit($limit, $start);
-        return  $this->db->get("nomina_detalle");
+        
+        if ($estatus != "0"){
+            $query = "SELECT DISTINCT `nd`.`beneficiario`, `c`.`nombre` `cargo`, `nd`.`id_tipo_documento_identidad` `tipo_documento`,
+                                    `nd`.`documento_identidad`, `nd`.`numero_cuenta` `cuenta`, `nd`.`credito`, `tc`.`descripcion` `tipo_cuenta`,
+                                    `tp`.`descripcion` `tipo_pago`, `b`.`nombre` `banco`, `en`.`nombre` `estatus`, `nd`.`referencia_credito`
+                         FROM (`nomina_detalle` `nd`, `nomina_detalle`) 
+                         INNER JOIN `cargo` `c` ON `c`.`id` = `nd`.`id_cargo`
+                         INNER JOIN `tipos_cuentas` `tc` ON `tc`.`tipo` = `nd`.`id_tipo_cuenta` 
+                         INNER JOIN `tipo_pago` `tp` ON `tp`.`id` = `nd`.`id_tipo_pago`
+                         INNER JOIN `banco` `b` ON `b`.`id` = `nd`.`id_banco`
+                         INNER JOIN `estatus_nomina_detalle` `en` ON `en`.`id` = `nd`.`id_estatus`
+                        WHERE `nd`.`id_estatus` = ".$estatus." AND `nd`.`id_nomina` = ".$id."  LIMIT ".$start.",".$limit ;
+        }else {
+            $query = "SELECT DISTINCT `nd`.`beneficiario`, `c`.`nombre` `cargo`, `nd`.`id_tipo_documento_identidad` `tipo_documento`,
+                                    `nd`.`documento_identidad`, `nd`.`numero_cuenta` `cuenta`, `nd`.`credito`, `tc`.`descripcion` `tipo_cuenta`,
+                                    `tp`.`descripcion` `tipo_pago`, `b`.`nombre` `banco`, `en`.`nombre` `estatus`, `nd`.`referencia_credito`
+                         FROM (`nomina_detalle` `nd`, `nomina_detalle`)
+                         INNER JOIN `cargo` `c` ON `c`.`id` = `nd`.`id_cargo`
+                         INNER JOIN `tipos_cuentas` `tc` ON `tc`.`tipo` = `nd`.`id_tipo_cuenta`
+                         INNER JOIN `tipo_pago` `tp` ON `tp`.`id` = `nd`.`id_tipo_pago`
+                         INNER JOIN `banco` `b` ON `b`.`id` = `nd`.`id_banco`
+                         INNER JOIN `estatus_nomina_detalle` `en` ON `en`.`id` = `nd`.`id_estatus`
+                        WHERE  `nd`.`id_nomina` = ".$id."  LIMIT ". $start.",".$limit;
+        }
+        
+        
+        $result=$this->db->query($query);
+        
+        return  $result;
         
         
         
     }
     
     
-    public function get_total_detail() {
-            return $this->db->count_all_results("nomina_detalle");
+    public function get_total_detail($estatus, $id) {
+        
+        if ($estatus != "0"){
+            $this->db->where("id_estatus",$estatus);
+        }
+        $this->db->where("id_nomina",$id);
+        $result = $this->db->count_all_results("nomina_detalle");
+        //echo $this->db->last_query();
+        return$result;
 
     }
 

@@ -8,7 +8,7 @@ if (!isset($this->session->userdata['logged_in'])) {
 	<div class="col-md-12">
 		<div class="page-header">
 
-    		<h3>Detalle Pagos</h3>
+    		<h3>Detalle Pagos <?= isset($estatus)? $estatus : "" ?></h3>
     		<?php        	           
         	        echo form_open();
                     $cant= 0;
@@ -36,7 +36,7 @@ if (!isset($this->session->userdata['logged_in'])) {
                                     <td>Cr&eacute;dito</td>
                                     <td>Tipo Cuenta</td>
                                     <td>Tipo Pago</td>
-                                    <td>banco</td>
+                                    <td>Banco</td>
                                     <td>Estatus</td>
                      			</tr>
                     		</thead>

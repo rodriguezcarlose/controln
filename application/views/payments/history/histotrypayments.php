@@ -8,7 +8,7 @@ if (!isset($this->session->userdata['logged_in'])) {
 	<div class="col-md-12">
 		<div class="page-header">
 
-    		<h3>Pagos</h3>
+    		<h3>Historico de N&oacute;minas</h3>
     		</br>
     		<?php echo form_open();
     		$data= 0;
@@ -28,7 +28,6 @@ if (!isset($this->session->userdata['logged_in'])) {
                                     <td>Pagados</td>
                                     <td>Rechazados</td>
                                     <td>Total</td>
-                                     <td>Detalle</td>
                      			</tr>
                     		</thead>
                     		<tbody>
@@ -40,12 +39,52 @@ if (!isset($this->session->userdata['logged_in'])) {
                             		<td><?=$data->numero_lote ?></td>
                             		<td><?=$data->estatus ?></td>
                             		<td><?=$data->fecha_creacion ?></td>
-                            		<td><?= $data->pendiente == null ? 0 : $data->pendiente?></td>
-                            		<td><?= $data->procesada == null ? 0 : $data->procesada?></td>
-                            		<td><?= $data->pagada == null ? 0 : $data->pagada?></td>
-                            		<td><?= $data->rechazada == null ? 0 : $data->rechazada?></td>
-                                    <td>Total</td>
-                            		<td><a href=<?= base_url() . 'index.php/historyPayments/viewdetails/'.$data->id;?>>Detalle</a></td>
+                            		<td>
+                            		<?php 
+                                		if ($data->pendiente != null){ ?>
+                                		   <a href=<?= base_url() . 'index.php/historyPayments/viewdetails/1/'.$data->id;?>><?= $data->pendiente?></a> 
+                                	<?php 
+                               			}else{
+                                		    echo "0";
+                                		}
+                                		
+                            		?>
+                            		</td>
+                            		
+                            		<td>
+                            		<?php 
+                            		if ($data->procesada != null){ ?>
+                                		   <a href=<?= base_url() . 'index.php/historyPayments/viewdetails/2/'.$data->id;?>><?= $data->procesada?></a> 
+                                	<?php 
+                               			}else{
+                                		    echo "0";
+                                		}
+                                		
+                            		?>
+                            		</td>
+									<td>
+									<?php 
+									if ($data->pagada != null){ ?>
+                                		   <a href=<?= base_url() . 'index.php/historyPayments/viewdetails/3/'.$data->id;?>><?= $data->pagada?></a> 
+                                	<?php 
+                               			}else{
+                                		    echo "0";
+                                		}
+                                		
+                            		?>
+									</td>
+									<td>
+									<?php 
+									if ($data->rechazada != null){ ?>
+                                		   <a href=<?= base_url() . 'index.php/historyPayments/viewdetails/3/'.$data->id;?>><?= $data->rechazada?></a> 
+                                	<?php 
+                               			}else{
+                                		    echo "0";
+                                		}
+                                		
+                            		?>
+									</td>
+                            		<td><a href=<?= base_url() . 'index.php/historyPayments/viewdetails/0/'.$data->id;?>><?= $data->total == null ? 0 : $data->total?></a></td>
                             	</tr>
                             <?php } ?>
         

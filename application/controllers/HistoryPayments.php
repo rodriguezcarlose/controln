@@ -56,28 +56,40 @@ class HistoryPayments extends CI_Controller
         $this->load->view('templates/footer');
     }
     
-    public function viewdetails($id){
+    public function viewdetails($estatus,$id){
         $data = new stdClass();
         
-       // $id = $this->input->post("id");
-        $start_index = ($this->uri->segment(4)) ? $this->uri->segment(4) : 0;
-        $per_page = 25;
-        $total_records = $this->Payments_model->get_total_detail();
+        $start_index = ($this->uri->segment(5)) ? $this->uri->segment(5) : 0;
+        //$per_page = 10;
+        $total_records = $this->Payments_model->get_total_detail($estatus,$id);
         $settings = $this->config->item('pagination');
+        $settings['per_page'] = 25;
         $settings['total_rows'] = $total_records;
-        $settings['base_url'] = base_url().'index.php/historyPayments/viewdetails/'.$id;
-        $settings["uri_segment"] = 4;
-        
-        // use the settings to initialize the library
+        $settings['base_url'] = base_url().'index.php/historyPayments/viewdetails/'.$estatus."/".$id;
+        $settings["uri_segment"] = 5;
         $this->pagination->initialize($settings);
-        
-        // build paging links
-        //$params["links"] = $this->pagination->create_links();
-        
-        $detail = $this->Payments_model->getPaymentsDetail($id,$per_page,$start_index);
+        $detail = $this->Payments_model->getPaymentsDetail($id,$settings['per_page'],$start_index,$estatus);
         $data->detail = $detail;
         $data->links = $this->pagination->create_links();
         $data->total_records = $total_records;
+        
+        
+        
+        
+        switch ($estatus){
+            case 1:
+                $data->estatus = "Pendientes";
+                break;
+            case 2:
+                $data->estatus = "Procesados";
+                break;
+            case 3:
+                $data->estatus = "Pagados";
+                break;
+            case 4:
+                $data->estatus = "Rechazados";
+                break;
+        }
         
         $this->load->view('templates/header');
         $this->load->view('templates/navigation', $data);
