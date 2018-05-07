@@ -11,7 +11,7 @@ if (!isset($this->session->userdata['logged_in'])) {
     		<h3>Pagos</h3>
     		</br>
     		<?php echo form_open();
-                    $cant= 0;
+    		$data= 0;
                     
                     if (isset($history) ) { ?>
     
@@ -51,7 +51,8 @@ if (!isset($this->session->userdata['logged_in'])) {
         
                     		</tbody>
                     	</table>
-                    	<input type="hidden" name="id" value="<?= $data->id?>">
+                    	<input type="hidden" name="id"  value="<?= $data && $data->id ?>">
+                    	
     
                     	<div class="small-12 column text-right buttonPanel">
             	            	<input type="submit" id="btnEnviar" class="button small right" value="Aceptar"  />

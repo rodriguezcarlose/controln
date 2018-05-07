@@ -553,23 +553,27 @@ class Payments_model extends CI_Model
                                 FROM (`nomina` `n`) 
                                 INNER JOIN `estatus_nomina` `en` ON `en`.`id` = `n`.`id_estatus` 
                                 INNER JOIN `proyecto` `p` ON `p`.`id` = `n`.`id_proyecto`
-                                LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) pendiente
-        						FROM nomina_detalle
+                                        LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) pendiente
+                                FROM nomina_detalle
         						WHERE id_estatus = 1
         						GROUP BY id_nomina,id_estatus) pendiente ON `pendiente`.`id_nomina` = `n`.`id`
+        					
                                         LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) procesada
         						FROM nomina_detalle
         						WHERE id_estatus = 2
         						GROUP BY id_nomina,id_estatus) procesada ON `procesada`.`id_nomina` = `n`.`id`
+        						
                                         LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) pagada
         						FROM nomina_detalle
         						WHERE id_estatus = 3
         						GROUP BY id_nomina,id_estatus) pagada ON `pagada`.`id_nomina` = `n`.`id`
+        					
                                         LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) rechazada
         						FROM nomina_detalle
         						WHERE id_estatus = 4
-        						GROUP BY id_nomina,id_estatus) rechazada ON `rechazada`.`id_nomina` = `n`.`id`");
-        
+        						GROUP BY id_nomina,id_estatus) rechazada ON `rechazada`.`id_nomina` = `n`.`id`
+                                WHERE id_gerencia= $gerencia");
+                            
         
        
       /* $this->db->select("p.nombre proyecto, n.descripcion, n.numero_lote, n.fecha_creacion, en.nombre estatus, n.id ");
