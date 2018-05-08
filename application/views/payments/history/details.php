@@ -79,7 +79,7 @@ if (!isset($this->session->userdata['logged_in'])) {
     
     
                     	<div class="small-12 column text-right buttonPanel">
-                    		<?php if($estatus=="Procesados"){?>
+                    		<?php if($estatus=="Procesados" && $_SESSION['id_rol'] === 1){?>
                     			<input type="submit" id="btnEnviar" class="button small right" value="Volver"  onclick="this.form.action = '<?=base_url()?>index.php/historyPayments'" />
             	            	<input type="submit" id="btnEnviar" class="button small right" value="Procesar Pago" onclick="this.form.action = '<?=base_url()?>index.php/historyPayments/updateNominaProccessed/<?= $id_nomina?>'"  />
             	            <?php }else{?>
