@@ -23,10 +23,10 @@ if (!isset($this->session->userdata['logged_in'])) {
                                     <td>Lote</td>
                                     <td>Estatus</td>
                                     <td>Fecha de Creaci&oacute;n</td>
-                                    <td>Pendientes</td>
-                                    <td>Procesados</td>
-                                    <td>Pagados</td>
-                                    <td>Rechazados</td>
+                                    <td>Pendiente</td>
+                                    <td>Procesada</td>
+                                    <td>Pagada</td>
+                                    <td>Rechazada</td>
                                     <td>Total</td>
                      			</tr>
                     		</thead>
@@ -76,7 +76,7 @@ if (!isset($this->session->userdata['logged_in'])) {
 									<td>
 									<?php 
 									if ($data->rechazada != null){ ?>
-                                		   <a href=<?= base_url() . 'index.php/historyPayments/viewdetails/3/'.$data->id;?>><?= $data->rechazada?></a> 
+                                		   <a href=<?= base_url() . 'index.php/historyPayments/viewdetails/4/'.$data->id;?>><?= $data->rechazada?></a> 
                                 	<?php 
                                			}else{
                                 		    echo "0";
@@ -92,12 +92,19 @@ if (!isset($this->session->userdata['logged_in'])) {
                     	</table>
                     	<input type="hidden" name="id"  value="<?= $data && $data->id ?>">
                     	
-    
-                    	<div class="small-12 column text-right buttonPanel">
-            	            	<input type="submit" id="btnEnviar" class="button small right" value="Aceptar"  />
-                        </div>   	
+	
         		 <?php } 
         		 echo form_close();?>   
+        		 <label>Leyenda Estatus N&oacute;mina:</label>
+        		 <label>Cargada: La nomina esta cargada por la gerencia solicitante.</label>
+        		 <label>Liberada: Liberada por el Gerente Solicitante, para que  pueda ser enviada al Banco.</label>
+        		 <label>Procesada: Enviada al Banco.</label>
+        		 <label>Pagada: Pagada en el Banco.</label>
+        		 <br>
+        		 <label>Leyenda Detalles:</label>
+            <?php foreach ($estatusNom->result() as $fila){ ?>
+            	<label><?= $fila->nombre?>: <?= $fila->descripcion?></label>
+		    <?php }?>
 		 </div> 
 	</div>
 </div>

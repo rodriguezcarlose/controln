@@ -48,6 +48,9 @@ class HistoryPayments extends CI_Controller
             $history = $this->Payments_model->getHistoryPayments($_SESSION['gerencia']);
         }
         
+        $resultEstatus=$this->Payments_model->getEstausNominaDetalle();
+        $data->estatusNom= $resultEstatus;
+        
         $data->history = $history;
         
         $this->load->view('templates/header');
@@ -72,7 +75,7 @@ class HistoryPayments extends CI_Controller
         $data->detail = $detail;
         $data->links = $this->pagination->create_links();
         $data->total_records = $total_records;
-        
+        $data->id_nomina = $id;
         
         
         
@@ -89,12 +92,51 @@ class HistoryPayments extends CI_Controller
             case 4:
                 $data->estatus = "Rechazados";
                 break;
+            case 0:
+                $data->estatus = "total";
+                break;
         }
         
         $this->load->view('templates/header');
         $this->load->view('templates/navigation', $data);
         $this->load->view('payments/history/details',$id);
         $this->load->view('templates/footer');
+        
+        
+    }
+    
+    public function updateNominaProccessed($idnomina){
+        
+       
+        $data = new stdClass();
+        
+        $result = $this->Payments_model->updateNominaProccessed($idnomina);
+        
+        if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) &&  $_SESSION['id_rol'] === 1 ){
+            $history = $this->Payments_model->getHistoryPayments("id_gerencia", 'gerencia');
+        }else if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) ){
+            $history = $this->Payments_model->getHistoryPayments($_SESSION['gerencia']);
+        }
+        
+        $data->history = $history;
+        
+        if ($result){
+            $data->success = "Operaci&oacute;n Realizada con Exito.";
+            $this->load->view('templates/header');
+            $this->load->view('templates/navigation', $data);
+            $this->load->view('payments/history/histotrypayments');
+            $this->load->view('templates/footer');
+            
+        }else{
+            $data->error = "Operaci&oacute;nFallida.";
+            $this->load->view('templates/header');
+            $this->load->view('templates/navigation', $data);
+            $this->load->view('payments/history/histotrypayments');
+            $this->load->view('templates/footer');
+        }
+        
+        
+        
         
         
     }

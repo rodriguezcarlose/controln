@@ -18,7 +18,7 @@ if (!isset($this->session->userdata['logged_in'])) {
                 	    <div class = "row">
                 	    	<div class="small-6 columns">
                 	    		<div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">
-                	    			Mostrando   <?= $total_records ?> registros 
+                	    			Mostrando   <?= $total_records ?> Registros 
                 	    		</div>
                 	    	</div>
                 	    	<?= $links?>
@@ -64,17 +64,27 @@ if (!isset($this->session->userdata['logged_in'])) {
                 	    <div class = "row">
                 	    	<div class="small-6 columns">
                 	    		<div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">
-                	    			Mostrando <?= $total_records ?> registros 
+                	    			Mostrando <?= $total_records ?> Registros 
                 	    		</div>
                 	    	</div>
                 	    	<?= $links?>
                 	    </div>
         	           <?php  } ?>
+        	           
                     	
                     	<input type="hidden" name="cantreg" value="<?= $cant?>">
     
+    
+    
+    
+    
                     	<div class="small-12 column text-right buttonPanel">
-            	            	<input type="submit" id="btnEnviar" class="button small right" value="Aceptar"  />
+                    		<?php if($estatus=="Procesados"){?>
+                    			<input type="submit" id="btnEnviar" class="button small right" value="Volver"  onclick="this.form.action = '<?=base_url()?>index.php/historyPayments'" />
+            	            	<input type="submit" id="btnEnviar" class="button small right" value="Procesar Pago" onclick="this.form.action = '<?=base_url()?>index.php/historyPayments/updateNominaProccessed/<?= $id_nomina?>'"  />
+            	            <?php }else{?>
+            	            	<input type="submit" id="btnEnviar" class="button small right" value="Volver"  onclick="this.form.action = '<?=base_url()?>index.php/historyPayments'" />
+            	            <?php }?>
                         </div>   	
             		 
             		

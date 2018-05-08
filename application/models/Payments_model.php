@@ -521,6 +521,32 @@ class Payments_model extends CI_Model
         
     }
     
+    
+    public function updateNominaProccessed($idnomina){
+        
+        $this->db->trans_start();
+       
+        
+        $this->db->set('id_estatus', 4);
+        $this->db->where('id', $idnomina);
+        $this->db->update('nomina');
+        
+        $this->db->set('id_estatus', 3);
+        $this->db->where('id_nomina', $idnomina);
+        $this->db->where('id_estatus', 2);
+        $this->db->update('nomina_detalle');
+        
+        $this->db->trans_complete();
+        
+        if ($this->db->trans_status() === FALSE){
+            return false;
+        }else{
+            return true;
+        }
+        
+    }
+   
+    
     public function updateEstatusNominaDetallebyReferenciaCredito($referenciaCredito, $idEstatus, $idnomina){
         
         
