@@ -55,7 +55,7 @@ class HistoryPayments extends CI_Controller
         
         $this->load->view('templates/header');
         $this->load->view('templates/navigation', $data);
-        $this->load->view('payments/history/histotrypayments');
+        $this->load->view('payments/history/historypayments');
         $this->load->view('templates/footer');
     }
     
@@ -124,14 +124,14 @@ class HistoryPayments extends CI_Controller
             $data->success = "Operaci&oacute;n Realizada con Exito.";
             $this->load->view('templates/header');
             $this->load->view('templates/navigation', $data);
-            $this->load->view('payments/history/histotrypayments');
+            $this->load->view('payments/history/historyPayments');
             $this->load->view('templates/footer');
             
         }else{
             $data->error = "Operaci&oacute;nFallida.";
             $this->load->view('templates/header');
             $this->load->view('templates/navigation', $data);
-            $this->load->view('payments/history/histotrypayments');
+            $this->load->view('payments/history/historyPayments');
             $this->load->view('templates/footer');
         }
         
