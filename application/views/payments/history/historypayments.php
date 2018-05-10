@@ -102,10 +102,9 @@ if (!isset($this->session->userdata['logged_in'])) {
         		 <label>Pagada: Pagada en el Banco.</label>
         		 <br>
         		 <label>Leyenda Detalles:</label>
-        		 <label>Pendiente: Pendiente Por Pago.</label>
-        		 <label>Procesada: Enviada al Banco.</label>
-        		 <label>Pagada: Pago Exitoso.</label>
-        		 <label>Rechazada: Pago Reachazado.</label>
+            <?php foreach ($estatusNom->result() as $fila){ ?>
+            	<label><?= $fila->nombre?>: <?= $fila->descripcion?></label>
+		    <?php }?>
 		 </div> 
 	</div>
 </div>
