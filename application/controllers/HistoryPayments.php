@@ -117,7 +117,8 @@ class HistoryPayments extends CI_Controller
         }else if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) ){
             $history = $this->Payments_model->getHistoryPayments($_SESSION['gerencia']);
         }
-        
+        $resultEstatus=$this->Payments_model->getEstausNominaDetalle();
+        $data->estatusNom= $resultEstatus;
         $data->history = $history;
         
         if ($result){
