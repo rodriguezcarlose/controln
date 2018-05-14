@@ -247,7 +247,8 @@ class Generatebankfile extends CI_Controller {
                 $rif = $this->input->post('rif');
                 $lote = $this->input->post('lote');
                 $negociacion = $this->input->post('negociacion');
-                $fecha = $this->input->post('fecha');
+                $fecha = new DateTime($this->input->post('fecha'));
+                $fecha = $fecha->format('d/m/Y');
                 $tipocuenta = $this->input->post('tipocuenta');
                 $numerocuenta = $this->input->post('numerocuenta');
                 $nomina = $this->input->post('nomina');
