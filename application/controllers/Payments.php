@@ -674,7 +674,7 @@ class Payments extends CI_Controller {
             for ($row = 2; $row <= $highestRow; $row++){
                 
                 $tipo_pago;
-                if ($sheet->getCell("A".$row) == "1")
+                if ($sheet->getCell("J".$row) == "1")
                     $tipo_pago = "1";
                 else
                     $tipo_pago = "2";

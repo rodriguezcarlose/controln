@@ -358,7 +358,7 @@ class Payments_model extends CI_Model
                                             LEFT JOIN duracion_cheque dc ON dn.id_duracion_cheque=dc.duracion
                                             LEFT JOIN cargo c ON dn.id_cargo=c.id
                                             LEFT JOIN banco b ON dn.id_banco=b.id
-                                   WHERE    dn.id_nomina=" . $nomina);
+                                   WHERE    dn.id_nomina=" . $nomina . " ORDER BY numero_referencia_credito");
         if ($result->num_rows()>0){
             return $result;
         }else {
@@ -601,7 +601,8 @@ class Payments_model extends CI_Model
                                         LEFT JOIN (SELECT DISTINCT id_nomina, COUNT(*) total
         						FROM nomina_detalle
         						GROUP BY id_nomina) total ON `total`.`id_nomina` = `n`.`id`
-                                WHERE id_gerencia= $gerencia");
+                                WHERE id_gerencia= $gerencia
+                                ORDER BY n.`fecha_creacion` DESC");
                             
         
        // echo $this->db->last_query();
