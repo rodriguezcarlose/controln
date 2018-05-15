@@ -55,7 +55,7 @@ class Payments_model extends CI_Model
         $this->db->query("DROP TABLE IF EXISTS ".$table.";");
         
         $result=$this->db->query("CREATE TABLE ".$table. " (
-              `id` int(10) NOT NULL AUTO_INCREMENT,
+              `id` int(10) NOT NULL,
               `beneficiario` varchar(255),
               `id_cargo` varchar(255),
               `referencia_credito` varchar(255),

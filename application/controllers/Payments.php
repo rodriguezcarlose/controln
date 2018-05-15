@@ -404,15 +404,30 @@ class Payments extends CI_Controller {
         //sitodos los registros cargados fueron modificados y corregidos
         }else{
             $start_index = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+           // $settings['per_page'] = 25;
+            
+            
+           
             
             if (isset($_SESSION['table_temp_nom']) ){
-                $total_records = $this->payments_model->get_total($tablename, 1);
-                $params["results"] = $this->payments_model->get_current_page_records($tablename,$this->per_page_valid, $start_index,1,'id');
-                $params["total_records"] = $total_records;
+                
+                
                 
                 $settings = $this->config->item('pagination');
-                $settings['total_rows'] = $total_records;
+                $settings['per_page'] = 25;
+                
                 $settings['base_url'] = base_url().'index.php/payments/loadgrid';
+                $settings["uri_segment"] = 3;
+                
+                
+                $total_records = $this->payments_model->get_total($tablename, 1);
+                $params["results"] = $this->payments_model->get_current_page_records($tablename,$settings['per_page'], $start_index,1,'id');
+                $params["total_records"] = $total_records;
+                $settings['total_rows'] = $total_records;
+                
+               // $settings = $this->config->item('pagination');
+                //$settings['total_rows'] = $total_records;
+                //$settings['base_url'] = base_url().'index.php/payments/loadgrid';
                 
                 // use the settings to initialize the library
                 $this->pagination->initialize($settings);
@@ -464,7 +479,6 @@ class Payments extends CI_Controller {
         $this->load->view('templates/navigation',$data);
         $this->load->view('payments/paymentsload/loadgrid');
         $this->load->view('templates/footer');
-        
     }
     
     
@@ -670,21 +684,22 @@ class Payments extends CI_Controller {
             
             log_message('info', 'Payment|do_upload|inicio recorrido archivo cargado');
             
-            
+            $i = 0;
             for ($row = 2; $row <= $highestRow; $row++){
-                
+                $i ++;
                 $tipo_pago;
-                if ($sheet->getCell("J".$row) == "1")
+                if ($sheet->getCell("J".$row) == "1"){
                     $tipo_pago = "1";
-                else
+                }else{
                     $tipo_pago = "2";
-                        
+                }
                         
                     $credito = str_replace('.','',$sheet->getCell("H".$row));
                     $credito = str_replace(',','.',$sheet->getCell("H".$row));
                         
                     $fila = array("beneficiario"=> strtoupper($this->form_validation->stripAccents($sheet->getCell("A".$row)->getValue())),
                         // "referencia_credito"=> $sheet->getCell("B".$row),
+                        "id"=> $i,
                         "referencia_credito"=> "",
                         "id_cargo"=> $sheet->getCell("C".$row),
                         "id_tipo_documento_identidad"=> $sheet->getCell("D".$row),
@@ -694,11 +709,8 @@ class Payments extends CI_Controller {
                         "credito"=>$credito,
                         "id_tipo_pago"=> $tipo_pago,
                         "id_banco"=> $sheet->getCell("J".$row),
-                        //"id_duracion_cheque"=> $sheet->getCell("K".$row),
                         "id_duracion_cheque"=> "",
-                        // "correo_beneficiario"=> $sheet->getCell("L".$row),
                         "correo_beneficiario"=> "",
-                        // "fecha"=> $sheet->getCell("M".$row),
                          "fecha"=> "",
                         "id_estatus"=>1,);
                         
