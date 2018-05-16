@@ -92,7 +92,7 @@ class User extends CI_Controller {
             $username = $this->input->post('username');
             $password = $this->input->post('password');
             
-            if ($this->user_model->resolve_user_login($username, $password)) {
+                if ($this->user_model->resolve_user_login($username, $password)) {
                 
                //consultamos los datos del usuario
                 $user_id = $this->user_model->get_user_id_from_username($username);
