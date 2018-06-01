@@ -20,6 +20,7 @@ if (!isset($this->session->userdata['logged_in'])) {
                     			<tr>
                     				<td>Proyecto</td>
                         			<td>Descripci&oacute;n N&oacute;mina</td>
+                        			<td>Gerencia</td>
                                     <td>Lote</td>
                                     <td>Estatus</td>
                                     <td>Fecha de Creaci&oacute;n</td>
@@ -36,6 +37,7 @@ if (!isset($this->session->userdata['logged_in'])) {
                             	<tr>
                             		<td><?=$data->proyecto ?></td>
                             		<td><?=$data->descripcion ?></td>
+                            		<td><?=$data->gerencia ?></td>
                             		<td><?=$data->numero_lote ?></td>
                             		<td><?=$data->estatus ?></td>
                             		<td><?=$data->fecha_creacion ?></td>

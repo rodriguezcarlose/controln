@@ -385,7 +385,7 @@ class Generatebankfile extends CI_Controller {
                     write_file($nombre_archivo . $id_archivos . '.txt',$credito,'a');
                     
                     //El archivo TXT soporta hasta 500 transacciones, si el archivo tiene mas de 500 se cierra en esta condici�n para abrir otro archivo.
-                    if ($cantidad_registros==500){
+                   /* if ($cantidad_registros==500){
                         $monto_entero=0;
                         $monto_decimal=0;
                         $aux_monto=explode(".", $suma_registros);
@@ -404,11 +404,11 @@ class Generatebankfile extends CI_Controller {
                            
                             $cantidad_registros=0;
                             $suma_registros=0;
-                    }
+                    }*/
                 
                 }
                 //El archivo TXT soporta hasta 500 transacciones, si el archivo tiene menos de 500 se cierra en esta condici�n.
-                if ($cantidad_registros<500){
+                //if ($cantidad_registros<500){
                     $monto_entero=0;
                     $monto_decimal=0;
                     $aux_monto=explode(".", $suma_registros);
@@ -428,9 +428,9 @@ class Generatebankfile extends CI_Controller {
                         
                         $cantidad_registros=0;
                         $suma_registros=0;
-                }
+               // }
                 
-                $this->load->library('zip');
+             /*   $this->load->library('zip');
                 
                 for($i=0;$i<=$id_archivos;$i=$i+1){
                     //Se Agregan los archivos de nominas a un archivos al ZIP
@@ -442,7 +442,12 @@ class Generatebankfile extends CI_Controller {
                 
                 
                 //Se Descargar el archivo Zip con las nominas
-                $this->zip->download('PROV_' . date('Ymd') . '_' . $lote. '.zip');
+                $this->zip->download('PROV_' . date('Ymd') . '_' . $lote. '.zip');*/
+                
+                //Desacrga archivo txt
+                $this->load->helper('download');
+                force_download($nombre_archivo . $id_archivos . '.txt', NULL);
+                
                 
             }else{
                 $this->errorLote = "Ya existe una n&oacute;mina con el número de lote infresado, por favor valide la informaci&oacute;n.";

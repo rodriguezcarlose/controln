@@ -425,6 +425,14 @@ class Payments extends CI_Controller {
                 $params["total_records"] = $total_records;
                 $settings['total_rows'] = $total_records;
                 
+                //validamos cuantas nóminas se crearan de acuerdo a la cantidad de registros del archivo
+                $cantidadNominas = intval($total_records/500);
+                
+                if ($total_records/500 > $cantidadNominas)
+                    $cantidadNominas ++;
+                
+                
+                
                // $settings = $this->config->item('pagination');
                 //$settings['total_rows'] = $total_records;
                 //$settings['base_url'] = base_url().'index.php/payments/loadgrid';
@@ -434,6 +442,8 @@ class Payments extends CI_Controller {
                 
                 // build paging links
                 $params["links"] = $this->pagination->create_links();
+                
+                $params["catidadnominas"] = $cantidadNominas;
             }
             
             if ($this->form_validation->run() == false){

@@ -421,11 +421,14 @@ if (!isset($this->session->userdata['logged_in'])) {
                 	    		<div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">
                 	    			Mostrando  <?= count($results)?> de <?= $total_records ?> registros 
                 	    		</div>
+                	    		
                 	    	</div>
                 	    	<?= $links?>
                 	    </div>
         	           <?php  } ?>
-            
+            		<div class="small-12 columns">
+                		<h4>Se cargaron <?= $total_records ?> registros, se crearan <?= $catidadnominas ?> N&oacute;minas.</h4>
+                	</div>
  
                 	<table id="dataTable">
                 		<thead>

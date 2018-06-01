@@ -54,7 +54,7 @@ class User_model extends CI_Model {
             foreach ($result->result() as $idEmpleado){
                 $usuario["id_empleado"] = $idEmpleado->id;
             }
-            $usuario["clave"] = password_hash("Abcd1234.", PASSWORD_BCRYPT);
+            $usuario["clave"] = password_hash("12345678", PASSWORD_BCRYPT);
             $this->db->insert('usuario', $usuario);
             
             $this->db->trans_complete();
@@ -184,13 +184,13 @@ class User_model extends CI_Model {
         if ($delecte){
             $this->db->set("estatus", "eliminado");
         }else if ($reset){
-            $this->db->set("clave", password_hash("Abcd1234.", PASSWORD_BCRYPT));
+            $this->db->set("clave", password_hash("12345678", PASSWORD_BCRYPT));
             $this->db->set("estatus", "nuevo");
         }
             
             //usuario
         if ($reset){
-            $this->db->set("clave", password_hash("Abcd1234.", PASSWORD_BCRYPT));
+            $this->db->set("clave", password_hash("12345678", PASSWORD_BCRYPT));
             $this->db->set("estatus", "nuevo");
         }
            

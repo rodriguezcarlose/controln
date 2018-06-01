@@ -410,30 +410,56 @@ class Payments_model extends CI_Model
     
     public function insertPayment($descripcion,$proyecto, $gerencia, $usuario, $detalle){
         
+        ini_set('max_execution_time', 0);
         $this->db->trans_start();
         
         
-        $this->db->select_max('id','maxid');
-        $id_nomina = $this->db->get('nomina')->row(); 
-        $id_nomina = (int)$id_nomina->maxid + 1;
-
-        $this->db->set('id', $id_nomina);
-        $this->db->set('descripcion', $descripcion);
-        $this->db->set('id_estatus', 2);
-        $this->db->set('id_proyecto', $proyecto);
-        $this->db->set('id_usuario', $usuario);
-        $this->db->set('id_gerencia', $gerencia);
-        $this->db->insert("nomina");
+        $cantidadNominas = intval(count($detalle)/500);
         
-        foreach ($detalle as $detalleNomina){
-            $detalleNomina->id_nomina = $id_nomina;
-            unset ($detalleNomina->id);
-            unset ($detalleNomina->valid);
+        if (count($detalle)/500 > $cantidadNominas){
+            $cantidadNominas ++;
         }
+       
+        $totalPorNomina = 500;
+        $nomimaInicial = 0;
+        $nominaFin = count($detalle);
         
-        $this->db->insert_batch("nomina_detalle", $detalle);
+        for ($i = 1 ; $cantidadNominas >= $i; $i++ ){
+            
+            $this->db->select_max('id','maxid');
+            $id_nomina = $this->db->get('nomina')->row();
+            $id_nomina = (int)$id_nomina->maxid + 1;
+            
+            $this->db->set('id', $id_nomina);
+            if ($cantidadNominas >1)
+                $this->db->set('descripcion', $descripcion."_".$i);
+            else 
+                $this->db->set('descripcion', $descripcion);
+            $this->db->set('id_estatus', 2);
+            $this->db->set('id_proyecto', $proyecto);
+            $this->db->set('id_usuario', $usuario);
+            $this->db->set('id_gerencia', $gerencia);
+            $this->db->insert("nomina");
+            
+            foreach ($detalle as $detalleNomina){
+                $detalleNomina->id_nomina = $id_nomina;
+                unset ($detalleNomina->id);
+                unset ($detalleNomina->valid);
+            }
+            
+            
+            if ($cantidadNominas >1){
+                $detalle_nomina = array_slice($detalle, $nomimaInicial, $totalPorNomina);
+                $nomimaInicial = $nomimaInicial + 500;
+            }else{
+                $detalle_nomina = array_slice($detalle, 0, count($detalle));
+            }
+            $this->db->insert_batch("nomina_detalle", $detalle_nomina);
+        }
         $this->db->trans_complete();
         
+        
+        ini_set('max_execution_time', 30);
         if ($this->db->trans_status() === FALSE){
             return false;
         }else{
@@ -574,26 +600,24 @@ class Payments_model extends CI_Model
         
         
         
-        $result=$this->db->query("SELECT `p`.`nombre` `proyecto`, `n`.`descripcion`, `n`.`numero_lote`, `n`.`fecha_creacion`, `en`.`nombre` `estatus`, `n`.`id`, 
+        $result=$this->db->query("SELECT `p`.`nombre` `proyecto`, `n`.`descripcion`, `g`.`nombre`  `gerencia`, `n`.`numero_lote`, `n`.`fecha_creacion`, `en`.`nombre` `estatus`, `n`.`id`, 
                                 pendiente.pendiente,procesada.procesada,pagada.pagada,rechazada.rechazada,total.total
                                 FROM (`nomina` `n`) 
                                 INNER JOIN `estatus_nomina` `en` ON `en`.`id` = `n`.`id_estatus` 
                                 INNER JOIN `proyecto` `p` ON `p`.`id` = `n`.`id_proyecto`
+                                INNER JOIN `gerencia` `g` ON `g`.`id` = `n`.`id_gerencia`
                                         LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) pendiente
                                 FROM nomina_detalle
         						WHERE id_estatus = 1
         						GROUP BY id_nomina,id_estatus) pendiente ON `pendiente`.`id_nomina` = `n`.`id`
-        					
                                         LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) procesada
         						FROM nomina_detalle
         						WHERE id_estatus = 2
         						GROUP BY id_nomina,id_estatus) procesada ON `procesada`.`id_nomina` = `n`.`id`
-        						
                                         LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) pagada
         						FROM nomina_detalle
         						WHERE id_estatus = 3
         						GROUP BY id_nomina,id_estatus) pagada ON `pagada`.`id_nomina` = `n`.`id`
-        					
                                         LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) rechazada
         						FROM nomina_detalle
         						WHERE id_estatus = 4
