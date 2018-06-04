@@ -119,7 +119,7 @@ class User_model extends CI_Model {
         $this->db->where('id', $user_id);
         return $this->db->get()->row();*/
         
-        $this->db->select('u.id, u.correo, u.estatus, e.nombre, e.apellido, e.id_cargo, e.id_gerencia, u.id_rol');
+        $this->db->select('u.id, u.correo, u.estatus, e.nombre, e.apellido, e.id_cargo, e.id_gerencia, u.id_rol, u.id_empleado');
         $this->db->from('usuario u');
         $this->db->join('empleado e', 'e.id = u.id_empleado');
         $this->db->where('u.id',$user_id);

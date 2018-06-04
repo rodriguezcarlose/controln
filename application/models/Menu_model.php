@@ -32,8 +32,10 @@ class Menu_model extends CI_Model {
     public function get_menu($rol) {
         
         $query = $this->db->query('CALL getmenu ('.$rol.')');
-
-        return $query->result();
+        $result = $query->result();
+        mysqli_next_result( $this->db->conn_id);
+        $query->free_result();
+        return $result;
         
     }
     

@@ -107,7 +107,7 @@ class User extends CI_Controller {
                     
                     // set session user datas
                     $_SESSION['id']      = (int)$user->id;
-                    $_SESSION['email']     = (string)$user->email;
+                    $_SESSION['email']     = (string)$user->correo;
                     $_SESSION['id_rol']     = (int)$user->id_rol;
                     $_SESSION['id_empleado'] = (int)$user->id_empleado;
                     $_SESSION['estatus']     = (string)$user->estatus;
