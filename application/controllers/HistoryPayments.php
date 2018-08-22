@@ -36,16 +36,33 @@ class HistoryPayments extends CI_Controller
         }
         
         $this->load->model('Payments_model');
+        $this->load->model('EstatusNomina_model');
+        $this->load->model('Proyecto_model');
+        $this->load->model('Gerencia_model');
         $this->load->library('pagination');
     }
     
     public function index(){
         $data = new stdClass();
         
+        $data->proyecto =  $this->Proyecto_model->getProyecto();
+        $data->gerencia =  $this->Gerencia_model->getGerencia();
+        $data->estatusnomina =  $this->EstatusNomina_model->geteEstatus();
+       
+        //verificamos si se realizo un filtro para la busqueda
+        $proyectoSelect = $this->input->post("id_proyecto");
+        $gerenciaSelect = $this->input->post("id_gerencia");
+        $estatusNomSelect = $this->input->post("id_estatus");
+        $descripcionSelect = $this->input->post("descripcion");
+        
+      //  echo "seleccion: proyecto: ". $proyectoSelect." gerencia: ".$gerenciaSelect." estatus ".$estatusNomSelect." descripción ".$descripcionSelect;
+        
+        
+        
         if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) &&  $_SESSION['id_rol'] === 1 ){
-            $history = $this->Payments_model->getHistoryPayments("id_gerencia", 'gerencia');
+            $history = $this->Payments_model->getHistoryPayments($gerenciaSelect,$proyectoSelect,$estatusNomSelect,$descripcionSelect);
         }else if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) ){
-            $history = $this->Payments_model->getHistoryPayments($_SESSION['gerencia']);
+            $history = $this->Payments_model->getHistoryPayments($_SESSION['gerencia'],$proyectoSelect,$estatusNomSelect, $descripcionSelect);
         }
         
         $resultEstatus=$this->Payments_model->getEstausNominaDetalle();
@@ -55,7 +72,7 @@ class HistoryPayments extends CI_Controller
         
         $this->load->view('templates/header');
         $this->load->view('templates/navigation', $data);
-        $this->load->view('payments/history/historypayments');
+        $this->load->view('payments/history/historypayments',$data);
         $this->load->view('templates/footer');
     }
     
@@ -110,12 +127,22 @@ class HistoryPayments extends CI_Controller
        
         $data = new stdClass();
         
+        
+        $data->proyecto =  $this->Proyecto_model->getProyecto();
+        $data->gerencia =  $this->Gerencia_model->getGerencia();
+        $data->estatusnomina =  $this->EstatusNomina_model->geteEstatus();
+        //verificamos si se realizo un filtro para la busqueda
+        $proyectoSelect = $this->input->post("id_proyecto");
+        $gerenciaSelect = $this->input->post("id_gerencia");
+        $estatusNomSelect = $this->input->post("id_estatus");
+        $descripcionSelect = $this->input->post("descripcion");
+        
         $result = $this->Payments_model->updateNominaProccessed($idnomina);
         
         if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) &&  $_SESSION['id_rol'] === 1 ){
-            $history = $this->Payments_model->getHistoryPayments("id_gerencia", 'gerencia');
+            $history = $this->Payments_model->getHistoryPayments($gerenciaSelect,$proyectoSelect,$estatusNomSelect,$descripcionSelect);
         }else if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) ){
-            $history = $this->Payments_model->getHistoryPayments($_SESSION['gerencia']);
+            $history = $this->Payments_model->getHistoryPayments($_SESSION['gerencia'],$proyectoSelect,$estatusNomSelect, $descripcionSelect);
         }
         $resultEstatus=$this->Payments_model->getEstausNominaDetalle();
         $data->estatusNom= $resultEstatus;
@@ -125,14 +152,14 @@ class HistoryPayments extends CI_Controller
             $data->success = "Operaci&oacute;n Realizada con Exito.";
             $this->load->view('templates/header');
             $this->load->view('templates/navigation', $data);
-            $this->load->view('payments/history/historypayments');
+            $this->load->view('payments/history/historypayments',$data);
             $this->load->view('templates/footer');
             
         }else{
             $data->error = "Operaci&oacute;nFallida.";
             $this->load->view('templates/header');
             $this->load->view('templates/navigation', $data);
-            $this->load->view('payments/history/historypayments');
+            $this->load->view('payments/history/historypayments',$data);
             $this->load->view('templates/footer');
         }
         

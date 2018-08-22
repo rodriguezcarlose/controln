@@ -595,15 +595,15 @@ class Payments_model extends CI_Model
         
     }
 
-    public function getHistoryPayments($gerencia){
+    public function getHistoryPayments($gerencia, $proyecto, $estatus, $descripcion){
+        
+        //echo "seleccion: proyecto: ". $proyecto." gerencia: ".$gerencia." estatus ".$estatus." descripción ".$descripcion;
         
         
-        
-        
-        $result=$this->db->query("SELECT `p`.`nombre` `proyecto`, `n`.`descripcion`, `g`.`nombre`  `gerencia`, `n`.`numero_lote`, `n`.`fecha_creacion`, `en`.`nombre` `estatus`, `n`.`id`, 
+        $sql = "SELECT `p`.`nombre` `proyecto`, `n`.`descripcion`, `g`.`nombre`  `gerencia`, `n`.`numero_lote`, `n`.`fecha_creacion`, `en`.`nombre` `estatus`, `n`.`id`,
                                 pendiente.pendiente,procesada.procesada,pagada.pagada,rechazada.rechazada,total.total
-                                FROM (`nomina` `n`) 
-                                INNER JOIN `estatus_nomina` `en` ON `en`.`id` = `n`.`id_estatus` 
+                                FROM (`nomina` `n`)
+                                INNER JOIN `estatus_nomina` `en` ON `en`.`id` = `n`.`id_estatus`
                                 INNER JOIN `proyecto` `p` ON `p`.`id` = `n`.`id_proyecto`
                                 INNER JOIN `gerencia` `g` ON `g`.`id` = `n`.`id_gerencia`
                                         LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) pendiente
@@ -624,22 +624,48 @@ class Payments_model extends CI_Model
         						GROUP BY id_nomina,id_estatus) rechazada ON `rechazada`.`id_nomina` = `n`.`id`
                                         LEFT JOIN (SELECT DISTINCT id_nomina, COUNT(*) total
         						FROM nomina_detalle
-        						GROUP BY id_nomina) total ON `total`.`id_nomina` = `n`.`id`
-                                WHERE id_gerencia= $gerencia
-                                ORDER BY n.`fecha_creacion` DESC");
-                            
+        						GROUP BY id_nomina) total ON `total`.`id_nomina` = `n`.`id` ";
+            
+        $where = false;
         
-       // echo $this->db->last_query();
-      /* $this->db->select("p.nombre proyecto, n.descripcion, n.numero_lote, n.fecha_creacion, en.nombre estatus, n.id ");
-       $this->db->from('nomina n');
-       $this->db->join('estatus_nomina en', 'en.id = n.id_estatus', 'inner');
-       $this->db->join('proyecto p', 'p.id = n.id_proyecto', 'inner');
-       if ($gerencia != null){
-           $this->db->where("id_gerencia", $gerencia);
-       }
-       
-       $result = $this->db->get("nomina");*/
-      // echo $this->db->last_query();
+        //agregamos las ondiciones del filtro de búsqueda
+        if (!$gerencia == null && !$gerencia == ''){
+            if (!$where){
+                $sql =  $sql."WHERE n.id_gerencia=".$gerencia." ";
+                $where = true;
+            }else{
+                $sql =  $sql."AND n.id_gerencia=".$gerencia." ";
+            }
+        }
+        
+        if (!$proyecto == null && !$proyecto == ''){
+            if (!$where){
+                $sql =  $sql."WHERE n.id_proyecto=".$proyecto." ";
+                $where = true;
+            }else{
+                $sql =  $sql."AND n.id_proyecto=".$proyecto." ";
+            }
+        }
+        
+        if (!$estatus == null && !$estatus == ''){
+            if (!$where){
+                $sql =  $sql."WHERE n.id_estatus=".$estatus." ";
+                $where = true;
+            }else{
+                $sql =  $sql."AND n.id_estatus=".$estatus." ";
+            }
+        }
+        
+        if (!$descripcion == null && !$descripcion == ''){
+            if (!$where){
+                $sql =  $sql."WHERE n.descripcion like '%".trim($descripcion)."%'";
+                $where = true;
+            }else{
+                $sql =  $sql."AND n.descripcion like '%".trim($descripcion)."%' ";
+            }
+        }
+        $sql = $sql."ORDER BY n.`fecha_creacion` DESC";
+        $result=$this->db->query($sql);
        return $result;
     }
     

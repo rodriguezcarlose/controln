@@ -261,7 +261,7 @@ class Claim extends CI_Controller
         ));
         
         // validaci�n del captcha
-         $this->form_validation->set_rules('g-recaptcha-response', '', 'required',array('required' => 'El Campo capcha es requerido'));
+        // $this->form_validation->set_rules('g-recaptcha-response', '', 'required',array('required' => 'El Campo capcha es requerido'));
         $codbanco = $this->Banco_model->getBancosbyId($this->input->post("id_banco"));
         $validate = true;
         

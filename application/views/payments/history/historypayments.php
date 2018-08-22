@@ -10,10 +10,73 @@ if (!isset($this->session->userdata['logged_in'])) {
 
     		<h3>Historico de N&oacute;minas</h3>
     		</br>
-    		<?php echo form_open();
-    		$data= 0;
-                    
-                    if (isset($history) ) { ?>
+    		<?php 
+    		echo form_open();
+            $data= 0;
+            ?>      
+	    		<div class="field small-2 column">
+    	            <label for="Enum:">Proyecto:</label>
+                    <select id="id_proyecto" name="id_proyecto" >
+	                   	<option value="">Todos</option>
+                         <?php 
+                         if (isset($proyecto)) { 
+                            foreach ($proyecto->result() as $data) { 
+                         ?>
+                         	<option value="<?= $data->id ?>"><?= $data->nombre ?></option>
+                         <?php 
+                            }
+                         }
+                         ?>
+          			</select>
+            	</div>
+            	
+            	<?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) &&  $_SESSION['id_rol'] === 1 ){ ?>
+            	
+    				<div class="field small-2 column">
+        	            <label for="Enum:">Gerencia:</label>
+                        <select id="id_gerencia" name="id_gerencia" >
+    	                   	<option value="">Todas</option>
+                             <?php 
+                             if (isset($gerencia)) { 
+                                 foreach ($gerencia->result() as $data) { 
+                             ?>
+                             	<option value="<?= $data->id ?>"><?= $data->nombre ?></option>
+                             <?php 
+                                }
+                             }
+                             ?>
+              			</select>
+                	</div>
+                <?php 
+                  }
+                ?>
+            	<div class="field small-2 column">
+    	            <label for="Enum:">Estatus:</label>
+                    <select id="id_estatus" name="id_estatus" >
+	                   	<option value="">Todos</option>
+                         <?php 
+                         if (isset($estatusnomina)) { 
+                             foreach ($estatusnomina->result() as $data) { 
+                         ?>
+                         	<option value="<?= $data->id ?>"><?= $data->nombre ?></option>
+                         <?php 
+                            }
+                         }
+                         ?>
+          			</select>
+            	</div> 
+            	<div class="field small-4 column">
+    	            <label for="Enum:">Descripci&oacute;n:</label>
+                    <input id="descripcion" name="descripcion" type="text" value=""/>
+            	</div>   		
+            	
+            	<div class="field small-2 column">
+            		<input type="submit" value="Buscar" id="btnBuscar" class="button small"  />
+            	</div>
+    		
+    		
+    		
+                    <?php if (isset($history) ) { ?>
     
                     	<table id="dataTable">
                     		<thead>
