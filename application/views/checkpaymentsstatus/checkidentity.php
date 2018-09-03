@@ -26,6 +26,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         				    case "controlnomina.com":
         				        echo '<div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC"></div>';
         				        break;
+        				    case "172.16.4.172":
+        				        echo '<div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC"></div>';
+        				        break;
+        				    case "10.31.5.2":
+        				        echo '<div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC"></div>';
+        				        break;
         				    case "10.31.193.147":
         				        echo '<div class="g-recaptcha" data-sitekey="6LcREFQUAAAAAO58EooEWhWqm2Zk-M0II-sQlSD2"></div>';
         				        break;

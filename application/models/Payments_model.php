@@ -274,6 +274,64 @@ class Payments_model extends CI_Model
     }
     
     
+    public function getEmailadministrativo(){
+       $result=$this->db->query("SELECT usuario.correo
+                                            FROM usuario
+                                            INNER JOIN empleado ON usuario.`id_empleado` = empleado.`id`
+                                            INNER JOIN gerencia ON empleado.`id_gerencia` = gerencia.id
+                                            WHERE empleado.`id_gerencia` = 7");
+        return $result;
+    }
+    public function getEmailsubject($idnomina){
+        $result=$this->db->query("SELECT
+                                              n.descripcion, g.`nombre`,n.numero_lote
+                                              FROM
+                                              nomina n
+                                              INNER JOIN gerencia g
+                                              ON n.`id_gerencia`=g.`id`
+                                              WHERE n.id='". $idnomina ."'
+                                             ");
+        return $result;
+    }
+    public function getEmailgerencia($idnomina){
+        $result=$this->db->query("SELECT usuario.correo
+                                                FROM usuario
+                                                INNER JOIN empleado ON usuario.`id_empleado` = empleado.`id`
+                                                INNER JOIN gerencia ON empleado.`id_gerencia` = gerencia.id
+                                                INNER JOIN nomina ON gerencia.`id`=nomina.`id_gerencia`
+                                                WHERE nomina.id = '". $idnomina ."'
+                                                ");
+        return $result;
+    }
+    public function getemailrechazados($idnomina){
+        $result=$this->db->query("SELECT pagada.pagada,rechazada.rechazada
+                                                FROM (`nomina` `n`)
+                                                INNER JOIN `estatus_nomina` `en` ON `en`.`id` = `n`.`id_estatus`
+                                                INNER JOIN `proyecto` `p` ON `p`.`id` = `n`.`id_proyecto`
+                                                INNER JOIN `gerencia` `g` ON `g`.`id` = `n`.`id_gerencia`
+                                                LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) pendiente
+                                                FROM nomina_detalle
+                                                WHERE id_estatus = 1
+                                                GROUP BY id_nomina,id_estatus) pendiente ON `pendiente`.`id_nomina` = `n`.`id`
+                                                LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) procesada
+                                                FROM nomina_detalle
+                                                WHERE id_estatus = 2
+                                                GROUP BY id_nomina,id_estatus) procesada ON `procesada`.`id_nomina` = `n`.`id`
+                                                LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) pagada
+                                                FROM nomina_detalle
+                                                WHERE id_estatus = 3
+                                                GROUP BY id_nomina,id_estatus) pagada ON `pagada`.`id_nomina` = `n`.`id`
+                                                LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) rechazada
+                                                FROM nomina_detalle
+                                                WHERE id_estatus = 4
+                                                GROUP BY id_nomina,id_estatus) rechazada ON `rechazada`.`id_nomina` = `n`.`id`
+                                                LEFT JOIN (SELECT DISTINCT id_nomina, COUNT(*) total
+                                                FROM nomina_detalle
+                                                GROUP BY id_nomina) total ON `total`.`id_nomina` = `n`.`id`
+                                                WHERE n.id = '". $idnomina ."'
+                                                ORDER BY n.`fecha_creacion` DESC");
+        return $result;
+    }
     public function getPaymentsGenerateCSVFile($nomina = ''){
 
         
@@ -461,9 +519,9 @@ class Payments_model extends CI_Model
         
         ini_set('max_execution_time', 30);
         if ($this->db->trans_status() === FALSE){
-            return false;
+            return 0;
         }else{
-            return true;
+            return $id_nomina;
         }
         
     }

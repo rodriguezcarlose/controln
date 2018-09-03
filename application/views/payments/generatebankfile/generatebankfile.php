@@ -131,7 +131,7 @@ if (!isset($this->session->userdata['logged_in'])) {
                 	}
             	?>
 
-             	<h3>Generar Archivo CSV</h3>
+             	<h3>Generar Archivo XLS</h3>
         
             	<?= form_open("generatebankfile/generateXLS") ?>
                                 

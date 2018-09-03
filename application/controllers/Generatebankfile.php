@@ -298,7 +298,41 @@ class Generatebankfile extends CI_Controller {
                 $resultPayments=$this->Payments_model->getPaymentsGenerateTXTFile($nomina);
                 $this->load->helper('file');
                 $salt="\r\n";
+                /*******************************************EMAIL solo para gerencias*******************************/
                 
+                $to_email= $this->Payments_model->getEmailgerencia($nomina);
+                $to = "";
+                foreach ($to_email->result() as $email){
+                    $to = $email->correo;
+                }
+                $to_subject= $this->Payments_model->getEmailsubject($nomina);
+                $subject = "";
+                foreach ($to_subject->result() as $descripcion){
+                    $subject = $descripcion->descripcion;
+                }
+                $lote = "";
+                foreach ($to_subject->result() as $numerolote){
+                    $lote = $numerolote->numero_lote;
+                }
+                $this->load->library('email');
+                $configexcle = array(
+                    'protocol' => 'smtp',
+                    'smtp_host' => 'ssl://mail.ex-cle.com',
+                    'smtp_port' => 465,
+                    'smtp_user' => 'noresponder@ex-cle.com',
+                    'smtp_pass' => 'oiu987ygv',
+                    'mailtype' => 'html',
+                    'charset' => 'utf-8',
+                    'newline' => "\r\n",
+                    'wordwrap' => true
+                );
+                $this->email->initialize($configexcle);
+                $this->email->from('noresponder@ex-cle.com');
+                $this->email->to($to);
+                $this->email->subject('Control Nomina  Procesada ' . "$subject");
+                $this->email->message('Se notifica que la Gerencia Administrativa proceso el archivo de nómina '. "$subject".' <br> Lote: '.$lote.' ,para ser enviado al banco.');
+                $this->email->send();
+                /**************************************FIN EMAIL*********************************************/
     
                           
                 // Debito y Credito de cada pago del archivo TXT
@@ -450,7 +484,7 @@ class Generatebankfile extends CI_Controller {
                 
                 
             }else{
-                $this->errorLote = "Ya existe una n&oacute;mina con el número de lote infresado, por favor valide la informaci&oacute;n.";
+                $this->errorLote = "Ya existe una n&oacute;mina con el n&uacute;mero de lote ingresado, por favor valide la informaci&oacute;n.";
                 $this->index();
             }
         }

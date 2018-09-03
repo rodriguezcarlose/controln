@@ -87,7 +87,7 @@ class Claims_model extends CI_Model
         $this->db->join('tipo_error te', 'r.id_tipo_error=te.id', 'inner');
         $this->db->join('estatus_reclamo er', 'r.id_estatus_reclamo=er.id', 'inner');
         
-        $this->db->group_by('r.id');
+        $this->db->group_by('r.id,r.documento_identidad,r.nombre,r.apellido,p.descripcion ,te.nombre_error ,r.fecha_reclamo,er.nombre_reclamo');
         $query = $this->db->get();
         return $query->result();
     }

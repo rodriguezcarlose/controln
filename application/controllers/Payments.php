@@ -468,7 +468,64 @@ class Payments extends CI_Controller {
             // $this->payments_model->insertPayment($this->input->post("descripcion"),$this->input->post("id_proyecto"),$this->input->post("id_gerencia"),$_SESSION['id'],$detalle);
             $resultado =  $this->payments_model->insertPayment($descripcion,$proyecto,$gerencia, $_SESSION['id'],$detalle->result());
             if ($resultado){
-                $data->success = 'Se ha crado con &Eacutexito la nomina.';
+                $data->success = 'Se ha creado con &Eacutexito la nomina.';
+                /********************** para la gerencia************************************************************************/
+                $to_subject= $this->payments_model->getEmailsubject($resultado);{
+                    $to_email= $this->payments_model->getEmailgerencia($resultado);
+                    $to = "";
+                    foreach ($to_email->result() as $email){
+                        $to = $email->correo;
+                    }
+                    $subject = "";
+                    foreach ($to_subject->result() as $descripcionx){
+                        $subject = $descripcionx->descripcion;
+                    }
+                    $gerencianomina="";
+                    foreach ($to_subject->result() as $nombregerencia){
+                        $gerencianomina = $nombregerencia->nombre;
+                    }
+                }
+                $this->load->library('email');
+                $configexcle = array(
+                    'protocol' => 'smtp',
+                    'smtp_host' => 'ssl://mail.ex-cle.com',
+                    'smtp_port' => 465,
+                    'smtp_user' => 'noresponder@ex-cle.com',
+                    'smtp_pass' => 'oiu987ygv',
+                    'mailtype' => 'html',
+                    'charset' => 'utf-8',
+                    'newline' => "\r\n",
+                    'wordwrap' => true
+                );
+                $this->email->initialize($configexcle);
+                $this->email->from('noresponder@ex-cle.com');
+                $this->email->to($to);
+                $this->email->subject('Control Nomina  Liberada ' . "$descripcion" );
+                $this->email->message('Nomina ' . "$descripcion". ' cargada exitosamente.');
+                $this->email->send();
+                ///******************para el gerente administrativo*************/////////////////////////////
+                $this->email->clear();
+                $this->email->initialize($configexcle);
+                $to_subject= $this->payments_model->getEmailsubject($resultado);{
+                    $to_email= $this->payments_model->getEmailadministrativo($this->input->post('result'));
+                    $to = "";
+                    foreach ($to_email->result() as $email){
+                        $to = $email->correo;
+                    }
+                    $subject = "";
+                    foreach ($to_subject->result() as $descripcionx){
+                        $subject = $descripcionx->descripcion;
+                    }
+                    $gerencianomina="";
+                    foreach ($to_subject->result() as $nombregerencia){
+                        $gerencianomina = $nombregerencia->nombre;
+                    }
+                }
+                $this->email->from('noresponder@ex-cle.com');
+                $this->email->to($to);
+                $this->email->subject('Control Nomina  Liberada ' . "$descripcion" );
+                $this->email->message('Se notifica que la Gerencia '."$gerencianomina" . ' cargo una nómina <br>' . "$descripcion". ' para ser procesada.');
+                $this->email->send();
             }else{
                 $data->error = 'Ha acorrido un error inesperado, por favor intente de nuevo.';
             }
@@ -489,6 +546,8 @@ class Payments extends CI_Controller {
         $this->load->view('templates/navigation',$data);
         $this->load->view('payments/paymentsload/loadgrid');
         $this->load->view('templates/footer');
+        if(isset($resultado))
+            return $resultado;
     }
     
     

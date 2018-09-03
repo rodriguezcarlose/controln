@@ -59,7 +59,7 @@ class HistoryPayments extends CI_Controller
         
         
         
-        if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) &&  $_SESSION['id_rol'] === 1 ){
+        if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) &&  ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 4) ){
             $history = $this->Payments_model->getHistoryPayments($gerenciaSelect,$proyectoSelect,$estatusNomSelect,$descripcionSelect);
         }else if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) ){
             $history = $this->Payments_model->getHistoryPayments($_SESSION['gerencia'],$proyectoSelect,$estatusNomSelect, $descripcionSelect);
@@ -155,6 +155,66 @@ class HistoryPayments extends CI_Controller
             $this->load->view('payments/history/historypayments',$data);
             $this->load->view('templates/footer');
             
+           /**********************************************para la gerencia*******************************/
+            $this->load->library('email');
+            $configexcle = array(
+                'protocol' => 'smtp',
+                'smtp_host' => 'ssl://mail.ex-cle.com',
+                'smtp_port' => 465,
+                'smtp_user' => 'noresponder@ex-cle.com',
+                'smtp_pass' => 'oiu987ygv',
+                'mailtype' => 'html',
+                'charset' => 'utf-8',
+                'newline' => "\r\n",
+                'wordwrap' => true
+            );
+            $to_email= $this->Payments_model->getEmailgerencia($idnomina);
+            $to = "";
+            foreach ($to_email->result() as $email){
+                $to = $email->correo;
+            }
+            $to_subject= $this->Payments_model->getEmailsubject($idnomina);
+            $subject = "";
+            foreach ($to_subject->result() as $descripcion){
+                $subject = $descripcion->descripcion;
+            }
+            $lote = "";
+            foreach ($to_subject->result() as $numerolote){
+                $lote = $numerolote->numero_lote;
+            }
+            $rechazados= $this->Payments_model->getemailrechazados($idnomina);
+            $rechazo = 0;
+            $this->email->initialize($configexcle);
+            $this->email->from('noresponder@ex-cle.com');
+            $this->email->to($to);
+            $this->email->subject('Control Nomina  Pagada ' . "$subject");
+            $this->email->message('Se notifica que la Gerencia Administrativa Pago la nómina: ' . $subject . '<br>Lote numero: ' . $lote .' Registrando: "' . $rechazo. '" Rechazados.');
+            $this->email->send();
+            /**************************************para la gerencia administrativa*******************************/
+            $this->email->clear();
+            $to_administrativo= $this->Payments_model->getEmailadministrativo();
+            $to_email= $this->Payments_model->getEmailgerencia($idnomina);
+            $to = "";
+            foreach ($to_administrativo->result() as $email){
+                $to = $email->correo;
+            }
+            $to_subject= $this->Payments_model->getEmailsubject($idnomina);
+            $subject = "";
+            foreach ($to_subject->result() as $descripcion){
+                $subject = $descripcion->descripcion;
+            }
+            $lote = "";
+            foreach ($to_subject->result() as $numerolote){
+                $lote = $numerolote->numero_lote;
+            }
+            $rechazados= $this->Payments_model->getemailrechazados($idnomina);
+            $rechazo = 0;
+            $this->email->initialize($configexcle);
+            $this->email->from('noresponder@ex-cle.com');
+            $this->email->to($to);
+            $this->email->subject('Control Nomina  Pagada ' . "$subject");
+            $this->email->message('Nómina: ' . $subject . '<br>Lote numero: ' . $lote .'  Pagada Exitosamente.');
+            $this->email->send();
         }else{
             $data->error = "Operaci&oacute;nFallida.";
             $this->load->view('templates/header');
