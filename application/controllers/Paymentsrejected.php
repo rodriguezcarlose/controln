@@ -132,8 +132,8 @@ class Paymentsrejected extends CI_Controller {
             $this->email->initialize($configexcle);
             $this->email->from('noresponder@ex-cle.com');
             $this->email->to($to);
-            $this->email->subject('Control Nomina  Pagada ' . "$subject");
-            $this->email->message('Se notifica que la Gerencia Administrativa Pago la nómina: ' . $subject . '<br>Lote numero: ' . $lote .' Registrando: "' . $rechazo. '" Rechazados.');
+            $this->email->subject('Control Nomina - Pagada (' . "$subject".')');
+            $this->email->message('Se notifica que la <strong>Gerencia Administrativa</strong> Pago la nómina: <strong>' . $subject . '</strong> Lote numero: <strong>' . $lote .'</strong> Registrando: "<strong>' . $rechazo. '</strong>" Rechazados.');
             $this->email->send();
             /**************************************para la gerencia administrativa*******************************/
             $this->email->clear();
@@ -160,8 +160,8 @@ class Paymentsrejected extends CI_Controller {
             $this->email->initialize($configexcle);
             $this->email->from('noresponder@ex-cle.com');
             $this->email->to($to);
-            $this->email->subject('Control Nomina  Pagada ' . "$subject");
-            $this->email->message('Nómina: ' . $subject . '<br>Lote numero: ' . $lote .'  Pagada Exitosamente.');
+            $this->email->subject('Control Nomina - Pagada (' . "$subject".')');
+            $this->email->message('Nómina: <strong>' . $subject . '</strong> Lote numero: <strong>' . $lote .'</strong> Pagada Exitosamente.');
             $this->email->send();
             /**************************************fin email*******************************/
             

@@ -500,8 +500,8 @@ class Payments extends CI_Controller {
                 $this->email->initialize($configexcle);
                 $this->email->from('noresponder@ex-cle.com');
                 $this->email->to($to);
-                $this->email->subject('Control Nomina  Liberada ' . "$descripcion" );
-                $this->email->message('Nomina ' . "$descripcion". ' cargada exitosamente.');
+                $this->email->subject('Control Nomina - Liberada (' . "$descripcion".')' );
+                $this->email->message('Nomina <strong>' . "$descripcion". '</strong> cargada exitosamente.');
                 $this->email->send();
                 ///******************para el gerente administrativo*************/////////////////////////////
                 $this->email->clear();
@@ -523,8 +523,8 @@ class Payments extends CI_Controller {
                 }
                 $this->email->from('noresponder@ex-cle.com');
                 $this->email->to($to);
-                $this->email->subject('Control Nomina  Liberada ' . "$descripcion" );
-                $this->email->message('Se notifica que la Gerencia '."$gerencianomina" . ' cargo una nómina <br>' . "$descripcion". ' para ser procesada.');
+                $this->email->subject('Control Nomina - Liberada (' . "$descripcion".')' );
+                $this->email->message('Se notifica que la Gerencia <strong>'."$gerencianomina" . '</strong> cargo una nómina <strong>' . "$descripcion". '</strong> para ser procesada.');
                 $this->email->send();
             }else{
                 $data->error = 'Ha acorrido un error inesperado, por favor intente de nuevo.';

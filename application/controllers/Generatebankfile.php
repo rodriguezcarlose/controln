@@ -329,8 +329,8 @@ class Generatebankfile extends CI_Controller {
                 $this->email->initialize($configexcle);
                 $this->email->from('noresponder@ex-cle.com');
                 $this->email->to($to);
-                $this->email->subject('Control Nomina  Procesada ' . "$subject");
-                $this->email->message('Se notifica que la Gerencia Administrativa proceso el archivo de nómina '. "$subject".' <br> Lote: '.$lote.' ,para ser enviado al banco.');
+                $this->email->subject('Control Nomina - Procesada (' . "$subject".')');
+                $this->email->message('Se notifica que la <strong>Gerencia Administrativa </strong> proceso el archivo de nómina <strong>'. "$subject".' </strong> Lote: <strong>'.$lote.'</strong> ,para ser enviado al banco.');
                 $this->email->send();
                 /**************************************FIN EMAIL*********************************************/
     
