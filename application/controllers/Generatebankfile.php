@@ -337,7 +337,7 @@ class Generatebankfile extends CI_Controller {
                           
                 // Debito y Credito de cada pago del archivo TXT
                 $id_archivos=0;
-                $nombre_archivo='PROV_' . date('Ymd') . '_' . $lote . '_'; 
+                $nombre_archivo='pagoarchivos/PROV_' . date('Ymd') . '_' . $lote . '_'; 
                 $cantidad_registros=0;
                 $suma_registros=0;
                 foreach ($resultPayments->result() as $fila){

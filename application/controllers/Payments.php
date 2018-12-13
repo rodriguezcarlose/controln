@@ -826,19 +826,20 @@ class Payments extends CI_Controller {
                         
                     $credito = str_replace('.','',$sheet->getCell("H".$row));
                     $credito = str_replace(',','.',$sheet->getCell("H".$row));
-                        
-                    $fila = array("beneficiario"=> strtoupper($this->form_validation->stripAccents($sheet->getCell("A".$row)->getValue())),
+                    $credito = str_replace("\n",'',$credito);
+                    //str_replace("\n", '<p>', $str)    
+                    $fila = array("beneficiario"=>str_replace("\n",'', strtoupper($this->form_validation->stripAccents($sheet->getCell("A".$row)->getValue()))),
                         // "referencia_credito"=> $sheet->getCell("B".$row),
                         "id"=> $i,
                         "referencia_credito"=> "",
-                        "id_cargo"=> $sheet->getCell("C".$row),
-                        "id_tipo_documento_identidad"=> $sheet->getCell("D".$row),
-                        "documento_identidad"=> $sheet->getCell("E".$row),
-                        "id_tipo_cuenta"=> $sheet->getCell("F".$row),
-                        "numero_cuenta"=> $sheet->getCell("G".$row),
+                        "id_cargo"=> str_replace("\n",'', $sheet->getCell("C".$row)),
+                        "id_tipo_documento_identidad"=> str_replace("\n",'',$sheet->getCell("D".$row)),
+                        "documento_identidad"=> str_replace("\n",'',$sheet->getCell("E".$row)),
+                        "id_tipo_cuenta"=> str_replace("\n",'',$sheet->getCell("F".$row)),
+                        "numero_cuenta"=> str_replace("\n",'',$sheet->getCell("G".$row)),
                         "credito"=>$credito,
                         "id_tipo_pago"=> $tipo_pago,
-                        "id_banco"=> $sheet->getCell("J".$row),
+                        "id_banco"=> str_replace("\n",'',$sheet->getCell("J".$row)),
                         "id_duracion_cheque"=> "",
                         "correo_beneficiario"=> "",
                          "fecha"=> "",

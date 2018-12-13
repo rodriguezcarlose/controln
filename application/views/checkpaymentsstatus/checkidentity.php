@@ -21,31 +21,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         		<input id="cedula" name="cedula" placeholder="" type="text" value="" maxlength = "9" onkeypress="return validar_texto(event)"  />
         	</div>
             <center>
-    				<?php 
-        				switch ($_SERVER['HTTP_HOST']) {
-        				    case "controlnomina.com":
-        				        echo '<div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC"></div>';
-        				        break;
-        				    case "172.16.4.172":
-        				        echo '<div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC"></div>';
-        				        break;
-        				    case "10.31.5.2":
-        				        echo '<div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC"></div>';
-        				        break;
-        				    case "10.31.193.147":
-        				        echo '<div class="g-recaptcha" data-sitekey="6LcREFQUAAAAAO58EooEWhWqm2Zk-M0II-sQlSD2"></div>';
-        				        break;
-        				        break;
-        				    case "190.202.115.30":
-        				        echo '<div class="g-recaptcha" data-sitekey="6LeWyVUUAAAAAKimO7-YmOwsFmuM2XfSr64Ikfuy"></div>';
-        				        break;
-        				        $fase = 3;
-        				        break;
-        				    case "201.249.171.30":
-        				        echo '<div class="g-recaptcha" data-sitekey="6LenTVUUAAAAADHplTqw3eykF-AuuxdnM3sK_keY"></div>';
-        				        break;
-        				}
-    				?>
+            	<div class="g-recaptcha" data-sitekey="6Lco3UwUAAAAALLL9KeaIHOD4Bg6iS0Bwv1HehNC"></div>
     		</center>
             <div class="small-12 column text-right buttonPanel">
                 <input id="btnCloseModalEditor" class="button small right alert" value="Cancelar" type="button">
