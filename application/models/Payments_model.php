@@ -631,12 +631,12 @@ class Payments_model extends CI_Model
     }
    
     
-    public function updateEstatusNominaDetallebyReferenciaCredito($referenciaCredito, $idEstatus, $idnomina){
+    public function updateEstatusNominaDetallebyReferenciaCredito($referenciaCredito, $idEstatus){
         
         
         $this->db->set('id_estatus', $idEstatus);
         $this->db->where('referencia_credito', $referenciaCredito);
-        $this->db->where("id_nomina", $idnomina);
+       // $this->db->where("id_nomina", $idnomina);
         return $this->db->update('nomina_detalle');
         
     }
@@ -648,6 +648,23 @@ class Payments_model extends CI_Model
         return $this->db->count_all_results('nomina_detalle');
     }
     
+    public function getCantidadEstatusNominabyRefCredito($referenciaCredito){
+        $this->db->where('referencia_credito', $referenciaCredito);
+        //$this->db->where("id_nomina", $idnomina);
+        return $this->db->count_all_results('nomina_detalle');
+    }
+     public function getnominaByRefCredito($referenciaCredito){
+         $this->db->select('id_nomina');
+        $this->db->where('referencia_credito', $referenciaCredito);
+        //$this->db->where("id_nomina", $idnomina);
+        return $this->db->get('nomina_detalle');
+    }
+    public function nominaById($id){
+         $this->db->select("descripcion");
+        $this->db->where('id', $id);
+        //$this->db->where("id_nomina", $idnomina);
+        return $this->db->get('nomina');
+    }
     public function getEstausNominaDetalle(){
         return $this->db->get("estatus_nomina_detalle");
         

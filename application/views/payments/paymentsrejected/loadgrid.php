@@ -1,7 +1,9 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); 
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
 if (!isset($this->session->userdata['logged_in'])) {
     redirect(base_url()."index.php/user/login");
-}?>
+}
+?>
 </br>
 <div class="container">
 	<div class="col-md-20">
@@ -21,23 +23,9 @@ if (!isset($this->session->userdata['logged_in'])) {
 		</div>
 
 		<?=form_open('paymentsrejected/loadgrid')?>
-         	<div class="row">
-               	<div class="large-12 columns">
-	                <label for="Enum:">N&oacute;mina:</label>
-					<select id="nomina" name="nomina" >
-                    	<option value="">Seleccione</option>
                     	
-                      	<?php
-                      	if (isset($paymentsProcessed)){
-                      	         foreach ($paymentsProcessed->result() as $fila){ ?>
-                     					<option value="<?= $fila->id; ?>"><?= '(' . $fila->id . ') ' . $fila->fecha_creacion . ' [' . $fila->estatus . ']' . ' PROYECTO:' . $fila->nombre_proyecto . '. GERENCIA:' .  $fila->nombre_gerencia  . '. DESCRIPCION:'. $fila->descripcion; ?></option>
-            			<?php 
                       	         
-                      	         }
-                      	}?>
-                  	</select>
-            	</div>
-        	</div>		
+
         	<?php $i = 1?>
         	<?php if (isset($records) ) { ?>
         		
@@ -54,6 +42,7 @@ if (!isset($this->session->userdata['logged_in'])) {
                                 <td>N&uacute;mero Cuenta</td>
                                 <td>Monto</td>
                                 <td>Fecha</td>
+                        <td>Nomina</td>
                 			</tr>
                 		</thead>
                 		<tbody>
@@ -89,6 +78,9 @@ if (!isset($this->session->userdata['logged_in'])) {
                                         <td>
                                         	<?php echo ($dataRecords["fecha"])?>
                                         </td>
+                             <td>
+                        <?php echo ($dataRecords["nomina"]) ?>
+                            </td>
                 		 	</tr>
                 		 <?php }?>
                 		</tbody>

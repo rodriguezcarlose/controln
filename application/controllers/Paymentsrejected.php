@@ -39,8 +39,7 @@ class Paymentsrejected extends CI_Controller {
         
     }
     
-    public function index()
-    {
+    public function index() {
         
     }
     
@@ -48,13 +47,13 @@ class Paymentsrejected extends CI_Controller {
     public function loadgrid(){
         
         $data = new stdClass();
-        $this->form_validation->set_rules('nomina', 'nomina', 'required', array('required' => 'Debe seleccionar una N&oacute;mina de la lista'));
+        // $this->form_validation->set_rules('nomina', 'nomina', 'required', array('required' => 'Debe seleccionar una N&oacute;mina de la lista'));
         
         if (isset($_SESSION['data_rejected'])){
             $data = $_SESSION['data_rejected'];
         }
         
-        if ($this->form_validation->run() == false){
+        if (!isset($_SESSION['data_rejected']) && !isset($data->records)) {
             $this->load->view('templates/header');
             $this->load->view('templates/navigation');
             $resultPayments=$this->payments_model->getPaymentsProcessed();
@@ -79,7 +78,7 @@ class Paymentsrejected extends CI_Controller {
             $update_successful = false; 
             
             foreach ($data->records as $dataRecords) {    
-                $count= $this->payments_model->getCantidadEstatusNominabyReferenciaCredito($dataRecords["credito"],$this->input->post("nomina"));
+                $count = $this->payments_model->getCantidadEstatusNominabyRefCredito($dataRecords["credito"]);
                 if ($count > 0 ){
                     $resultPayments=$this->payments_model->updateEstatusNominaDetallebyReferenciaCredito($dataRecords["credito"],4,$this->input->post("nomina"));
                     $update_successful = true;
@@ -97,7 +96,7 @@ class Paymentsrejected extends CI_Controller {
                 $this->payments_model->updateEstatusNominabyId($this->input->post("nomina"),4);
             }
             /**********************************************para la gerencia*******************************/
-            $data = new stdClass();
+            //$data = new stdClass();
             $this->load->library('email');
             $configexcle = array(
                 'protocol' => 'smtp',
@@ -215,8 +214,7 @@ class Paymentsrejected extends CI_Controller {
             $data=array('paymentsProcessed'=>$resultPayments);
             $this->load->view('payments/paymentsrejected/loadgrid',$data);
             $this->load->view('templates/footer');
-        }
-        else{
+        } else {
             
             //cargamos el arcivo
             $file = $this->upload->data('file_path').$this->upload->data('file_name');
@@ -232,6 +230,16 @@ class Paymentsrejected extends CI_Controller {
                 
                 //descartamos la primera linea del archivo que contiene los nembres de los campos
                 if (!$i == 0){
+                    //consultamos la nomina al que pertenece el registro que se esta cargando.
+                    $nominasDeatlles = $this->payments_model->getnominaByRefCredito($datafile[2]);
+                    $non ='';
+                    foreach ($nominasDeatlles->result() as $nominaDet) {
+                        $non = $nominaDet->id_nomina;
+                    }
+                    $nominas = $this->payments_model->nominaById($non);
+                     foreach ($nominas->result() as $nomina) {
+                        $non = $nomina->descripcion;
+                    }
                     
                     // creamos el arreglo con la informaci�n de cada registro
                     $row = array("ticket"=> $datafile[0],
@@ -244,6 +252,7 @@ class Paymentsrejected extends CI_Controller {
                         "nro_cuenta"=> $datafile[6],
                         "monto"=> $datafile[7],
                         "fecha"=> $datafile[8],
+                        "nomina" => $non,
                    );
                     
                     //agregamos el registro en el arreglo
@@ -261,9 +270,13 @@ class Paymentsrejected extends CI_Controller {
             
             $_SESSION['data_rejected'] = $data;
 
-            $this->loadgrid();
-            
-            
+            //$this->loadgrid();
+            $this->load->view('templates/header');
+            $this->load->view('templates/navigation');
+            //$resultPayments = $this->payments_model->getPaymentsProcessed();
+            //$data->paymentsProcessed = $resultPayments;
+            $this->load->view('payments/paymentsrejected/loadgrid', $data);
+            $this->load->view('templates/footer');
         }
         
         
