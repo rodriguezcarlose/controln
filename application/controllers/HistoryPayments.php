@@ -54,26 +54,31 @@ class HistoryPayments extends CI_Controller
         $gerenciaSelect = $this->input->post("id_gerencia");
         $estatusNomSelect = $this->input->post("id_estatus");
         $descripcionSelect = $this->input->post("descripcion");
+        $fecha_creacionSelect = $this->input->post("fecha_creacion");
+        
         
       //  echo "seleccion: proyecto: ". $proyectoSelect." gerencia: ".$gerenciaSelect." estatus ".$estatusNomSelect." descripción ".$descripcionSelect;
         
         
         
         if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) &&  ($_SESSION['id_rol'] === 1 || $_SESSION['id_rol'] === 4) ){
-            $history = $this->Payments_model->getHistoryPayments($gerenciaSelect,$proyectoSelect,$estatusNomSelect,$descripcionSelect);
+            $history = $this->Payments_model->getHistoryPayments($gerenciaSelect,$proyectoSelect,$estatusNomSelect,$descripcionSelect,$fecha_creacionSelect);
         }else if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) ){
-            $history = $this->Payments_model->getHistoryPayments($_SESSION['gerencia'],$proyectoSelect,$estatusNomSelect, $descripcionSelect);
+            $history = $this->Payments_model->getHistoryPayments($_SESSION['gerencia'],$proyectoSelect,$estatusNomSelect, $descripcionSelect,$fecha_creacionSelect);
         }
         
         $resultEstatus=$this->Payments_model->getEstausNominaDetalle();
         $data->estatusNom= $resultEstatus;
         
         $data->history = $history;
-        
+   
         $this->load->view('templates/header');
         $this->load->view('templates/navigation', $data);
         $this->load->view('payments/history/historypayments',$data);
         $this->load->view('templates/footer');
+        
+        
+        
     }
     
     public function viewdetails($estatus,$id){
@@ -93,8 +98,11 @@ class HistoryPayments extends CI_Controller
         $data->links = $this->pagination->create_links();
         $data->total_records = $total_records;
         $data->id_nomina = $id;
+        $data->proyecto =  $this->Proyecto_model->getProyecto();
         
         
+        
+        //Para acceder a los valores de la consulta
         
         switch ($estatus){
             case 1:
@@ -136,13 +144,15 @@ class HistoryPayments extends CI_Controller
         $gerenciaSelect = $this->input->post("id_gerencia");
         $estatusNomSelect = $this->input->post("id_estatus");
         $descripcionSelect = $this->input->post("descripcion");
+        $fecha_creacionSelect = $this->input->post("fecha_creacion");
+             
         
         $result = $this->Payments_model->updateNominaProccessed($idnomina);
         
         if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) &&  $_SESSION['id_rol'] === 1 ){
-            $history = $this->Payments_model->getHistoryPayments($gerenciaSelect,$proyectoSelect,$estatusNomSelect,$descripcionSelect);
+            $history = $this->Payments_model->getHistoryPayments($gerenciaSelect,$proyectoSelect,$estatusNomSelect,$descripcionSelect,$fecha_creacionSelect);
         }else if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) ){
-            $history = $this->Payments_model->getHistoryPayments($_SESSION['gerencia'],$proyectoSelect,$estatusNomSelect, $descripcionSelect);
+            $history = $this->Payments_model->getHistoryPayments($_SESSION['gerencia'],$proyectoSelect,$estatusNomSelect, $descripcionSelect,$fecha_creacionSelect);
         }
         $resultEstatus=$this->Payments_model->getEstausNominaDetalle();
         $data->estatusNom= $resultEstatus;
@@ -222,10 +232,7 @@ class HistoryPayments extends CI_Controller
             $this->load->view('payments/history/historypayments',$data);
             $this->load->view('templates/footer');
         }
-        
-        
-        
-        
+
         
     }
     

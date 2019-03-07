@@ -41,12 +41,12 @@ class Generatebankfile extends CI_Controller {
     
     public function index()
     {
-       $data = new stdClass();
+        $data = new stdClass();
         if ($this->errorLote !== ""){
             $data->error = $this->errorLote;
         }
         
-                
+        
         $this->load->view('templates/header');
         $this->load->view('templates/navigation',$data);
         
@@ -54,7 +54,7 @@ class Generatebankfile extends CI_Controller {
         $this->load->model('Payments_model');
         $resultPayments=$this->Payments_model->getPaymentsGenerateBankFile();
         
-
+        
         $this->load->model('TiposCuentas_model');
         $resultTipoCuenta=$this->TiposCuentas_model->getTiposCuentas();
         
@@ -62,25 +62,25 @@ class Generatebankfile extends CI_Controller {
         $resultEmpresa=$this->EmpresaOrdenante_model->getEmpresaOrdenante();
         $resultData=array('paymentsGenerateBankFile'=>$resultPayments, 'empresaOrdenante'=>$resultEmpresa, 'tipoCuenta'=>$resultTipoCuenta);
         
-            if ($resultPayments!=null){
-                if($resultData != null){
-                    $this->load->view('payments/generatebankfile/generatebankfile',$resultData);
-                }
-            }else{
-                
-                $this->load->view('payments/generatebankfile/generatebankfileNotFound');
+        if ($resultPayments!=null){
+            if($resultData != null){
+                $this->load->view('payments/generatebankfile/generatebankfile',$resultData);
             }
-
+        }else{
+            
+            $this->load->view('payments/generatebankfile/generatebankfileNotFound');
+        }
+        
         $this->load->view('templates/footer');
         
-    } 
+    }
     
     public function generateCSV()
     {
         
         /*Para la generaci�n del CSV solo se requiere la nomina*/
         $this->form_validation->set_rules('nomina', 'nomina', 'required',array('required' => 'La N&oacute;mina a generar es requerida'));
-
+        
         if ($this->form_validation->run() == false) {
             
             // validation not ok, send validation errors to the view
@@ -102,7 +102,7 @@ class Generatebankfile extends CI_Controller {
             /*
              $this->load->helper('file');
              
-            **/
+             **/
             
             $this->load->helper('download');
             force_download('archivo' . date('Y-m-d H:i:s') .'.csv', $archivo);
@@ -211,12 +211,12 @@ class Generatebankfile extends CI_Controller {
              **/
             
             $this->load->helper('download');
-         // force_download('archivo' . date('Y-m-d H:i:s') .'.xls', $archivo);
+            // force_download('archivo' . date('Y-m-d H:i:s') .'.xls', $archivo);
             
         }
         
     }
-
+    
     public function generateTXT()
     {
         
@@ -232,7 +232,7 @@ class Generatebankfile extends CI_Controller {
         
         
         if ($this->form_validation->run() == false) {
-
+            
             // validation not ok, send validation errors to the view
             $this->index();
             
@@ -247,8 +247,7 @@ class Generatebankfile extends CI_Controller {
                 $rif = $this->input->post('rif');
                 $lote = $this->input->post('lote');
                 $negociacion = $this->input->post('negociacion');
-                $fecha = new DateTime($this->input->post('fecha'));
-                $fecha = $fecha->format('d/m/Y');
+                $fecha_pago = $this->input->post('fecha');
                 $tipocuenta = $this->input->post('tipocuenta');
                 $numerocuenta = $this->input->post('numerocuenta');
                 $nomina = $this->input->post('nomina');
@@ -261,12 +260,12 @@ class Generatebankfile extends CI_Controller {
                 $resultTipoDocumento=$this->TipoDocumentoIdentidad_model->getTipoDocumentoIdentidadbyTipo(substr($rif,0,1));
                 $tdi=$resultTipoDocumento->result();
                 
-                $value = array ('id_tipo_documento_identidad'=>$tdi[0]->id, 
-                                'rif' => substr($rif,1), 
-                                'nombre' => $empresa, 
-                                'numero_negociacion' => $negociacion, 
-                                'id_tipo_cuenta' => $tipocuenta, 
-                                'numero_cuenta' => $numerocuenta );
+                $value = array ('id_tipo_documento_identidad'=>$tdi[0]->id,
+                    'rif' => substr($rif,1),
+                    'nombre' => $empresa,
+                    'numero_negociacion' => $negociacion,
+                    'id_tipo_cuenta' => $tipocuenta,
+                    'numero_cuenta' => $numerocuenta );
                 
                 if ($tipocuenta=="1"){
                     $tipocuenta="00";
@@ -279,15 +278,13 @@ class Generatebankfile extends CI_Controller {
                 
                 //Asocio el numero de lote a la nomina y modifico la nomina detalle con la fecha de envio
                 $value = array ('numero_lote'=>$lote,
-                                'id'=>$nomina
-                                );
-                $resultPayments=$this->Payments_model->updateNumeroLote($value);
-    
-                $value = array ('fecha'=>$fecha,
-                    'id_nomina'=>$nomina
+                    'id'=>$nomina
                 );
-                $resultPayments=$this->Payments_model->updateFechaValor($value);
-    
+                $resultPayments=$this->Payments_model->updateNumeroLote($value);
+                
+              
+                $resultPayments=$this->Payments_model->updateFechaValor($fecha_pago);
+                
                 
                 $resultPayments=$this->Payments_model->updateEstatusNominabyId($nomina,$estatus_nomina_procesada);
                 $resultPayments=$this->Payments_model->updateEstatusNominaDetallebyId($nomina,$estatus_nominadetalle_procesada);
@@ -333,11 +330,11 @@ class Generatebankfile extends CI_Controller {
                 $this->email->message('Se notifica que la <strong>Gerencia Administrativa </strong> proceso el archivo de nómina <strong>'. "$subject".' </strong> Lote: <strong>'.$lote.'</strong> ,para ser enviado al banco.');
                 $this->email->send();
                 /**************************************FIN EMAIL*********************************************/
-    
-                          
+                
+                
                 // Debito y Credito de cada pago del archivo TXT
                 $id_archivos=0;
-                $nombre_archivo='pagoarchivos/PROV_' . date('Ymd') . '_' . $lote . '_'; 
+                $nombre_archivo='pagoarchivos/PROV_' . date('Ymd') . '_' . $lote . '_';
                 $cantidad_registros=0;
                 $suma_registros=0;
                 foreach ($resultPayments->result() as $fila){
@@ -349,8 +346,8 @@ class Generatebankfile extends CI_Controller {
                             str_pad($negociacion, 8, "0", STR_PAD_LEFT) .
                             substr($rif,0,1) .
                             str_pad(substr($rif,1),9,"0", STR_PAD_LEFT) .
-                            $fecha .
-                            $fecha .
+                            $fecha_pago .
+                            $fecha_pago .
                             $salt;
                             $id_archivos=$id_archivos+1;
                             
@@ -363,132 +360,131 @@ class Generatebankfile extends CI_Controller {
                     $aux_monto=explode(".", $fila->monto_credito);
                     if (count($aux_monto)>0){$monto_entero=$aux_monto[0];}
                     if (count($aux_monto)>1){$monto_decimal=$aux_monto[1];}
-    
                     
-                    $debito=    "DEBITO  " . 
-                                str_pad($fila->numero_referencia_credito, 8, "0", STR_PAD_LEFT) . 
-                                substr($rif,0,1) . 
-                                str_pad(substr($rif,1),9,"0", STR_PAD_LEFT) . 
-                                str_pad(strtoupper($empresa),35," ", STR_PAD_RIGHT) . 
-                                $fecha . 
-                                $tipocuenta .
-                                $numerocuenta . 
-                                str_pad($monto_entero, 15, "0", STR_PAD_LEFT) . 
-                                "," . 
-                                str_pad($monto_decimal, 2, "0", STR_PAD_LEFT) . 
-                                "VEB40" .
-                                $salt;
-    
-                    if (strlen($fila->nombre_beneficiario)>30) {
-                        $nombre=substr($fila->nombre_beneficiario,0,30);
-                    }else {
-                        $nombre=$fila->nombre_beneficiario;
-                    }
-                    if ($fila->tipo_cuenta=="C"){
-                        $tc="00";
-                    }else{
-                        $tc="01";
-                    }
-                    if ($fila->tipo_pago=="1"){
-                        $tp="10";
-                    }else{
-                        if ($fila->tipo_pago=="2"){
-                            $tp="00";
-                        }else{
-                            $tp="20";
-                        }
-                    }
-                    $credito=   "CREDITO " . 
-                                str_pad($fila->numero_referencia_credito, 8, "0", STR_PAD_LEFT) . 
-                                $fila->id_tipo_documento_identidad . 
-                                str_pad($fila->numero_ci_rif, 9, "0", STR_PAD_LEFT) . 
-                                str_pad($nombre, 30, " ", STR_PAD_RIGHT) . 
-                                $tc . $fila->numero_cuenta_beneficiario . 
-                                str_pad($monto_entero, 15, "0", STR_PAD_LEFT) . 
-                                "," . 
-                                str_pad($monto_decimal, 2, "0", STR_PAD_LEFT) . 
-                                $tp . 
-                                str_pad($fila->banco,11, " ", STR_PAD_RIGHT) . 
-                                $fila->duracion_cheque . 
-                              //  "501" . 
-                                $fila->email_beneficiario .
-                                $salt;
-                    $cantidad_registros=$cantidad_registros+1;
-                    $suma_registros=$suma_registros+$fila->monto_credito;
-                    write_file($nombre_archivo . $id_archivos . '.txt',$debito,'a');
-                    write_file($nombre_archivo . $id_archivos . '.txt',$credito,'a');
                     
-                    //El archivo TXT soporta hasta 500 transacciones, si el archivo tiene mas de 500 se cierra en esta condici�n para abrir otro archivo.
-                   /* if ($cantidad_registros==500){
-                        $monto_entero=0;
-                        $monto_decimal=0;
-                        $aux_monto=explode(".", $suma_registros);
-                        if (count($aux_monto)>0){$monto_entero=$aux_monto[0];}
-                        if (count($aux_monto)>1){$monto_decimal=$aux_monto[1];}
+                    $debito=    "DEBITO  " .
+                        str_pad($fila->numero_referencia_credito, 8, "0", STR_PAD_LEFT) .
+                        substr($rif,0,1) .
+                        str_pad(substr($rif,1),9,"0", STR_PAD_LEFT) .
+                        str_pad(strtoupper($empresa),35," ", STR_PAD_RIGHT) .
+                        $fecha_pago .
+                        $tipocuenta .
+                        $numerocuenta .
+                        str_pad($monto_entero, 15, "0", STR_PAD_LEFT) .
+                        "," .
+                        str_pad($monto_decimal, 2, "0", STR_PAD_LEFT) .
+                        "VEB40" .
+                        $salt;
                         
-                        //Pie del archivo con resumen del total
-                        $footer=    "TOTAL   " .
-                            str_pad($cantidad_registros, 5, "0", STR_PAD_LEFT) .
-                            str_pad($cantidad_registros, 5, "0", STR_PAD_LEFT) .
+                        if (strlen($fila->nombre_beneficiario)>30) {
+                            $nombre=substr($fila->nombre_beneficiario,0,30);
+                        }else {
+                            $nombre=$fila->nombre_beneficiario;
+                        }
+                        if ($fila->tipo_cuenta=="C"){
+                            $tc="00";
+                        }else{
+                            $tc="01";
+                        }
+                        if ($fila->tipo_pago=="1"){
+                            $tp="10";
+                        }else{
+                            if ($fila->tipo_pago=="2"){
+                                $tp="00";
+                            }else{
+                                $tp="20";
+                            }
+                        }
+                        $credito=   "CREDITO " .
+                            str_pad($fila->numero_referencia_credito, 8, "0", STR_PAD_LEFT) .
+                            $fila->id_tipo_documento_identidad .
+                            str_pad($fila->numero_ci_rif, 9, "0", STR_PAD_LEFT) .
+                            str_pad($nombre, 30, " ", STR_PAD_RIGHT) .
+                            $tc . $fila->numero_cuenta_beneficiario .
                             str_pad($monto_entero, 15, "0", STR_PAD_LEFT) .
                             "," .
-                            str_pad($monto_decimal, 2, "0", STR_PAD_LEFT).
-                            $salt;
-                            write_file($nombre_archivo . $id_archivos . '.txt',$footer,'a');
-                           
-                            $cantidad_registros=0;
-                            $suma_registros=0;
-                    }*/
-                
+                            str_pad($monto_decimal, 2, "0", STR_PAD_LEFT) .
+                            $tp .
+                            str_pad($fila->banco,11, " ", STR_PAD_RIGHT) .
+                            $fila->duracion_cheque .
+                            //  "501" .
+                        $fila->email_beneficiario .
+                        $salt;
+                        $cantidad_registros=$cantidad_registros+1;
+                        $suma_registros=$suma_registros+$fila->monto_credito;
+                        write_file($nombre_archivo . $id_archivos . '.txt',$debito,'a');
+                        write_file($nombre_archivo . $id_archivos . '.txt',$credito,'a');
+                        
+                        //El archivo TXT soporta hasta 500 transacciones, si el archivo tiene mas de 500 se cierra en esta condici�n para abrir otro archivo.
+                        /* if ($cantidad_registros==500){
+                         $monto_entero=0;
+                         $monto_decimal=0;
+                         $aux_monto=explode(".", $suma_registros);
+                         if (count($aux_monto)>0){$monto_entero=$aux_monto[0];}
+                         if (count($aux_monto)>1){$monto_decimal=$aux_monto[1];}
+                         
+                         //Pie del archivo con resumen del total
+                         $footer=    "TOTAL   " .
+                         str_pad($cantidad_registros, 5, "0", STR_PAD_LEFT) .
+                         str_pad($cantidad_registros, 5, "0", STR_PAD_LEFT) .
+                         str_pad($monto_entero, 15, "0", STR_PAD_LEFT) .
+                         "," .
+                         str_pad($monto_decimal, 2, "0", STR_PAD_LEFT).
+                         $salt;
+                         write_file($nombre_archivo . $id_archivos . '.txt',$footer,'a');
+                         
+                         $cantidad_registros=0;
+                         $suma_registros=0;
+                         }*/
+                        
                 }
                 //El archivo TXT soporta hasta 500 transacciones, si el archivo tiene menos de 500 se cierra en esta condici�n.
                 //if ($cantidad_registros<500){
-                    $monto_entero=0;
-                    $monto_decimal=0;
-                    $aux_monto=explode(".", $suma_registros);
-                    if (count($aux_monto)>0){$monto_entero=$aux_monto[0];}
-                    if (count($aux_monto)>1){$monto_decimal=$aux_monto[1];}
+                $monto_entero=0;
+                $monto_decimal=0;
+                $aux_monto=explode(".", $suma_registros);
+                if (count($aux_monto)>0){$monto_entero=$aux_monto[0];}
+                if (count($aux_monto)>1){$monto_decimal=$aux_monto[1];}
+                
+                //Pie del archivo con resumen del total
+                $footer=    "TOTAL   " .
+                    str_pad($cantidad_registros, 5, "0", STR_PAD_LEFT) .
+                    str_pad($cantidad_registros, 5, "0", STR_PAD_LEFT) .
+                    str_pad($monto_entero, 15, "0", STR_PAD_LEFT) .
+                    "," .
+                    str_pad($monto_decimal, 2, "0", STR_PAD_LEFT).
+                    $salt;
+                    write_file($nombre_archivo . $id_archivos . '.txt',$footer,'a');
                     
-                    //Pie del archivo con resumen del total
-                    $footer=    "TOTAL   " .
-                        str_pad($cantidad_registros, 5, "0", STR_PAD_LEFT) .
-                        str_pad($cantidad_registros, 5, "0", STR_PAD_LEFT) .
-                        str_pad($monto_entero, 15, "0", STR_PAD_LEFT) .
-                        "," .
-                        str_pad($monto_decimal, 2, "0", STR_PAD_LEFT).
-                        $salt;
-                        write_file($nombre_archivo . $id_archivos . '.txt',$footer,'a');
-                        
-                        
-                        $cantidad_registros=0;
-                        $suma_registros=0;
-               // }
-                
-             /*   $this->load->library('zip');
-                
-                for($i=0;$i<=$id_archivos;$i=$i+1){
+                    
+                    $cantidad_registros=0;
+                    $suma_registros=0;
+                    // }
+                    
+                    /*   $this->load->library('zip');
+                    
+                    for($i=0;$i<=$id_archivos;$i=$i+1){
                     //Se Agregan los archivos de nominas a un archivos al ZIP
                     $this->zip->read_file($nombre_archivo . $i . '.txt');
                     
                     //Se Eliminan los archivos temporales de nomina
                     unlink($nombre_archivo . $i . '.txt');
-                }
-                
-                
-                //Se Descargar el archivo Zip con las nominas
-                $this->zip->download('PROV_' . date('Ymd') . '_' . $lote. '.zip');*/
-                
-                //Desacrga archivo txt
-                $this->load->helper('download');
-                force_download($nombre_archivo . $id_archivos . '.txt', NULL);
-                
-                
+                    }
+                    
+                    
+                    //Se Descargar el archivo Zip con las nominas
+                    $this->zip->download('PROV_' . date('Ymd') . '_' . $lote. '.zip');*/
+                    
+                    //Desacrga archivo txt
+                    $this->load->helper('download');
+                    force_download($nombre_archivo . $id_archivos . '.txt', NULL);
+                    
+                    
             }else{
                 $this->errorLote = "Ya existe una n&oacute;mina con el n&uacute;mero de lote ingresado, por favor valide la informaci&oacute;n.";
                 $this->index();
             }
         }
     }
-
+    
 }
-
