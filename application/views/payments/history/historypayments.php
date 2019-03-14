@@ -118,8 +118,19 @@ if (! isset($this->session->userdata['logged_in'])) {
 						<td><?=$data->numero_lote ?></td>
 						<td><?=$data->estatus ?></td>
 						<td><?=$data->fecha_creacion ?></td>
-						<td><?= $data->fecha_pago ?></td>
-						
+<td>
+                            		<?php
+                            		if ($data->fecha_pago != '00/00/0000') {
+                                ?>
+                                		 
+							<?= $data->fecha_pago?>
+                                	<?php
+                            } else {
+                                echo "";
+                            }
+                            
+                            ?>
+                            		</td>						
 						<td>
                             		<?php
                             if ($data->pendiente != null) {
