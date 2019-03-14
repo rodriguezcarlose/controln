@@ -247,7 +247,8 @@ class Generatebankfile extends CI_Controller {
                 $rif = $this->input->post('rif');
                 $lote = $this->input->post('lote');
                 $negociacion = $this->input->post('negociacion');
-                $fecha_pago = $this->input->post('fecha');
+                $fecha = new DateTime($this->input->post('fecha'));
+                $fecha = $fecha->format('d/m/Y');
                 $tipocuenta = $this->input->post('tipocuenta');
                 $numerocuenta = $this->input->post('numerocuenta');
                 $nomina = $this->input->post('nomina');
@@ -282,8 +283,20 @@ class Generatebankfile extends CI_Controller {
                 );
                 $resultPayments=$this->Payments_model->updateNumeroLote($value);
                 
-              
-                $resultPayments=$this->Payments_model->updateFechaValor($fecha_pago);
+                $value = array ('fecha'=>$fecha,
+                    'id_nomina'=>$nomina
+                );
+                $resultPayments=$this->Payments_model->updateFechaValor($value);
+                //DATE_FORMAT(`n`.`fecha_pago`,'%d/%m/%Y')
+                
+                $fecha_pago = new DateTime($this->input->post('fecha'));
+                $fecha_pago = $fecha_pago->format('Y/m/d');
+                
+                $value = array ('fecha'=>$fecha_pago,
+                    'id_nomina'=>$nomina
+                );
+                
+                $resultPayments=$this->Payments_model->updateFechaPago($value);
                 
                 
                 $resultPayments=$this->Payments_model->updateEstatusNominabyId($nomina,$estatus_nomina_procesada);
@@ -346,8 +359,8 @@ class Generatebankfile extends CI_Controller {
                             str_pad($negociacion, 8, "0", STR_PAD_LEFT) .
                             substr($rif,0,1) .
                             str_pad(substr($rif,1),9,"0", STR_PAD_LEFT) .
-                            $fecha_pago .
-                            $fecha_pago .
+                            $fecha .
+                            $fecha .
                             $salt;
                             $id_archivos=$id_archivos+1;
                             
@@ -367,7 +380,7 @@ class Generatebankfile extends CI_Controller {
                         substr($rif,0,1) .
                         str_pad(substr($rif,1),9,"0", STR_PAD_LEFT) .
                         str_pad(strtoupper($empresa),35," ", STR_PAD_RIGHT) .
-                        $fecha_pago .
+                        $fecha .
                         $tipocuenta .
                         $numerocuenta .
                         str_pad($monto_entero, 15, "0", STR_PAD_LEFT) .

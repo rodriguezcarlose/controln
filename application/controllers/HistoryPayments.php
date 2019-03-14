@@ -55,8 +55,7 @@ class HistoryPayments extends CI_Controller
         $estatusNomSelect = $this->input->post("id_estatus");
         $descripcionSelect = $this->input->post("descripcion");
         $fecha_creacionSelect = $this->input->post("fecha_creacion");
-        
-        
+ 
       //  echo "seleccion: proyecto: ". $proyectoSelect." gerencia: ".$gerenciaSelect." estatus ".$estatusNomSelect." descripción ".$descripcionSelect;
         
         
@@ -99,7 +98,6 @@ class HistoryPayments extends CI_Controller
         $data->total_records = $total_records;
         $data->id_nomina = $id;
         $data->proyecto =  $this->Proyecto_model->getProyecto();
-        
         
         
         //Para acceder a los valores de la consulta
@@ -146,8 +144,8 @@ class HistoryPayments extends CI_Controller
         $descripcionSelect = $this->input->post("descripcion");
         $fecha_creacionSelect = $this->input->post("fecha_creacion");
              
-        
         $result = $this->Payments_model->updateNominaProccessed($idnomina);
+        
         
         if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true && isset($_SESSION['id_rol']) &&  $_SESSION['id_rol'] === 1 ){
             $history = $this->Payments_model->getHistoryPayments($gerenciaSelect,$proyectoSelect,$estatusNomSelect,$descripcionSelect,$fecha_creacionSelect);

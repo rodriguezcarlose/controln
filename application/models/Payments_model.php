@@ -555,11 +555,19 @@ class Payments_model extends CI_Model
         return $this->db->count_all_results('nomina');
     }
 
-    public function updateFechaValor($fecha_pago)
-    {
-        $this->db->set('fecha_pago', $fecha_pago);
-    
+    public function updateFechaValor($value){
+        $this->db->set('fecha', $value["fecha"]);
+        $this->db->where('id_nomina', $value["id_nomina"]);
+        $this->db->update('nomina_detalle');
     }
+    
+    
+    public function updateFechaPago($value){
+        $this->db->set('fecha_pago', $value["fecha"]);
+        $this->db->where('id', $value["id_nomina"]);
+        $this->db->update('nomina');
+    }
+
 
     public function updateEstatusNominabyId($idNomina, $idEstatus)
     {
@@ -567,6 +575,7 @@ class Payments_model extends CI_Model
         $this->db->where('id', $idNomina);
         $this->db->update('nomina');
     }
+    
 
     public function updateEstatusNominaDetallebyId($idNomina, $idEstatus)
     {
