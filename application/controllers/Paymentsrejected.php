@@ -103,7 +103,7 @@ class Paymentsrejected extends CI_Controller {
                 'smtp_host' => 'ssl://mail.ex-cle.com',
                 'smtp_port' => 465,
                 'smtp_user' => 'noresponder@ex-cle.com',
-                'smtp_pass' => 'oiu987ygv',
+                'smtp_pass' => 'BgtYhn123$',
                 'mailtype' => 'html',
                 'charset' => 'utf-8',
                 'newline' => "\r\n",
