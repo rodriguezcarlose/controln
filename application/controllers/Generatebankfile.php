@@ -311,9 +311,9 @@ class Generatebankfile extends CI_Controller {
                 /*******************************************EMAIL solo para gerencias*******************************/
                 
                 $to_email= $this->Payments_model->getEmailgerencia($nomina);
-                $to = "";
+                $to = array();
                 foreach ($to_email->result() as $email){
-                    $to = $email->correo;
+                    array_push($to, $email->correo);
                 }
                 $to_subject= $this->Payments_model->getEmailsubject($nomina);
                 $subject = "";
@@ -325,19 +325,10 @@ class Generatebankfile extends CI_Controller {
                     $lote = $numerolote->numero_lote;
                 }
                 $this->load->library('email');
-                $configexcle = array(
-                    'protocol' => 'smtp',
-                    'smtp_host' => 'ssl://mail.ex-cle.com',
-                    'smtp_port' => 465,
-                    'smtp_user' => 'noresponder@ex-cle.com',
-                    'smtp_pass' => 'BgtYhn123$',
-                    'mailtype' => 'html',
-                    'charset' => 'utf-8',
-                    'newline' => "\r\n",
-                    'wordwrap' => true
-                );
+                $configexcle = $this->config->item('smtp');
+
                 $this->email->initialize($configexcle);
-                $this->email->from('noresponder@ex-cle.com');
+                $this->email->from($configexcle['smtp_user']);
                 $this->email->to($to);
                 $this->email->subject('Control Nomina - Procesada (' . "$subject".')');
                 $this->email->message('Se notifica que la <strong>Gerencia Administrativa </strong> proceso el archivo de nómina <strong>'. "$subject".' </strong> Lote: <strong>'.$lote.'</strong> ,para ser enviado al banco.');

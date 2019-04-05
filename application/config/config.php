@@ -230,7 +230,7 @@ $config['allow_get_array'] = TRUE;
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 0;
+$config['log_threshold'] = 4;
 
 /*
 |--------------------------------------------------------------------------
@@ -542,3 +542,23 @@ $config['proxy_ips'] = '';
  | $config['maintenance_mode'] = FALSE; // site is online
  */
 $config['maintenance_mode'] = false;
+
+
+/*
+ |--------------------------------------------------------------------------
+ | SMTP para el envio de correos 
+ |--------------------------------------------------------------------------
+ |
+ */
+
+$config['smtp'] = array(
+    'protocol' => 'smtp',
+    'smtp_host' => 'ssl://mail.ex-cle.com',
+    'smtp_port' => 465,
+    'smtp_user' => 'noresponder@ex-cle.com',
+    'smtp_pass' => 'BgtYhn123$',
+    'mailtype' => 'html',
+    'charset' => 'utf-8',
+    'newline' => "\r\n",
+    'wordwrap' => true
+);

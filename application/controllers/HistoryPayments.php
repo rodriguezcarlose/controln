@@ -165,21 +165,12 @@ class HistoryPayments extends CI_Controller
             
            /**********************************************para la gerencia*******************************/
             $this->load->library('email');
-            $configexcle = array(
-                'protocol' => 'smtp',
-                'smtp_host' => 'ssl://mail.ex-cle.com',
-                'smtp_port' => 465,
-                'smtp_user' => 'noresponder@ex-cle.com',
-                'smtp_pass' => 'BgtYhn123$',
-                'mailtype' => 'html',
-                'charset' => 'utf-8',
-                'newline' => "\r\n",
-                'wordwrap' => true
-            );
+            $configexcle = $this->config->item('smtp');
+
             $to_email= $this->Payments_model->getEmailgerencia($idnomina);
-            $to = "";
+            $to = array();
             foreach ($to_email->result() as $email){
-                $to = $email->correo;
+                array_push($to, $email->correo);
             }
             $to_subject= $this->Payments_model->getEmailsubject($idnomina);
             $subject = "";
@@ -193,7 +184,7 @@ class HistoryPayments extends CI_Controller
             $rechazados= $this->Payments_model->getemailrechazados($idnomina);
             $rechazo = 0;
             $this->email->initialize($configexcle);
-            $this->email->from('noresponder@ex-cle.com');
+            $this->email->from($configexcle['smtp_user']);
             $this->email->to($to);
             $this->email->subject('Control Nomina  Pagada (' . "$subject".')');
             $this->email->message('Se notifica que la <strong>Gerencia Administrativa</strong> Pago la nómina: <strong>' . $subject . '</strong> Lote numero: <strong>' . $lote .'</strong> Registrando: "<strong>' . $rechazo. '</strong>" Rechazados.');
@@ -202,9 +193,9 @@ class HistoryPayments extends CI_Controller
             $this->email->clear();
             $to_administrativo= $this->Payments_model->getEmailadministrativo();
             $to_email= $this->Payments_model->getEmailgerencia($idnomina);
-            $to = "";
+            $to = array();
             foreach ($to_administrativo->result() as $email){
-                $to = $email->correo;
+                array_push($to, $email->correo);
             }
             $to_subject= $this->Payments_model->getEmailsubject($idnomina);
             $subject = "";
@@ -218,7 +209,7 @@ class HistoryPayments extends CI_Controller
             $rechazados= $this->Payments_model->getemailrechazados($idnomina);
             $rechazo = 0;
             $this->email->initialize($configexcle);
-            $this->email->from('noresponder@ex-cle.com');
+            $this->email->from($configexcle['smtp_user']);
             $this->email->to($to);
             $this->email->subject('Control - Nomina  Pagada (' . "$subject".')');
             $this->email->message('Nómina: <strong>' . $subject . '</strong> Lote numero: <strong>' . $lote .'</strong>  Pagada Exitosamente.');

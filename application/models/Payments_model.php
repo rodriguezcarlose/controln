@@ -263,7 +263,8 @@ class Payments_model extends CI_Model
                                             FROM usuario
                                             INNER JOIN empleado ON usuario.`id_empleado` = empleado.`id`
                                             INNER JOIN gerencia ON empleado.`id_gerencia` = gerencia.id
-                                            WHERE empleado.`id_gerencia` = 7");
+                                            WHERE empleado.`id_gerencia` = 7 
+                                            AND usuario.estatus = 'activo'");
         return $result;
     }
 
@@ -287,8 +288,8 @@ class Payments_model extends CI_Model
                                                 INNER JOIN empleado ON usuario.`id_empleado` = empleado.`id`
                                                 INNER JOIN gerencia ON empleado.`id_gerencia` = gerencia.id
                                                 INNER JOIN nomina ON gerencia.`id`=nomina.`id_gerencia`
-                                                WHERE nomina.id = '" . $idnomina . "'
-                                                ");
+                                                WHERE nomina.id = '" . $idnomina . "' 
+                                                AND usuario.estatus = 'activo'");
         return $result;
     }
 
@@ -638,6 +639,7 @@ class Payments_model extends CI_Model
 
     public function getnominaByRefCredito($referenciaCredito)
     {
+        log_message('info', 'referenciaCredito '.$referenciaCredito);
         $this->db->select('id_nomina');
         $this->db->where('referencia_credito', $referenciaCredito);
         // $this->db->where("id_nomina", $idnomina);

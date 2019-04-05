@@ -47,6 +47,7 @@ class Paymentsrejected extends CI_Controller {
     public function loadgrid(){
         
         $data = new stdClass();
+        $nomina = 0;
         // $this->form_validation->set_rules('nomina', 'nomina', 'required', array('required' => 'Debe seleccionar una N&oacute;mina de la lista'));
         
         if (isset($_SESSION['data_rejected'])){
@@ -77,44 +78,52 @@ class Paymentsrejected extends CI_Controller {
            
             $update_successful = false; 
             
+            
+            /*
+             * $nominasDeatlles = $this->payments_model->getnominaByRefCredito($datafile[2]);
+                    $non ='';
+                    foreach ($nominasDeatlles->result() as $nominaDet) {
+                        $non = $nominaDet->id_nomina;
+                    }*/
+            
             foreach ($data->records as $dataRecords) {    
+                
+                log_message('info', 'credito '.$dataRecords["credito"]);
                 $count = $this->payments_model->getCantidadEstatusNominabyRefCredito($dataRecords["credito"]);
+                $nomina = $this->payments_model->getnominaByRefCredito((int)$dataRecords["credito"]);
                 if ($count > 0 ){
-                    $resultPayments=$this->payments_model->updateEstatusNominaDetallebyReferenciaCredito($dataRecords["credito"],4,$this->input->post("nomina"));
+                    $resultPayments=$this->payments_model->updateEstatusNominaDetallebyReferenciaCredito($dataRecords["credito"],4);
                     $update_successful = true;
                 }else{
                     array_push($noDataRecords,$dataRecords);
                     
                 }
             }
+            
+            
+            foreach ($nomina->result() as $nominaRe) {
+                $non = $nominaRe->id_nomina;
+            }
             unset($_SESSION['data_rejected']);
             
             if ($update_successful){
+                log_message('info', '$non '.$non);
                 // cambiamos el estatus de todos los registros a 3 (pagada) en detalkle nomina;
-                $this->payments_model->updateEstatusNominaDetallePagadas($this->input->post("nomina"),3);
+                $this->payments_model->updateEstatusNominaDetallePagadas($non,3);
                 //cambiaos el estaus de la nómina a 4 (pagada en el banco
-                $this->payments_model->updateEstatusNominabyId($this->input->post("nomina"),4);
+                $this->payments_model->updateEstatusNominabyId($non,4);
             }
             /**********************************************para la gerencia*******************************/
             //$data = new stdClass();
             $this->load->library('email');
-            $configexcle = array(
-                'protocol' => 'smtp',
-                'smtp_host' => 'ssl://mail.ex-cle.com',
-                'smtp_port' => 465,
-                'smtp_user' => 'noresponder@ex-cle.com',
-                'smtp_pass' => 'BgtYhn123$',
-                'mailtype' => 'html',
-                'charset' => 'utf-8',
-                'newline' => "\r\n",
-                'wordwrap' => true
-            );
-            $to_email= $this->payments_model->getEmailgerencia($this->input->post("nomina"));
-            $to = "";
+            $configexcle = $this->config->item('smtp');
+            log_message('info', 'nomina rechazada '.$non);
+            $to_email= $this->payments_model->getEmailgerencia($non);
+            $to = array();
             foreach ($to_email->result() as $email){
-                $to = $email->correo;
+                array_push($to, $email->correo);
             }
-            $to_subject= $this->payments_model->getEmailsubject($this->input->post("nomina"));
+            $to_subject= $this->payments_model->getEmailsubject($non);
             $subject = "";
             foreach ($to_subject->result() as $descripcion){
                 $subject = $descripcion->descripcion;
@@ -123,13 +132,13 @@ class Paymentsrejected extends CI_Controller {
             foreach ($to_subject->result() as $numerolote){
                 $lote = $numerolote->numero_lote;
             }
-            $rechazados= $this->payments_model->getemailrechazados($this->input->post("nomina"));
+            $rechazados= $this->payments_model->getemailrechazados($non);
             $rechazo = "";
             foreach ($rechazados->result() as $conteo){
              $rechazo = $conteo->rechazada;
             }
             $this->email->initialize($configexcle);
-            $this->email->from('noresponder@ex-cle.com');
+            $this->email->from($configexcle['smtp_user']);
             $this->email->to($to);
             $this->email->subject('Control Nomina - Pagada (' . "$subject".')');
             $this->email->message('Se notifica que la <strong>Gerencia Administrativa</strong> Pago la nómina: <strong>' . $subject . '</strong> Lote numero: <strong>' . $lote .'</strong> Registrando: "<strong>' . $rechazo. '</strong>" Rechazados.');
@@ -137,12 +146,12 @@ class Paymentsrejected extends CI_Controller {
             /**************************************para la gerencia administrativa*******************************/
             $this->email->clear();
             $to_administrativo= $this->payments_model->getEmailadministrativo();
-            $to_email= $this->payments_model->getEmailgerencia($this->input->post("nomina"));
-            $to = "";
+            $to_email= $this->payments_model->getEmailgerencia($non);
+            $to = array();
             foreach ($to_administrativo->result() as $email){
-                $to = $email->correo;
+                array_push($to, $email->correo);
             }
-            $to_subject= $this->payments_model->getEmailsubject($this->input->post("nomina"));
+            $to_subject= $this->payments_model->getEmailsubject($non);
             $subject = "";
             foreach ($to_subject->result() as $descripcion){
                 $subject = $descripcion->descripcion;
@@ -151,16 +160,16 @@ class Paymentsrejected extends CI_Controller {
             foreach ($to_subject->result() as $numerolote){
                 $lote = $numerolote->numero_lote;
             }
-            $rechazados= $this->payments_model->getemailrechazados($this->input->post("nomina"));
+            $rechazados= $this->payments_model->getemailrechazados($non);
             $rechazo = "";
             foreach ($rechazados->result() as $conteo){
                 $rechazo = $conteo->rechazada;
             }
             $this->email->initialize($configexcle);
-            $this->email->from('noresponder@ex-cle.com');
+            $this->email->from($configexcle['smtp_user']);
             $this->email->to($to);
             $this->email->subject('Control Nomina - Pagada (' . "$subject".')');
-            $this->email->message('Nómina: <strong>' . $subject . '</strong> Lote numero: <strong>' . $lote .'</strong> Pagada Exitosamente.');
+            $this->email->message('Carga de Rechazos de la nómina: <strong>' . $subject . '</strong> Lote numero: <strong>' . $lote .'</strong> Procesada Exitosamente. Registrando: "<strong>' . $rechazo. '</strong>" Rechazados.');
             $this->email->send();
             /**************************************fin email*******************************/
             

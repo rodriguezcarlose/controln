@@ -265,7 +265,8 @@ class Payments extends CI_Controller {
                         }
                     }
                     $this->load->library('email');
-                    $configexcle = array(
+                    $configexcle = $this->config->item('smtp');
+                   /*$configexcle = array(
                         'protocol' => 'smtp',
                         'smtp_host' => 'ssl://mail.ex-cle.com',
                         'smtp_port' => 465,
@@ -275,7 +276,7 @@ class Payments extends CI_Controller {
                         'charset' => 'utf-8',
                         'newline' => "\r\n",
                         'wordwrap' => true
-                    );
+                    );*/
                     $this->email->initialize($configexcle);
                     $this->email->from('noresponder@ex-cle.com');
                     $this->email->to($to);
@@ -525,16 +526,17 @@ class Payments extends CI_Controller {
         
         if (isset($_SESSION['table_temp_nom']) ) {
             $detalle =$this->payments_model->getTablepaymentsTem($_SESSION['table_temp_nom']);
-            // $this->payments_model->insertPayment($this->input->post("descripcion"),$this->input->post("id_proyecto"),$this->input->post("id_gerencia"),$_SESSION['id'],$detalle);
             $resultado =  $this->payments_model->insertPayment($descripcion,$proyecto,$gerencia, $_SESSION['id'],$detalle->result());
             if ($resultado){
                 $data->success = 'Se ha creado con &Eacutexito la nomina.';
-                /********************** para la gerencia************************************************************************/
+                
+                ///********************** para la gerencia************************************************************************/
                 $to_subject= $this->payments_model->getEmailsubject($resultado);{
                     $to_email= $this->payments_model->getEmailgerencia($resultado);
-                    $to = "";
+                    $to = array();
                     foreach ($to_email->result() as $email){
-                        $to = $email->correo;
+                        array_push($to, $email->correo);  //$to =   $email->correo;
+                        log_message('info', 'mail para el gerente'.$email->correo);
                     }
                     $subject = "";
                     foreach ($to_subject->result() as $descripcionx){
@@ -546,32 +548,24 @@ class Payments extends CI_Controller {
                     }
                 }
                 $this->load->library('email');
-                $configexcle = array(
-                    'protocol' => 'smtp',
-                    'smtp_host' => 'ssl://mail.ex-cle.com',
-                    'smtp_port' => 465,
-                    'smtp_user' => 'noresponder@ex-cle.com',
-                    'smtp_pass' => 'BgtYhn123$',
-                    'mailtype' => 'html',
-                    'charset' => 'utf-8',
-                    'newline' => "\r\n",
-                    'wordwrap' => true
-                );
+              
+                $configexcle = $this->config->item('smtp');
                 
                 $this->email->initialize($configexcle);
-                $this->email->from('noresponder@ex-cle.com');
+                $this->email->from($configexcle['smtp_user']);
                 $this->email->to($to);
                 $this->email->subject('Control Nomina - Liberada (' . "$descripcion".')' );
                 $this->email->message('Nomina <strong>' . "$descripcion". '</strong> cargada exitosamente.');
                 $this->email->send();
+
                 ///******************para el gerente administrativo*************/////////////////////////////
-                //$this->email->clear();
                 $this->email->initialize($configexcle);
                 $to_subject= $this->payments_model->getEmailsubject($resultado);{
                     $to_email= $this->payments_model->getEmailadministrativo($this->input->post('result'));
-                    $to = "";
+                    $to = array();
                     foreach ($to_email->result() as $email){
-                        $to = $email->correo;
+                        array_push($to, $email->correo);
+                        log_message('info', 'mail para el administrador'.$email->correo);
                     }
                     $subject = "";
                     foreach ($to_subject->result() as $descripcionx){
@@ -582,7 +576,7 @@ class Payments extends CI_Controller {
                         $gerencianomina = $nombregerencia->nombre;
                     }
                 }
-                $this->email->from('noresponder@ex-cle.com');
+                $this->email->from($configexcle['smtp_user']);
                 $this->email->to($to);
                 $this->email->subject('Control Nomina - Liberada (' . "$descripcion".')' );
                 $this->email->message('Se notifica que la Gerencia <strong>'."$gerencianomina" . '</strong> cargo una nómina <strong>' . "$descripcion". '</strong> para ser procesada.');
