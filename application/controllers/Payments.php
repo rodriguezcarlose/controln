@@ -278,7 +278,7 @@ class Payments extends CI_Controller {
                         'wordwrap' => true
                     );*/
                     $this->email->initialize($configexcle);
-                    $this->email->from('noresponder@ex-cle.com');
+                    $this->email->from($configexcle['smtp_user']);
                     $this->email->to($to);
                     $this->email->subject('Control Nomina - Liberada (' . "$descripciong".')' );
                     $this->email->message('Nomina <strong>' . "$descripciong". '</strong> cargada exitosamente.');
@@ -302,7 +302,7 @@ class Payments extends CI_Controller {
                             $gerencianomina = $nombregerencia->nombre;
                         }
                     }
-                    $this->email->from('noresponder@ex-cle.com');
+                    $this->email->from($configexcle['smtp_user']);
                     $this->email->to($to);
                     $this->email->subject('Control Nomina - Liberada (' . "$descripciong".')' );
                     $this->email->message('Se notifica que la Gerencia <strong>'."$gerencianomina" . '</strong> cargo una nómina <strong>' . "$descripciong". '</strong> para ser procesada.');
