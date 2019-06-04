@@ -104,8 +104,7 @@ if (! isset($this->session->userdata['logged_in'])) {
 						<td>Rechazada</td>
 						<td>Rechazada BS</td>
 						<td>Total</td>
-						<td>Total BS</td
-					
+						<td>Total BS</td>
 					</tr>
 				</thead>
 				<tbody>
@@ -209,8 +208,7 @@ if (! isset($this->session->userdata['logged_in'])) {
                             ?></td> 
 
 						<td><a
-							href=<?= base_url() . 'index.php/historyPayments/viewdetails/0/'.$data->id;?>><?= $data->total == null ? 0 : $data->total?></a></td>
-												
+							href=<?= base_url() . 'index.php/historyPayments/viewdetails/0/'.$data->id;?>><?= $data->total == null ? 0 : $data->total?></a></td>					
 												
 							<td>
 							<?php
@@ -231,17 +229,13 @@ if (! isset($this->session->userdata['logged_in'])) {
 			</table>
 			<input type="hidden" name="id" value="<?= $data && $data->id ?>">
                     	
-	
         		 <?php
                     
 }
                     echo form_close();
                     ?>   
                     
-        		 <?php
-                    
-                              //echo $this->db->last_query();
-                    
+        		 <?php                                     
                     ?>   
                     
         		 <label>Leyenda Estatus N&oacute;mina:</label> <label>Cargada:

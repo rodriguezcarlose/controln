@@ -434,6 +434,16 @@ class Payments_model extends CI_Model
             $this->db->update($table);
         }
     }
+    
+    // toma el total de la tabla temporal para comparar con el total de auditoria
+    public function gettotaltable($table)
+    {
+        $this->db->select('SUM(credito) as credito');
+        $this->db->from($table);
+        $query = $this->db->get();
+        return $query->result();
+        
+    }
 
     /**
      * TableTem function, actialuza los registros de la tabla temporal, de acuerdo a los arreglos realizados en la vista
@@ -454,7 +464,7 @@ class Payments_model extends CI_Model
         // log_message('info', 'Payment|updateTableTempRow'.$sql = $this->db->last_query());
     }
 
-    public function insertPayment($descripcion, $proyecto, $gerencia, $usuario, $detalle)
+    public function insertPayment($descripcion, $proyecto, $gerencia, $usuario, $detalle,$total)
     {
         ini_set('max_execution_time', 0);
         $this->db->trans_start();
@@ -484,6 +494,7 @@ class Payments_model extends CI_Model
             $this->db->set('id_proyecto', $proyecto);
             $this->db->set('id_usuario', $usuario);
             $this->db->set('id_gerencia', $gerencia);
+            $this->db->set('monto_maximo',$total);
             $this->db->insert("nomina");
             
             foreach ($detalle as $detalleNomina) {
@@ -510,7 +521,7 @@ class Payments_model extends CI_Model
         }
     }
 
-    public function insertPaymentIndividual($descripcion, $proyecto, $gerencia, $usuario, $detalle)
+    public function insertPaymentIndividual($descripcion, $proyecto, $gerencia, $usuario, $detalle,$total)
     {
         $this->db->trans_start();
         
@@ -524,6 +535,7 @@ class Payments_model extends CI_Model
         $this->db->set('id_proyecto', $proyecto);
         $this->db->set('id_usuario', $usuario);
         $this->db->set('id_gerencia', $gerencia);
+        $this->db->set('monto_maximo', $total);
         $this->db->insert("nomina");
         
         $detalleInsert = array();
@@ -779,6 +791,97 @@ class Payments_model extends CI_Model
         
         $result = $this->db->query($query);
         
+        return $result;
+    }
+    public function getHistorySalaries($gerencia, $proyecto, $estatus, $descripcion,$fecha_pago)
+    {
+        
+        // echo "seleccion: proyecto: ". $proyecto." gerencia: ".$gerencia." estatus ".$estatus." descripción ".$descripcion;
+        $sql = "SELECT `p`.`nombre` `proyecto`, `n`.`descripcion`, `g`.`nombre`  `gerencia`, `n`.`numero_lote`,DATE_FORMAT(`n`.`fecha_creacion`,'%d/%m/%Y') as fecha_creacion ,DATE_FORMAT(`n`.`fecha_pago`,'%d/%m/%Y') as fecha_pago, `en`.`nombre` `estatus`, `n`.`id`,
+                                pendiente.pendiente,procesada.procesada,pagada.pagada,pagada_BS.pagada_BS,rechazada.rechazada,rechazada_BS.rechazada_BS,total.total,  total_BS.total_BS,monto_maximo
+                                FROM (`nomina` `n`)
+                                INNER JOIN `estatus_nomina` `en` ON `en`.`id` = `n`.`id_estatus`
+                                INNER JOIN `proyecto` `p` ON `p`.`id` = `n`.`id_proyecto`
+                                INNER JOIN `gerencia` `g` ON `g`.`id` = `n`.`id_gerencia`
+                                        LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) pendiente
+                                FROM nomina_detalle
+        						WHERE id_estatus = 1
+        						GROUP BY id_nomina,id_estatus) pendiente ON `pendiente`.`id_nomina` = `n`.`id`
+                                        LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) procesada
+        						FROM nomina_detalle
+        						WHERE id_estatus = 2
+        						GROUP BY id_nomina,id_estatus) procesada ON `procesada`.`id_nomina` = `n`.`id`
+                                        LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) pagada
+        						FROM nomina_detalle
+        						WHERE id_estatus = 3
+        						GROUP BY id_nomina,id_estatus) pagada ON `pagada`.`id_nomina` = `n`.`id`
+						LEFT JOIN (SELECT DISTINCT id_nomina, SUM(credito) pagada_BS
+        						FROM nomina_detalle
+        						WHERE id_estatus = 3
+        						GROUP BY id_nomina,id_estatus) pagada_BS ON `pagada_BS`.`id_nomina` = `n`.`id`
+                                        LEFT JOIN (SELECT DISTINCT id_nomina,id_estatus, COUNT(*) rechazada
+        						FROM nomina_detalle
+        						WHERE id_estatus = 4
+        						GROUP BY id_nomina,id_estatus) rechazada ON `rechazada`.`id_nomina` = `n`.`id`
+					LEFT JOIN (SELECT DISTINCT id_nomina, SUM(credito) rechazada_BS
+        						FROM nomina_detalle
+        						WHERE id_estatus = 4
+        						GROUP BY id_nomina,id_estatus) rechazada_BS ON `rechazada_BS`.`id_nomina` = `n`.`id`
+                                        LEFT JOIN (SELECT DISTINCT id_nomina, COUNT(*) total
+        						FROM nomina_detalle
+        						GROUP BY id_nomina) total ON `total`.`id_nomina` = `n`.`id`
+					LEFT JOIN (SELECT DISTINCT id_nomina, SUM(credito) total_BS
+        						FROM nomina_detalle
+        						GROUP BY id_nomina) total_BS ON `total_BS`.`id_nomina` = `n`.`id`";
+        
+        $where = false;
+        
+        // agregamos las ondiciones del filtro de búsqueda
+        if (! $gerencia == null && ! $gerencia == '') {
+            if (! $where) {
+                $sql = $sql . "WHERE n.id_gerencia=" . $gerencia . " ";
+                $where = true;
+            } else {
+                $sql = $sql . "AND n.id_gerencia=" . $gerencia . " ";
+            }
+        }
+        
+        if (! $proyecto == null && ! $proyecto == '') {
+            if (! $where) {
+                $sql = $sql . "WHERE n.id_proyecto=" . $proyecto . " ";
+                $where = true;
+            } else {
+                $sql = $sql . "AND n.id_proyecto=" . $proyecto . " ";
+            }
+        }
+        
+        if (! $estatus == null && ! $estatus == '') {
+            if (! $where) {
+                $sql = $sql . "WHERE n.id_estatus=" . $estatus . " ";
+                $where = true;
+            } else {
+                $sql = $sql . "AND n.id_estatus=" . $estatus . " ";
+            }
+        }
+        
+        if (! $descripcion == null && ! $descripcion == '') {
+            if (! $where) {
+                $sql = $sql . "WHERE n.descripcion like '%" . trim($descripcion) . "%'";
+                $where = true;
+            } else {
+                $sql = $sql . "AND n.descripcion like '%" . trim($descripcion) . "%' ";
+            }
+        }
+        if (! $fecha_pago == null && ! $fecha_pago == '') {
+            if (! $where) {
+                $sql = $sql . "WHERE n.fecha_pago like '%" .($fecha_pago) . "%'";
+                $where = true;
+            } else {
+                $sql = $sql . "AND n.fecha_pago like'%" .($fecha_pago) . "%'";
+            }
+        }
+        $sql = $sql . "ORDER BY n.fecha_creacion desc";
+        $result = $this->db->query($sql);
         return $result;
     }
 
