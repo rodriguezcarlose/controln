@@ -276,9 +276,7 @@ class Usermanagement extends CI_Controller {
                     $this->load->view('templates/navigation',$data);
                     $this->load->view('user/crud/editUser',$data);
                     $this->load->view('templates/footer');
-                }
-                
-                
+                } 
             }
         }
 
